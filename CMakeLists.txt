@@ -27,8 +27,9 @@ set(FT_WITH_ZLIB OFF CACHE BOOL "" FORCE)
 set(FT_WITH_BZIP2 OFF CACHE BOOL "" FORCE)
 set(FT_WITH_BROTLI OFF CACHE BOOL "" FORCE)
 set(FT_WITH_HARFBUZZ OFF CACHE BOOL "" FORCE)
-set(FREETYPE_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/freetype2/include)
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/freetype2 EXCLUDE_FROM_ALL)
+set(FREETYPE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/freetype2/include)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/freetype2 EXCLUDE_FROM_ALL)
+set_target_properties(freetype PROPERTIES FOLDER 3rdparty)
 
 #####################################################
 #####################################################
@@ -40,8 +41,6 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "cmakeTargets")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(FINAL_BIN_DIR ${CMAKE_SOURCE_DIR}/bin)
-set(CMAKE_INSTALL_PREFIX "${FINAL_BIN_DIR}")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
 
 add_definitions(-DUSE_STD_FILESYSTEM)
@@ -55,83 +54,83 @@ add_definitions(-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS)
 #####################################################
 
 file(GLOB IMGUI_SOURCES
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_docking_layout/*.h
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_docking_layout/*.cpp
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_docking_layout/misc/freetype/imgui_freetype.h
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_docking_layout/misc/freetype/imgui_freetype.cpp)
-source_group(TREE ${CMAKE_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_SOURCES})
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking_layout/*.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking_layout/*.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking_layout/misc/freetype/imgui_freetype.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking_layout/misc/freetype/imgui_freetype.cpp)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_SOURCES})
 
 #####################################################
 ##### IMPLOT
 #####################################################
 
 file(GLOB IMGUI_IMPLOT_SOURCES
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_implot/*.h
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_implot/*.cpp)
-source_group(TREE ${CMAKE_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMPLOT_SOURCES})
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/*.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/*.cpp)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMPLOT_SOURCES})
 
 #####################################################
 ##### IMCOOLBAR
 #####################################################
 
 file(GLOB IMGUI_IMCOOLBAR_SOURCES
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.h
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.cpp)
-source_group(TREE ${CMAKE_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMCOOLBAR_SOURCES})
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.cpp)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMCOOLBAR_SOURCES})
 
 #####################################################
 ##### IMGRADIENTHDR
 #####################################################
 
 file(GLOB IMGUI_IMGRADIENTHDR_SOURCES
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/src/*.h
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/src/*.cpp)
-source_group(TREE ${CMAKE_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGRADIENTHDR_SOURCES})
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/src/*.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/src/*.cpp)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGRADIENTHDR_SOURCES})
 
 #####################################################
 ##### IMGUIFILEDIALOG
 #####################################################
 
 file(GLOB IMGUI_IMGUIFILEDIALOG_SOURCES
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/*.h
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/*.cpp)
-source_group(TREE ${CMAKE_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIFILEDIALOG_SOURCES})
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/*.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/*.cpp)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIFILEDIALOG_SOURCES})
 
 #####################################################
 ##### IMGUIZMO
 #####################################################
 
 file(GLOB IMGUI_IMGUIZMO_SOURCES
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.h
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.cpp)
-source_group(TREE ${CMAKE_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIZMO_SOURCES})
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.cpp)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIZMO_SOURCES})
 
 #####################################################
 ##### IMTOOLS
 #####################################################
 
 file(GLOB IMGUI_IMTOOLS_SOURCES
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_tools/*.h
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_tools/*.cpp)
-source_group(TREE ${CMAKE_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMTOOLS_SOURCES})
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.cpp)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMTOOLS_SOURCES})
 
 #####################################################
 ##### IMGUINODEEDITOR
 #####################################################
 
 file(GLOB_RECURSE IMGUI_IMGUINODEEDITOR_SOURCES
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/*.h
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/*.inl
-		${CMAKE_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/*.cpp)
-source_group(TREE ${CMAKE_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUINODEEDITOR_SOURCES})
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/*.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/*.inl
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/*.cpp)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUINODEEDITOR_SOURCES})
 
 #####################################################
 ##### IMGUIPACK
 #####################################################
 
 file(GLOB IMGUI_IMGUIPACK_SOURCES
-		${CMAKE_SOURCE_DIR}/*.h)
-source_group(TREE ${CMAKE_SOURCE_DIR}/ PREFIX header FILES ${IMGUI_IMGUIPACK_SOURCES})
+		${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/ PREFIX header FILES ${IMGUI_IMGUIPACK_SOURCES})
 
 #####################################################
 #####################################################
@@ -167,14 +166,14 @@ endif()
 
 target_include_directories(${PROJECT} PRIVATE
 	${FREETYPE_INCLUDE_DIR}
-	${CMAKE_SOURCE_DIR}/3rdparty/imgui_tools/
-	${CMAKE_SOURCE_DIR}/3rdparty/imgui_implot/
-	${CMAKE_SOURCE_DIR}/3rdparty/imgui_imguizmo/
-	${CMAKE_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
-	${CMAKE_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
-	${CMAKE_SOURCE_DIR}/3rdparty/imgui_docking_layout/
-	${CMAKE_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
-	${CMAKE_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/Include
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking_layout/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/Include
 )
 
 target_link_libraries(${PROJECT}
