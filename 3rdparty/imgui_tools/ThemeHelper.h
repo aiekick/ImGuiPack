@@ -23,7 +23,15 @@
 #include <imgui.h>
 #include <string>
 #include <map>
-//#define USE_SHADOW
+
+class ImGuiTheme {
+public:
+	ImVec4 colors[ImGuiCol_COUNT];
+	std::map<std::string, IGFD::FileStyle> fileTypeInfos;
+	ImGuiStyle style;
+	ImVec4 goodColor = ImVec4(0.00f, 0.35f, 0.00f, 1.00f);
+	ImVec4 badColor = ImVec4(0.35f, 0.00f, 0.00f, 1.00f);
+};
 
 class ThemeHelper
 #ifdef USE_XML_CONFIG 
@@ -31,41 +39,32 @@ class ThemeHelper
 #endif // USE_XML_CONFIG
 {
 public:
-#ifdef USE_SHADOW
-	static float puShadowStrength; // low value is darker than higt (0.0f - 2.0f)
-	static bool puUseShadow;
-	static bool puUseTextureForShadow;
-#endif
 	bool puShowImGuiStyleEdtor = false;
 
 private:
-	std::map<std::string, IGFD::FileStyle> prFileTypeInfos;
-	ImGuiStyle prImGuiStyle;
+	std::map<std::string, ImGuiTheme> m_ThemeContainer;
+	ImGuiTheme m_CurrentTheme;
 
 public:
     bool init();
     void unit();
 
+	void AddTheme(const std::string& vThemeName, const ImGuiTheme& vImGuiTheme);
+	void RemoveTheme(const std::string& vThemeName);
+
 	void Draw();
 	void DrawMenu();
     void ShowCustomImGuiStyleEditor(bool* vOpen, ImGuiStyle* ref = nullptr);
+
+public: // configuration
 #ifdef USE_XML_CONFIG
 	std::string getXml(const std::string& vOffset, const std::string& vUserDatas = "") override;
     bool setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement* vParent, const std::string& vUserDatas = "") override;
 #endif // USE_XML_CONFIG
 
-	ImGuiStyle GetImGuiStyle() { return prImGuiStyle; }
+	ImGuiStyle GetImGuiStyle() { return m_CurrentTheme.style; }
 
 private:
-	void ApplyStyleColorsDefault();
-	void ApplyStyleColorsOrangeBlue();
-	void ApplyStyleColorsGreenBlue();
-	void ApplyStyleColorsClassic();
-	void ApplyStyleColorsDark();
-	void ApplyStyleColorsLight();
-	void ApplyStyleColorsDarcula();
-	void ApplyStyleColorsRedDark();
-
 	void ApplyFileTypeColors();
 
 	// ImGuiColorTextEdit Palette
