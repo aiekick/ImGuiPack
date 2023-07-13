@@ -1,10 +1,4 @@
-git submodule add --force -b "feature/docking-layout-external" https://github.com/thedmd/imgui.git 3rdparty/imgui_docking_layout
-git submodule add --force -b "master" https://github.com/aiekick/ImGuiFileDialog.git 3rdparty/imgui_imguifiledialog
-git submodule add --force -b "master" https://github.com/aiekick/ImCoolBar.git 3rdparty/imgui_imcoolbar
-git submodule add --force -b "master" https://github.com/CedricGuillemet/ImGuizmo.git 3rdparty/imgui_imguizmo
-git submodule add --force -b "main" https://github.com/aiekick/ImTools.git 3rdparty/imgui_tools
-git submodule add --force -b "main" https://github.com/effekseer/ImGradientHDR.git 3rdparty/imgui_imgradienthdr
-git submodule add --force -b "master" https://github.com/epezent/implot.git 3rdparty/imgui_implot
-git submodule add --force -b "master" https://github.com/aiekick/imgui-node-editor.git 3rdparty/imgui_node_editor
+git submodule add --force -b "c" https://github.com/Dav1dde/glad.git 3rdparty/glad
+git submodule add --force -b "master" https://github.com/glfw/glfw.git 3rdparty/glfw
 
-git submodule add --force -b "master" https://github.com/freetype/freetype2.git 3rdparty/freetype2
+git submodule add --force -b "master" https://github.com/aiekick/ImGuiPack.git 3rdparty/ImGuiPack
