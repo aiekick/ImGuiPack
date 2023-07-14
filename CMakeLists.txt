@@ -54,10 +54,10 @@ add_definitions(-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS)
 #####################################################
 
 file(GLOB IMGUI_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking_layout/*.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking_layout/*.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking_layout/misc/freetype/imgui_freetype.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking_layout/misc/freetype/imgui_freetype.cpp)
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/*.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/*.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/misc/freetype/imgui_freetype.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/misc/freetype/imgui_freetype.cpp)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_SOURCES})
 
 #####################################################
@@ -171,11 +171,31 @@ target_include_directories(${PROJECT} PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking_layout/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/Include
 )
 
 target_link_libraries(${PROJECT}
 	${FREETYPE_LIBRARIES}
+)
+
+set(IMGUIPACK_INCLUDE_DIRS
+	${FREETYPE_INCLUDE_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/Include
+PARENT_SCOPE)
+
+
+install(FILES 
+    inc/someHeader.h
+    inc/someHeaderB.h
+    DESTINATION include/MyLibrary
 )

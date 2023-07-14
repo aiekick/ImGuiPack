@@ -15,10 +15,11 @@ limitations under the License.
 */
 
 #pragma once
+#pragma warning(disable : 4251)
 
 #include <memory> // smart ptr
 #include <string>
-#include <cstdint> // int32_t
+#include <Common/Globals.h>
 
 typedef int PaneFlags;
 enum class PaneDisposal
@@ -31,13 +32,23 @@ enum class PaneDisposal
 	Count
 };
 
+#include <string>
+#include <ctools/cTools.h>
+ 
+template<typename T>
+class COMMON_API Selector
+{
+public:
+	virtual void Select(ct::cWeak<T> vObjet) {}
+};
+
 class AbstractPane;
 typedef std::shared_ptr<AbstractPane> AbstractPanePtr;
-typedef std::weak_ptr<AbstractPane> AbstractPaneWeak;
+typedef ct::cWeak<AbstractPane> AbstractPaneWeak;
 
 class BaseNode;
 class ProjectFile;
-class AbstractPane
+class COMMON_API AbstractPane : public Selector<BaseNode>
 {
 public:
 	std::string m_PaneName;
@@ -55,9 +66,9 @@ public:
 public:
 	virtual bool Init() = 0;
 	virtual void Unit() = 0;
-    virtual int32_t DrawPanes(const uint32_t& vCurrentFrame, const int32_t& vWidgetId, const std::string& vUserDatas, PaneFlags& vInOutPaneShown) = 0;
-    virtual void DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const std::string& vUserDatas) = 0;
-    virtual int32_t DrawWidgets(const uint32_t& vCurrentFrame, const int32_t& vWidgetId, const std::string& vUserDatas) = 0;
+	virtual int DrawPanes(const uint32_t& vCurrentFrame, int vWidgetId, std::string vUserDatas, PaneFlags& vInOutPaneShown) = 0;
+	virtual void DrawDialogsAndPopups(const uint32_t& vCurrentFrame, std::string vUserDatas) = 0;
+	virtual int DrawWidgets(const uint32_t& vCurrentFrame, int vWidgetId, std::string vUserDatas) = 0;
 
 public:
 	virtual void ShowPane() { m_ShowPaneAtFirstCall = true; };

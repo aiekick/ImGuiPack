@@ -16,29 +16,17 @@ limitations under the License.
 
 #pragma once
 
-#ifdef USE_XML_CONFIG
-#include <ConfigAbstract.h>
-#endif // USE_XML_CONFIG
-
-#include <AbstractPane.h>
-#include <imgui.h>
-
-#include <map>
-#include <string>
+#include <ctools/ConfigAbstract.h>
+#include <Panes/Abstract/AbstractPane.h>
+#include <imgui/imgui.h>
 #include <array>
-#include <vector>
+#include <string>
+#include <map>
 
-namespace ImGui
-{
-    IMGUI_API bool BeginPaneFlags(const std::string& vName, PaneFlags* vContainer, PaneFlags vPaneFlag, ImGuiWindowFlags vWinFlags);
-}
+typedef std::string PaneCategoryName;
 
 class ProjectFile;
-class LayoutManager 
-#ifdef USE_XML_CONFIG
-    : public conf::ConfigAbstract
-#endif
-
+class LayoutManager : public conf::ConfigAbstract
 {
 private:
 	ImGuiID m_DockSpaceID = 0;
@@ -49,15 +37,16 @@ private:
 	std::array<float, (size_t)PaneDisposal::Count> m_PaneDisposalSizes = 
 	{	0.0f, // central size is ignored because dependant of others
 		200.0f, // left size
-		200.0f, // right siz0f, // bottom size
+		200.0f, // right size
+		200.0f, // bottom size
 		200.0f // top size
 	};
 
 protected:
-    std::map<PaneDisposal, AbstractPaneWeak> m_PanesByDisposal;
-    std::map<std::string, AbstractPaneWeak> m_PanesByName;
-    std::map<std::string, std::vector<AbstractPaneWeak>> m_PanesInDisplayOrder;
-    std::map<PaneFlags, AbstractPaneWeak> m_PanesByFlag;
+	std::map<PaneDisposal, AbstractPaneWeak> m_PanesByDisposal;
+	std::map<std::string, AbstractPaneWeak> m_PanesByName;
+	std::map<PaneCategoryName, std::vector<AbstractPaneWeak>> m_PanesInDisplayOrder;
+	std::map<PaneFlags, AbstractPaneWeak> m_PanesByFlag;
 	int32_t m_FlagCount = 0U;
 
 public:
@@ -73,14 +62,14 @@ public:
 	void AddPane(
 		AbstractPaneWeak vPane,
 		const std::string& vName,
-		const std::string& vCategory,
+		const PaneCategoryName& vCategory,
 		const PaneDisposal& vPaneDisposal,
 		const bool& vIsOpenedDefault,
 		const bool& vIsFocusedDefault);
 	void AddPane(
 		AbstractPaneWeak vPane,
 		const std::string& vName,
-        const std::string& vCategory,
+		const PaneCategoryName& vCategory,
 		const PaneFlags& vFlag,
 		const PaneDisposal& vPaneDisposal,
 		const bool& vIsOpenedDefault,
@@ -97,7 +86,7 @@ public:
 	void InitAfterFirstDisplay(const ImVec2& vSize);
 	bool BeginDockSpace(const ImGuiDockNodeFlags& vFlags);
 	void EndDockSpace();
-	bool IsDockSpaceHovered();
+	bool IsDockSpaceHoleHovered();
 
 	void ApplyInitialDockingLayout(const ImVec2& vSize = ImVec2(0, 0));
 
@@ -120,13 +109,27 @@ private: // configuration
 	PaneFlags Internal_GetFocusedPanes();
 	void Internal_SetFocusedPanes(const PaneFlags& vActivePanes);
 
-#ifdef USE_XML_CONFIG
 public: // configuration
 	std::string getXml(const std::string& vOffset, const std::string& vUserDatas = "");
 	bool setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement* vParent, const std::string& vUserDatas = "");
-#endif // USE_XML_CONFIG
 
-public:
+public: // singleton
+	static LayoutManager *Instance(LayoutManager* vCopy = nullptr, bool vForce = false)
+	{
+		static LayoutManager _instance;
+		static LayoutManager* _instance_copy = nullptr;
+		if (vCopy || vForce)
+		{
+			_instance_copy = vCopy;
+		}
+		if (_instance_copy)
+		{
+			return _instance_copy;
+		}
+		return &_instance;
+	}
+
+protected:
 	LayoutManager(); // Prevent construction
 	LayoutManager(const LayoutManager&) = delete;
 	LayoutManager& operator =(const LayoutManager&) = delete;
