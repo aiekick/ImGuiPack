@@ -21,17 +21,16 @@ if (USE_NEW_IMGUI_KEY_SYSTEM)
 endif()
 
 file(GLOB MAIN_SOURCES ${CMAKE_SOURCE_DIR}/main.cpp)
-file(GLOB RES_SOURCES 
-		${CMAKE_SOURCE_DIR}/CustomFont.cpp 
-		${CMAKE_SOURCE_DIR}/CustomFont.h)
+source_group(main FILES ${IMGUI_IMPL_SRC})
+
+file(GLOB_RECURSE SRC_SOURCES ${CMAKE_SOURCE_DIR}/src/*.*)
+source_group(TREE ${CMAKE_SOURCE_DIR}/src PREFIX src FILES ${SRC_SOURCES})
+
 file(GLOB IMGUIIMPL_SOURCES 
 		${CMAKE_SOURCE_DIR}/3rdparty/imgui/backends/imgui_impl_glfw.cpp
 		${CMAKE_SOURCE_DIR}/3rdparty/imgui/backends/imgui_impl_glfw.h
 		${CMAKE_SOURCE_DIR}/3rdparty/imgui/backends/imgui_impl_opengl3.cpp
 		${CMAKE_SOURCE_DIR}/3rdparty/imgui/backends/imgui_impl_opengl3.h)
-source_group(main FILES ${MAIN_SOURCES})
-source_group(src\\Custom FILES ${CUSTOM_SOURCES})
-source_group(src\\Res FILES ${RES_SOURCES})
 source_group(src\\ImGuiImpl FILES ${IMGUIIMPL_SOURCES})
 
 if (APPLE)
@@ -40,22 +39,22 @@ if (APPLE)
 endif()
 
 include_directories(
-	${PLOG_INCLUDE_DIR}
 	${GLM_INCLUDE_DIR}
-	${OPENGL_INCLUDE_DIR}
+	${CMAKE_SOURCE_DIR}
+	${PLOG_INCLUDE_DIR}
 	${GLFW_INCLUDE_DIR}
 	${GLAD_INCLUDE_DIR}
 	${IMGUI_INCLUDE_DIR}
+	${OPENGL_INCLUDE_DIR}
 	${IMPLOT_INCLUDE_DIR}
-	${CMAKE_SOURCE_DIR}
+	${IMGUIPACK_INCLUDE_DIRS}
 )
 
 add_executable(${PROJECT}
-	MACOSX_BUNDLE
 	##${ICON}
-	${RES_SOURCES}
+	MACOSX_BUNDLE
+	${SRC_SOURCES}
 	${MAIN_SOURCES}
-	${CUSTOM_SOURCES}
 	${IMGUIIMPL_SOURCES}
 )
 

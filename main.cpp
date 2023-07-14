@@ -1,25 +1,40 @@
-﻿// dear imgui: standalone example application for GLFW + OpenGL 3, using programmable pipeline
-// If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
-// (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan graphics context creation, etc.)
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
-#ifndef IMGUI_DEFINE_MATH_OPERATORS
-#define IMGUI_DEFINE_MATH_OPERATORS
-#endif
-#include <ImGuiPack.h>
-#include <3rdparty/glad/include/glad/glad.h>
-#include <3rdparty/imgui_docking_layout/backends/imgui_impl_opengl3.h>
-#include <3rdparty/imgui_docking_layout/backends/imgui_impl_glfw.h>
-#include <CustomFont.cpp>
+/*
+Copyright 2022-2023 Stephane Cuillerdier (aka aiekick)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+#include <imgui.h>
+#include "3rdparty/imgui/backends/imgui_impl_opengl3.h"
+#include "3rdparty/imgui/backends/imgui_impl_glfw.h"
 #include <stdio.h>
-#include <sstream>
-#include <fstream>
-#include <clocale>
-#include <string>
-#include <vector>
-#include <array>
 
-// Include glfw3.h after our OpenGL definitions
+#include <Gui/MainFrame.h>
+#include <Contrib/FontIcons/CustomFont.cpp>
+#include <Contrib/FontIcons/CustomFont2.cpp>
+#include <Contrib/FontIcons/CustomFontToolBar.cpp>
+#include <Contrib/FontIcons/Roboto_Medium.cpp>
+#include <glad/glad.h> 
 #include <GLFW/glfw3.h>
+
+#include <implot/implot.h>
+
+#include <Engine/Lua/LuaEngine.h>
+
+#define SHOW_CONSOLE
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
@@ -28,192 +43,149 @@
 #pragma comment(lib, "legacy_stdio_definitions")
 #endif
 
-int display_w, display_h;
+static void glfw_window_drop_callback(GLFWwindow* /*window*/, int count, const char** paths)
+{
+    MainFrame::Instance()->JustDropFiles(count, paths);
+}
 
-static void glfw_error_callback(int error, const char* description) { fprintf(stderr, "Glfw Error %d: %s\n", error, description); }
+static void glfw_error_callback(int error, const char* description)
+{
+    fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+}
 
-int main(int, char**) {
+static void glfw_window_close_callback(GLFWwindow* window)
+{
+	glfwSetWindowShouldClose(window, GL_FALSE); // block app closing
+	MainFrame::Instance()->IWantToCloseTheApp();
+}
+
+int main(int, char**argv)
+{	
+    FileHelper::Instance()->SetAppPath(std::string(argv[0]));
+    FileHelper::Instance()->SetCurDirectory(FileHelper::Instance()->GetAppPath());
+
     glfwSetErrorCallback(glfw_error_callback);
-    if (!glfwInit()) return 1;
+    if (!glfwInit())
+        return 1;
 
+	// Decide GL+GLSL versions
+#if APPLE
+    // GL 3.2 + GLSL 150
+    const char* glsl_version = "#version 150";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // Required on Mac
+#else
+    // GL 3.0 + GLSL 130
     const char* glsl_version = "#version 130";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+#endif
 
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "ImToolbar", NULL, NULL);
-    if (window == NULL) return 1;
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);  // Enable vsync
-
-    if (!gladLoadGL()) {
+    glfwWindowHint(GLFW_SAMPLES, 4);
+    
+    // Create window with graphics context
+    GLFWwindow* mainWindow = glfwCreateWindow(1280, 720, "LogToGraph", nullptr, nullptr);
+    if (mainWindow == 0)
+        return 1;
+    glfwMakeContextCurrent(mainWindow);
+    glfwSwapInterval(1); // Enable vsync
+	glfwSetWindowCloseCallback(mainWindow, glfw_window_close_callback);
+    glfwSetDropCallback(mainWindow, glfw_window_drop_callback);
+    
+    if (gladLoadGL() == 0)
+    {
         fprintf(stderr, "Failed to initialize OpenGL loader!\n");
         return 1;
     }
 
+#ifdef MSVC
+	//#if defined(_DEBUG) && defined(SHOW_CONSOLE)
+	//	ShowWindow(GetConsoleWindow(), SW_SHOW); // show 
+    //#else
+        ShowWindow(GetConsoleWindow(), SW_HIDE); // hide 
+	//#endif
+#endif
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImPlot::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    (void)io;
-    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;    // Enable Docking
-    // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;  // Enable Multi-Viewport / Platform Windows
-    io.FontAllowUserScaling = true;  // zoom wiht ctrl + mouse wheel
+	
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Viewport
+	io.FontAllowUserScaling = true; // activate zoom feature with ctrl + mousewheel
+#ifdef USE_DECORATIONS_FOR_RESIZE_CHILD_WINDOWS
+    io.ConfigViewportsNoDecoration = false; // toujours mettre une frame au fenetre enfant
+#endif
 
-    // Setup Dear ImGui style
-    // ImGui::StyleColorsDark();
-    ImGui::StyleColorsClassic();
-
-    // Setup Platform/Renderer bindings
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version);
-
-    // load icon font file (CustomFont.cpp)
-    ImGui::GetIO().Fonts->AddFontDefault();
-    static const ImWchar icons_ranges[] = {ICON_MIN_IGFD, ICON_MAX_IGFD, 0};
-    ImFontConfig icons_config;
-    icons_config.MergeMode  = true;
-    icons_config.PixelSnapH = true;
-    ImGui::GetIO().Fonts->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_IGFD, 50.0f, &icons_config, icons_ranges);
-
-    const std::vector<std::string> icons_name = {
-        "Settings",   //
-        "Activa",     //
-        "Magnet",     //
-        "Blender",    //
-        "CLion",      //
-        "Firefox",    //
-        "Gimp",       //
-        "Godot",      //
-        "VLC",        //
-        "Wikipedia",  //
-        "GeoGebra"    //
-    };
-
-    auto background_id = loadTexture("res/desert.jpg");
-
-    AppDatas _appDatas;
-    for (const auto& name : icons_name) {
-        _appDatas.textures.push_back(std::make_pair(name, loadTexture("res/" + name + ".png")));
+    // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+    ImGuiStyle& style = ImGui::GetStyle();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        style.WindowRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
 
-    const char* imCoolBarTitle = "##CoolBarMainWin";
+    // Setup Platform/Renderer bindings
+    ImGui_ImplGlfw_InitForOpenGL(mainWindow, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
 
-    while (!glfwWindowShouldClose(window)) {
+	// load memory font file
+    auto fonts_ptr = ImGui::GetIO().Fonts;
+    fonts_ptr->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_RM, 15.0f);
+    static ImFontConfig icons_config; icons_config.MergeMode = true; icons_config.PixelSnapH = true;
+    static const ImWchar icons_ranges[] = {ICON_MIN_NDP, ICON_MAX_NDP, 0};
+    fonts_ptr->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_NDP, 15.0f, &icons_config, icons_ranges);
+    static const ImWchar icons_ranges2[] = {ICON_MIN_NDP2, ICON_MAX_NDP2, 0};
+    fonts_ptr->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_NDP2, 15.0f, &icons_config, icons_ranges2);
+    static const ImWchar icons_ranges3[] = {ICON_MIN_NDPTB, ICON_MAX_NDPTB, 0};
+    fonts_ptr->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_NDPTB, 15.0f, &icons_config, icons_ranges3);
+
+	MainFrame::Instance(mainWindow)->Init();
+
+    // Main loop
+	int display_w, display_h;
+    ImVec2 pos, size;
+	while (!glfwWindowShouldClose(mainWindow))
+    {
+#ifndef _DEBUG
+        if (!LuaEngine::Instance()->IsJoinable()) // for not blocking threading progress bar animation
+        {
+            glfwWaitEventsTimeout(1.0);
+        }
+#endif
         glfwPollEvents();
 
-        glfwGetFramebufferSize(window, &display_w, &display_h);
-
+        glfwGetFramebufferSize(mainWindow, &display_w, &display_h);
+        
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-
-        drawBackground(background_id);
-
-        drawCoolBar(_appDatas, 11, "Top##CoolBarMainWin", ImCoolBarFlags_Horizontal, {ImVec2(0.5f, 0.0f), 50.0f, 100.0f});
-        drawCoolBar(_appDatas, 6, "Left##CoolBarMainWin", ImCoolBarFlags_Vertical, {ImVec2(0.0f, 0.5f), 50.0f, 100.0f});
-        drawCoolBar(_appDatas, 6, "Right##CoolBarMainWin", ImCoolBarFlags_Vertical, {ImVec2(1.0f, 0.5f), 50.0f, 100.0f});
-
-        const float& ref_font_scale = ImGui::GetIO().Fonts->Fonts[0]->Scale;
-
-        auto coolbar_button = [ref_font_scale](const char* label) {
-            float w         = ImGui::GetCoolBarItemWidth();
-            auto font_ptr   = ImGui::GetIO().Fonts->Fonts[0];
-            //font_ptr->Scale = ref_font_scale;
-            ImGui::PushFont(font_ptr);
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2());
-            ImGui::PopStyleVar();
-            font_ptr->Scale = ImGui::GetCoolBarItemScale();
-            ImGui::Button(label, ImVec2(w, w));
-            font_ptr->Scale = ref_font_scale;
-            ImGui::PopFont();
-        };
-
-        static ImGui::ImCoolBarConfig _config;
-        _config.normal_size  = 25.0f;
-        _config.hovered_size = 100.0f;
-        _config.anchor       = ImVec2(0.5f, 1.0f);
-
-        ImGui::GetIO().Fonts->Fonts[0]->Scale = ref_font_scale;
-        ImGuiWindowFlags window_flags         = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings ;
-        if (ImGui::BeginViewportSideBar("BottomBar", ImGui::GetMainViewport(), ImGuiDir_Down, 40.0f, window_flags)) {
-            if (ImGui::BeginCoolBar("Bottom##CoolBarMainWin", ImCoolBarFlags_Horizontal, _config)) {
-                auto window = ImGui::GetCurrentWindow();
-                if (window) {
-                    // correct the rect of the window. maybe a bug on imgui !?
-                    // the workrect can cause issue when click around
-                    // this thing correct the issue
-                    const auto& rc            = window->Rect();
-                    window->WorkRect          = rc;
-                    window->OuterRectClipped  = rc;
-                    window->InnerRect         = rc;
-                    window->InnerClipRect     = rc;
-                    window->ParentWorkRect    = rc;
-                    window->ClipRect          = rc;
-                    window->ContentRegionRect = rc;
-                }
-                if (ImGui::CoolBarItem()) {
-                    coolbar_button("A");
-                }
-                if (ImGui::CoolBarItem()) {
-                    coolbar_button("B");
-                }
-                if (ImGui::CoolBarItem()) {
-                    coolbar_button("C");
-                }
-                if (ImGui::CoolBarItem()) {
-                    coolbar_button("D");
-                }
-                if (ImGui::CoolBarItem()) {
-                    coolbar_button("E");
-                }
-                if (ImGui::CoolBarItem()) {
-                    coolbar_button("F");
-                }
-                if (ImGui::CoolBarItem()) {
-                    coolbar_button("G");
-                }
-                if (ImGui::CoolBarItem()) {
-                    coolbar_button("H");
-                }
-                if (ImGui::CoolBarItem()) {
-                    coolbar_button("I");
-                }
-                if (ImGui::CoolBarItem()) {
-                    coolbar_button("J");
-                }
-                if (ImGui::CoolBarItem()) {
-                    coolbar_button("K");
-                }
-                if (ImGui::CoolBarItem()) {
-                    coolbar_button("L");
-                }
-                if (ImGui::CoolBarItem()) {
-                    coolbar_button("M");
-                }
-                ImGui::EndCoolBar();
+        
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            ImGuiViewport* viewport = ImGui::GetMainViewport();
+            if (viewport)
+            {
+                pos = viewport->WorkPos;
+                size = viewport->WorkSize;
             }
         }
-        ImGui::End();
-
-        if (_appDatas.show_app_metrics) {
-            ImGui::ShowMetricsWindow(&_appDatas.show_app_metrics);
+        else
+        {
+            pos = ImVec2(0, 0);
+            size = ImVec2((float)display_w, (float)display_h);
         }
 
-        if (_appDatas.show_app_demo) {
-            ImGui::ShowDemoWindow(&_appDatas.show_app_demo);
-        }
+		MainFrame::Instance()->Display(pos, size);
+        
+        LuaEngine::Instance()->FinishIfRequired();
 
-        if (_appDatas.show_graph_demo) {
-            ImPlot::ShowDemoWindow(&_appDatas.show_graph_demo);
-        }
-
-        // Cpu Zone : prepare
         ImGui::Render();
-
-        // GPU Zone : Rendering
-        glfwMakeContextCurrent(window);
 
         glViewport(0, 0, display_w, display_h);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -221,23 +193,27 @@ int main(int, char**) {
 
         // Update and Render additional Platform Windows
         // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
-        //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        // For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
             GLFWwindow* backup_current_context = glfwGetCurrentContext();
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backup_current_context);
         }
 
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(mainWindow);
     }
+
+	MainFrame::Instance()->Unit();
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
-    ImPlot::DestroyContext();
+
+	ImPlot::DestroyContext();
     ImGui::DestroyContext();
 
-    glfwDestroyWindow(window);
+    glfwDestroyWindow(mainWindow);
     glfwTerminate();
 
     return 0;
