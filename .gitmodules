@@ -10,10 +10,10 @@
 	path = 3rdparty/imgui_imguizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo.git
 	branch = master
-[submodule "3rdparty/imgui_docking_layout"]
-	path = 3rdparty/imgui_docking_layout
+[submodule "3rdparty/imgui"]
+	path = 3rdparty/imgui
 	url = https://github.com/thedmd/imgui.git
-	branch = docking-layout-external
+	branch = feature/docking-layout-external
 [submodule "3rdparty/imgui_tools"]
 	path = 3rdparty/imgui_tools
 	url = https://github.com/aiekick/ImTools.git

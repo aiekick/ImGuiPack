@@ -1,4 +1,4 @@
-git submodule add --force -b "feature/docking-layout-external" https://github.com/thedmd/imgui.git 3rdparty/imgui_docking_layout
+git submodule add --force -b "feature/docking-layout-external" https://github.com/thedmd/imgui.git 3rdparty/imgui
 git submodule add --force -b "master" https://github.com/aiekick/ImGuiFileDialog.git 3rdparty/imgui_imguifiledialog
 git submodule add --force -b "master" https://github.com/aiekick/ImCoolBar.git 3rdparty/imgui_imcoolbar
 git submodule add --force -b "master" https://github.com/CedricGuillemet/ImGuizmo.git 3rdparty/imgui_imguizmo
