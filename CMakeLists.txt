@@ -10,8 +10,8 @@ project(
 	VERSION ${PROJECT_VER} 
 	LANGUAGES CXX)
 	
-option(BUILD_SHARED_LIBS "Enable Shared Lib" OFF)
-option(USE_STD_FILESYSTEM "Enable the use of std::filesystem in ImGuiFileDialog" OFF)
+option(IMGUIPACK_BUILD_SHARED_LIBS "Enable Shared Lib" OFF)
+option(IMGUIPACK_USE_STD_FILESYSTEM "Enable the use of std::filesystem in ImGuiFileDialog" OFF)
 
 if(NOT CMAKE_DEBUG_POSTFIX)
   set(CMAKE_DEBUG_POSTFIX d)
@@ -136,7 +136,9 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/ PREFIX header FILES ${IMGUI_IMGUI
 #####################################################
 #####################################################
 
-if (BUILD_SHARED_LIBS)
+if (IMGUIPACK_BUILD_SHARED_LIBS)
+	set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
+	set(USE_MSVC_RUNTIME_LIBRARY_DLL ON CACHE BOOL "" FORCE)
 	add_library(${PROJECT} 
 		${IMGUI_SOURCES} 
 		${IMGUI_IMPLOT_SOURCES}
@@ -166,6 +168,7 @@ endif()
 
 target_include_directories(${PROJECT} PRIVATE
 	${FREETYPE_INCLUDE_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
@@ -193,9 +196,10 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/Include
 PARENT_SCOPE)
 
+set(IMGUIPACK_LIBRARIES ImGuiPack PARENT_SCOPE)
 
-install(FILES 
-    inc/someHeader.h
-    inc/someHeaderB.h
-    DESTINATION include/MyLibrary
-)
+#install(FILES 
+#    inc/someHeader.h
+#    inc/someHeaderB.h
+#    DESTINATION include/MyLibrary
+#)

@@ -24,7 +24,7 @@
 #include <string>
 #include <map>
 
-class ImGuiTheme {
+class IMGUI_API ImGuiTheme {
 public:
 	ImVec4 colors[ImGuiCol_COUNT];
 	std::map<std::string, IGFD::FileStyle> fileTypeInfos;
@@ -33,7 +33,7 @@ public:
 	ImVec4 badColor = ImVec4(0.35f, 0.00f, 0.00f, 1.00f);
 };
 
-class ThemeHelper
+class IMGUI_API ThemeHelper
 #ifdef USE_XML_CONFIG 
 	: public conf::ConfigAbstract
 #endif // USE_XML_CONFIG

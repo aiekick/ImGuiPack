@@ -16,9 +16,13 @@ limitations under the License.
 
 #pragma once
 
+#include <ImGuiPack.h>
+
+#ifdef USE_XML_CONFIG
 #include <ctools/ConfigAbstract.h>
-#include <Panes/Abstract/AbstractPane.h>
-#include <imgui/imgui.h>
+#endif  // USE_XML_CONFIG
+#include <AbstractPane.h>
+#include <imgui.h>
 #include <array>
 #include <string>
 #include <map>
@@ -26,7 +30,10 @@ limitations under the License.
 typedef std::string PaneCategoryName;
 
 class ProjectFile;
-class LayoutManager : public conf::ConfigAbstract
+class IMGUI_API LayoutManager
+#ifdef USE_XML_CONFIG
+    : public conf::ConfigAbstract
+#endif // USE_XML_CONFIG
 {
 private:
 	ImGuiID m_DockSpaceID = 0;
@@ -109,9 +116,11 @@ private: // configuration
 	PaneFlags Internal_GetFocusedPanes();
 	void Internal_SetFocusedPanes(const PaneFlags& vActivePanes);
 
+#ifdef USE_XML_CONFIG
 public: // configuration
 	std::string getXml(const std::string& vOffset, const std::string& vUserDatas = "");
 	bool setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement* vParent, const std::string& vUserDatas = "");
+#endif // USE_XML_CONFIG
 
 public: // singleton
 	static LayoutManager *Instance(LayoutManager* vCopy = nullptr, bool vForce = false)

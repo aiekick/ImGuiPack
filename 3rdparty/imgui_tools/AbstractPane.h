@@ -19,7 +19,6 @@ limitations under the License.
 
 #include <memory> // smart ptr
 #include <string>
-#include <Common/Globals.h>
 
 typedef int PaneFlags;
 enum class PaneDisposal
@@ -33,22 +32,14 @@ enum class PaneDisposal
 };
 
 #include <string>
-#include <ctools/cTools.h>
  
-template<typename T>
-class COMMON_API Selector
-{
-public:
-	virtual void Select(ct::cWeak<T> vObjet) {}
-};
-
 class AbstractPane;
 typedef std::shared_ptr<AbstractPane> AbstractPanePtr;
-typedef ct::cWeak<AbstractPane> AbstractPaneWeak;
+typedef std::weak_ptr<AbstractPane> AbstractPaneWeak;
 
 class BaseNode;
 class ProjectFile;
-class COMMON_API AbstractPane : public Selector<BaseNode>
+class IMGUI_API AbstractPane
 {
 public:
 	std::string m_PaneName;

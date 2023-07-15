@@ -18,11 +18,9 @@ limitations under the License.
 */
 
 #include "LayoutManager.h"
+#include <ImGuiPack.h>
 
-#include <ctools/FileHelper.h>
-#include <ctools/Logger.h>
-
-#include <imgui/imgui_internal.h>
+#include <imgui_internal.h>
 
 LayoutManager::LayoutManager() = default;
 LayoutManager::~LayoutManager() = default;
@@ -54,7 +52,7 @@ void LayoutManager::AddPane(
 	if (m_PanesByName.find(vName) != m_PanesByName.end()) return; // pane name not already exist
 	if (m_PanesByFlag.find(vFlag) != m_PanesByFlag.end()) return; // pane flag not already exist
 	
-	auto panePtr = vPane.getValidShared();
+	auto panePtr = vPane.lock();
 	if (panePtr)
 	{
 		panePtr->m_PaneName = vName;
@@ -90,11 +88,13 @@ void LayoutManager::Init(const std::string& vMenuLabel, const std::string& vDefa
 	m_MenuLabel = vMenuLabel;
 	m_DefaultMenuLabel = vDefaultMenuLabel;
 
-	if (!FileHelper::Instance()->IsFileExist("imgui.ini"))
-	{
+    ImGuiContext& g = *GImGui;
+
+	/*if (g.SettingsHandlers.find("Docking") == g.SettingsHandlers.end()) // not found
+    {
 		m_FirstLayout = true; // need default layout
 		LogVarDebug("We will apply default layout :)");
-	}
+	}*/
 }
 
 void LayoutManager::Unit()
@@ -111,7 +111,7 @@ bool LayoutManager::InitPanes()
 
 	for (const auto& pane : m_PanesByFlag)
 	{
-		auto panePtr = pane.second.getValidShared();
+		auto panePtr = pane.second.lock();
 		if (panePtr)
 		{
 			res &= panePtr->Init();
@@ -125,7 +125,7 @@ void LayoutManager::UnitPanes()
 {
 	for (const auto& pane : m_PanesByFlag)
 	{
-		auto panePtr = pane.second.getValidShared();
+		auto panePtr = pane.second.lock();
 		if (panePtr)
 		{
 			panePtr->Unit();
@@ -188,7 +188,7 @@ void LayoutManager::EndDockSpace()
 bool LayoutManager::IsDockSpaceHoleHovered()
 {
 	auto& g = *GImGui;
-	return g.HoveredDockNode == nullptr && g.HoveredWindow == nullptr;
+    return g.DebugHoveredDockNode == nullptr && g.HoveredWindow == nullptr;
 }
 
 void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize)
@@ -223,7 +223,7 @@ void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize)
 
 	for (const auto& pane : m_PanesByName)
 	{
-		auto panePtr = pane.second.getValidShared();
+		auto panePtr = pane.second.lock();
 		if (panePtr)
 		{
 			switch (panePtr->m_PaneDisposal)
@@ -310,7 +310,7 @@ void LayoutManager::DisplayMenu(const ImVec2& vSize)
 			{
 				for (auto pane : paneCategory.second)
 				{
-					auto panePtr = pane.getValidShared();
+					auto panePtr = pane.lock();
 					if (panePtr && panePtr->CanWeDisplay())
 					{
 						LayoutManager_MenuItem<PaneFlags>(panePtr->m_PaneName.c_str(), "", &m_Pane_Shown, panePtr->m_PaneFlag);
@@ -334,7 +334,7 @@ int LayoutManager::DisplayPanes(const uint32_t& vCurrentFrame, const int& vWidge
 
 	for (const auto& pane : m_PanesByFlag)
 	{
-		auto panePtr = pane.second.getValidShared();
+		auto panePtr = pane.second.lock();
 		if (panePtr && panePtr->CanWeDisplay())
 		{
 			if (panePtr->m_ShowPaneAtFirstCall)
@@ -360,7 +360,7 @@ void LayoutManager::DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const st
 {
 	for (const auto& pane : m_PanesByFlag)
 	{
-		auto panePtr = pane.second.getValidShared();
+		auto panePtr = pane.second.lock();
 		if (panePtr && panePtr->CanWeDisplay())
 		{
 			panePtr->DrawDialogsAndPopups(vCurrentFrame, vUserDatas);
@@ -374,7 +374,7 @@ int LayoutManager::DrawWidgets(const uint32_t& vCurrentFrame, const int& vWidget
 
 	for (const auto& pane : m_PanesByFlag)
 	{
-		auto panePtr = pane.second.getValidShared();
+		auto panePtr = pane.second.lock();
 		if (panePtr && panePtr->CanWeDisplay())
 		{
 			widgetId = panePtr->DrawWidgets(vCurrentFrame, widgetId, vUserDatas);
@@ -400,7 +400,7 @@ void LayoutManager::FocusSpecificPane(const PaneFlags& vPane)
 
 	if (m_PanesByFlag.find(vPane) != m_PanesByFlag.end())
 	{
-		auto panePtr = m_PanesByFlag.at(vPane).getValidShared();
+		auto panePtr = m_PanesByFlag.at(vPane).lock();
 		if (panePtr)
 		{
 			FocusSpecificPane(panePtr->m_PaneName);
@@ -418,7 +418,7 @@ bool LayoutManager::IsSpecificPaneFocused(const PaneFlags& vPane)
 {
 	if (m_PanesByFlag.find(vPane) != m_PanesByFlag.end())
 	{
-		auto panePtr = m_PanesByFlag.at(vPane).getValidShared();
+		auto panePtr = m_PanesByFlag.at(vPane).lock();
 		if (panePtr)
 		{
 			return IsSpecificPaneFocused(panePtr->m_PaneName);
@@ -474,7 +474,7 @@ PaneFlags LayoutManager::Internal_GetFocusedPanes()
 
 	for (const auto& pane : m_PanesByFlag)
 	{
-		auto panePtr = pane.second.getValidShared();
+		auto panePtr = pane.second.lock();
 		if (panePtr && IsSpecificPaneFocused(panePtr->m_PaneName))
 			flag = (PaneFlags)((int32_t)flag | (int32_t)pane.first);
 	}
@@ -486,7 +486,7 @@ void LayoutManager::Internal_SetFocusedPanes(const PaneFlags& vActivePanes)
 {
 	for (const auto& pane : m_PanesByFlag)
 	{
-		auto panePtr = pane.second.getValidShared();
+		auto panePtr = pane.second.lock();
 		if (panePtr && vActivePanes & pane.first)
 			FocusSpecificPane(panePtr->m_PaneName);
 	}
@@ -495,6 +495,8 @@ void LayoutManager::Internal_SetFocusedPanes(const PaneFlags& vActivePanes)
 ///////////////////////////////////////////////////////
 //// CONFIGURATION PUBLIC /////////////////////////////
 ///////////////////////////////////////////////////////
+
+#ifdef USE_XML_CONFIG
 
 std::string LayoutManager::getXml(const std::string& vOffset, const std::string& vUserDatas)
 {
@@ -551,3 +553,5 @@ bool LayoutManager::setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement
 
 	return true;
 }
+
+#endif // USE_XML_CONFIG

@@ -23,8 +23,7 @@
 #include <memory>
 #include <imgui.h>
 
-class MessageData
-{
+class IMGUI_API MessageData {
 private:
 	std::shared_ptr<void> puDatas;
 
@@ -49,8 +48,7 @@ public:
 };
 
 class ProjectFile;
-class Messaging
-{
+class IMGUI_API Messaging {
 private:
 	const ImVec4 puErrorColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
 	const ImVec4 puWarningColor = ImVec4(0.8f, 0.8f, 0.0f, 1.0f);
