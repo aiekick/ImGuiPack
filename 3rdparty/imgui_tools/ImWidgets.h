@@ -100,7 +100,7 @@ IMGUI_API bool RadioButtonLabeled(float vWidth, const char* label, const char* h
 IMGUI_API bool RadioButtonLabeled(float vWidth, const char* label, const char* help, bool* active, bool disabled = false, ImFont* vLabelFont = nullptr);
 
 template <typename T>
-IMGUI_API bool RadioButtonLabeled_BitWize(float vWidth, const char* vLabel, const char* vHelp, T* vContainer, T vFlag,
+bool RadioButtonLabeled_BitWize(float vWidth, const char* vLabel, const char* vHelp, T* vContainer, T vFlag,
                                           bool vOneOrZeroAtTime     = false,  // only one selcted at a time
                                           bool vAlwaysOne           = true,   // radio behavior, always one selected
                                           T vFlagsToTakeIntoAccount = (T)0, bool vDisableSelection = false,
@@ -139,7 +139,7 @@ IMGUI_API bool RadioButtonLabeled_BitWize(float vWidth, const char* vLabel, cons
 }
 
 template <typename T>
-IMGUI_API bool RadioButtonLabeled_BitWize(float vWidth, const char* vLabelOK, const char* vLabelNOK, const char* vHelp, T* vContainer, T vFlag,
+bool RadioButtonLabeled_BitWize(float vWidth, const char* vLabelOK, const char* vLabelNOK, const char* vHelp, T* vContainer, T vFlag,
                                           bool vOneOrZeroAtTime     = false,  // only one selcted at a time
                                           bool vAlwaysOne           = true,   // radio behavior, always one selected
                                           T vFlagsToTakeIntoAccount = (T)0, bool vDisableSelection = false,
@@ -183,7 +183,7 @@ IMGUI_API bool RadioButtonLabeled(ImVec2 vSize, const char* label, const char* h
 IMGUI_API bool RadioButtonLabeled(ImVec2 vSize, const char* label, const char* help, bool* active, bool disabled = false, ImFont* vLabelFont = nullptr);
 
 template <typename T>
-IMGUI_API bool RadioButtonLabeled_BitWize(ImVec2 vSize, const char* vLabel, const char* vHelp, T* vContainer, T vFlag,
+bool RadioButtonLabeled_BitWize(ImVec2 vSize, const char* vLabel, const char* vHelp, T* vContainer, T vFlag,
                                           bool vOneOrZeroAtTime     = false,  // only one selcted at a time
                                           bool vAlwaysOne           = true,   // radio behavior, always one selected
                                           T vFlagsToTakeIntoAccount = (T)0, bool vDisableSelection = false,
@@ -220,8 +220,9 @@ IMGUI_API bool RadioButtonLabeled_BitWize(ImVec2 vSize, const char* vLabel, cons
     }
     return res;
 }
+
 template <typename T>
-IMGUI_API bool RadioButtonLabeled_BitWize(ImVec2 vSize, const char* vLabelOK, const char* vLabelNOK, const char* vHelp, T* vContainer, T vFlag,
+bool RadioButtonLabeled_BitWize(ImVec2 vSize, const char* vLabelOK, const char* vLabelNOK, const char* vHelp, T* vContainer, T vFlag,
                                           bool vOneOrZeroAtTime     = false,  // only one selcted at a time
                                           bool vAlwaysOne           = true,   // radio behavior, always one selected
                                           T vFlagsToTakeIntoAccount = (T)0, bool vDisableSelection = false,
@@ -261,7 +262,7 @@ IMGUI_API bool RadioButtonLabeled_BitWize(ImVec2 vSize, const char* vLabelOK, co
 }
 
 template <typename T>
-IMGUI_API bool MenuItem(const char* label, const char* shortcut, T* vContainer, T vFlag, bool vOnlyOneSameTime = false) {
+bool MenuItem(const char* label, const char* shortcut, T* vContainer, T vFlag, bool vOnlyOneSameTime = false) {
     bool selected  = *vContainer & vFlag;
     const bool res = MenuItem(label, shortcut, &selected, true);
     if (res) {
@@ -281,7 +282,7 @@ IMGUI_API bool MenuItem(const char* label, const char* shortcut, T* vContainer, 
 }
 
 template <typename T>
-IMGUI_API bool Begin(const char* name, T* vContainer, T vFlag, ImGuiWindowFlags flags) {
+bool Begin(const char* name, T* vContainer, T vFlag, ImGuiWindowFlags flags) {
     bool check     = *vContainer & vFlag;
     const bool res = Begin(name, &check, flags);
     if (check)
@@ -402,7 +403,7 @@ IMGUI_API bool SliderFloatDefault(float width, const char* label, float* v, floa
                                   ImGuiSliderFlags flags = 0);  // adjust format to decorate the value with a prefix or a suffix for in-slider labels or unit display.
 
 template <typename T>
-IMGUI_API bool SliderDefault(float vWidth, const char* vName, T* vVar, T vInf, T vSup, T vDefault, T vStep = (T)0, bool vForNode = false) {
+bool SliderDefault(float vWidth, const char* vName, T* vVar, T vInf, T vSup, T vDefault, T vStep = (T)0, bool vForNode = false) {
     UNUSED(vForNode);
 
     bool change = false;
@@ -417,7 +418,7 @@ IMGUI_API bool SliderDefault(float vWidth, const char* vName, T* vVar, T vInf, T
 }
 
 template <typename T>
-IMGUI_API bool SliderDefaultCompact(float vWidth, const char* vName, T* vVar, T vInf, T vSup, T vDefault, T vStep = (T)0, bool vForNode = false) {
+bool SliderDefaultCompact(float vWidth, const char* vName, T* vVar, T vInf, T vSup, T vDefault, T vStep = (T)0, bool vForNode = false) {
     UNUSED(vForNode);
 
     bool change = false;
