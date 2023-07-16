@@ -178,6 +178,88 @@ IMGUI_API bool RadioButtonLabeled_BitWize(float vWidth, const char* vLabelOK, co
     return res;
 }
 
+IMGUI_API bool RadioButtonLabeled(ImVec2 vSize, const char* label, bool active, bool disabled);
+IMGUI_API bool RadioButtonLabeled(ImVec2 vSize, const char* label, const char* help, bool active, bool disabled = false, ImFont* vLabelFont = nullptr);
+IMGUI_API bool RadioButtonLabeled(ImVec2 vSize, const char* label, const char* help, bool* active, bool disabled = false, ImFont* vLabelFont = nullptr);
+
+template <typename T>
+IMGUI_API bool RadioButtonLabeled_BitWize(ImVec2 vSize, const char* vLabel, const char* vHelp, T* vContainer, T vFlag,
+                                          bool vOneOrZeroAtTime     = false,  // only one selcted at a time
+                                          bool vAlwaysOne           = true,   // radio behavior, always one selected
+                                          T vFlagsToTakeIntoAccount = (T)0, bool vDisableSelection = false,
+                                          ImFont* vLabelFont = nullptr)  // radio witl use only theses flags
+{
+    bool selected  = *vContainer & vFlag;
+    const bool res = RadioButtonLabeled(vSize, vLabel, vHelp, &selected, vDisableSelection, vLabelFont);
+    if (res) {
+        if (selected) {
+            if (vOneOrZeroAtTime) {
+                if (vFlagsToTakeIntoAccount) {
+                    if (vFlag & vFlagsToTakeIntoAccount) {
+                        *vContainer = (T)(*vContainer & ~vFlagsToTakeIntoAccount);  // remove these flags
+                        *vContainer = (T)(*vContainer | vFlag);                     // add
+                    }
+                } else
+                    *vContainer = vFlag;  // set
+            } else {
+                if (vFlagsToTakeIntoAccount) {
+                    if (vFlag & vFlagsToTakeIntoAccount) {
+                        *vContainer = (T)(*vContainer & ~vFlagsToTakeIntoAccount);  // remove these flags
+                        *vContainer = (T)(*vContainer | vFlag);                     // add
+                    }
+                } else
+                    *vContainer = (T)(*vContainer | vFlag);  // add
+            }
+        } else {
+            if (vOneOrZeroAtTime) {
+                if (!vAlwaysOne)
+                    *vContainer = (T)(0);  // remove all
+            } else
+                *vContainer = (T)(*vContainer & ~vFlag);  // remove one
+        }
+    }
+    return res;
+}
+template <typename T>
+IMGUI_API bool RadioButtonLabeled_BitWize(ImVec2 vSize, const char* vLabelOK, const char* vLabelNOK, const char* vHelp, T* vContainer, T vFlag,
+                                          bool vOneOrZeroAtTime     = false,  // only one selcted at a time
+                                          bool vAlwaysOne           = true,   // radio behavior, always one selected
+                                          T vFlagsToTakeIntoAccount = (T)0, bool vDisableSelection = false,
+                                          ImFont* vLabelFont = nullptr)  // radio witl use only theses flags
+{
+    bool selected     = *vContainer & vFlag;
+    const char* label = (selected ? vLabelOK : vLabelNOK);
+    const bool res    = RadioButtonLabeled(vSize, label, vHelp, &selected, vDisableSelection, vLabelFont);
+    if (res) {
+        if (selected) {
+            if (vOneOrZeroAtTime) {
+                if (vFlagsToTakeIntoAccount) {
+                    if (vFlag & vFlagsToTakeIntoAccount) {
+                        *vContainer = (T)(*vContainer & ~vFlagsToTakeIntoAccount);  // remove these flags
+                        *vContainer = (T)(*vContainer | vFlag);                     // add
+                    }
+                } else
+                    *vContainer = vFlag;  // set
+            } else {
+                if (vFlagsToTakeIntoAccount) {
+                    if (vFlag & vFlagsToTakeIntoAccount) {
+                        *vContainer = (T)(*vContainer & ~vFlagsToTakeIntoAccount);  // remove these flags
+                        *vContainer = (T)(*vContainer | vFlag);                     // add
+                    }
+                } else
+                    *vContainer = (T)(*vContainer | vFlag);  // add
+            }
+        } else {
+            if (vOneOrZeroAtTime) {
+                if (!vAlwaysOne)
+                    *vContainer = (T)(0);  // remove all
+            } else
+                *vContainer = (T)(*vContainer & ~vFlag);  // remove one
+        }
+    }
+    return res;
+}
+
 template <typename T>
 IMGUI_API bool MenuItem(const char* label, const char* shortcut, T* vContainer, T vFlag, bool vOnlyOneSameTime = false) {
     bool selected  = *vContainer & vFlag;

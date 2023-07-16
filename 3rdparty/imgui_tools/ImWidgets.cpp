@@ -764,6 +764,90 @@ bool ImGui::RadioButtonLabeled(float vWidth, const char* label, const char* help
     return change;
 }
 
+bool ImGui::RadioButtonLabeled(ImVec2 vSize, const char* label, bool active, bool disabled) {
+    using namespace ImGui;
+
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
+    ImGuiContext& g         = *GImGui;
+    const ImGuiStyle& style = g.Style;
+    float w                 = vSize.x;
+    float h                 = vSize.y;
+    const ImGuiID id        = window->GetID(label);
+    const ImVec2 label_size = CalcTextSize(label, nullptr, true);
+    if (w < 0.0f)
+        w = ImGui::GetContentRegionMaxAbs().x - window->DC.CursorPos.x;
+    if (h < 0.0f)
+        w = ImGui::GetContentRegionMaxAbs().y - window->DC.CursorPos.y;
+    if (IS_FLOAT_EQUAL(w, 0.0f))
+        w = label_size.x + style.FramePadding.x * 2.0f;
+    if (IS_FLOAT_EQUAL(h, 0.0f))
+        h = label_size.y + style.FramePadding.y * 2.0f;
+    const ImRect total_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, h));
+
+    ItemSize(total_bb, style.FramePadding.y);
+    if (!ItemAdd(total_bb, id))
+        return false;
+
+    // check
+    bool pressed          = false;
+    ImGuiCol colUnderText = ImGuiCol_Button;
+    if (!disabled) {
+        bool hovered, held;
+        pressed = ButtonBehavior(total_bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
+
+        colUnderText = ImGuiCol_FrameBg;
+        window->DrawList->AddRectFilled(total_bb.Min, total_bb.Max, GetColorU32((held && hovered) ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : colUnderText), style.FrameRounding);
+        if (active) {
+            colUnderText = ImGuiCol_Button;
+            window->DrawList->AddRectFilled(total_bb.Min, total_bb.Max, GetColorU32((hovered && held) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : colUnderText), style.FrameRounding);
+        }
+    }
+
+    // circle shadow + bg
+    if (style.FrameBorderSize > 0.0f) {
+        window->DrawList->AddRect(total_bb.Min + ImVec2(1, 1), total_bb.Max, GetColorU32(ImGuiCol_BorderShadow), style.FrameRounding);
+        window->DrawList->AddRect(total_bb.Min, total_bb.Max, GetColorU32(ImGuiCol_Border), style.FrameRounding);
+    }
+
+    if (label_size.x > 0.0f) {
+        const bool pushed = ImGui::PushStyleColorWithContrast(colUnderText, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
+        RenderTextClipped(total_bb.Min, total_bb.Max, label, nullptr, &label_size, ImVec2(0.5f, 0.5f));
+        if (pushed)
+            ImGui::PopStyleColor();
+    }
+
+    return pressed;
+}
+
+bool ImGui::RadioButtonLabeled(ImVec2 vSize, const char* label, const char* help, bool active, bool disabled, ImFont* vLabelFont) {
+    if (vLabelFont)
+        ImGui::PushFont(vLabelFont);
+    const bool change = RadioButtonLabeled(vSize, label, active, disabled);
+    if (vLabelFont)
+        ImGui::PopFont();
+    if (help)
+        if (ImGui::IsItemHovered())
+            ImGui::SetTooltip("%s", help);
+    return change;
+}
+
+bool ImGui::RadioButtonLabeled(ImVec2 vSize, const char* label, const char* help, bool* active, bool disabled, ImFont* vLabelFont) {
+    if (vLabelFont)
+        ImGui::PushFont(vLabelFont);
+    const bool change = RadioButtonLabeled(vSize, label, *active, disabled);
+    if (vLabelFont)
+        ImGui::PopFont();
+    if (change)
+        *active = !*active;
+    if (help)
+        if (ImGui::IsItemHovered())
+            ImGui::SetTooltip("%s", help);
+    return change;
+}
+
 bool ImGui::CollapsingHeader_SmallHeight(const char* vName, float vHeightRatio, float vWidth, bool vDefaulExpanded, bool* vIsOpen) {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
