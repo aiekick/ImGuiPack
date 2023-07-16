@@ -33,7 +33,7 @@ public:
 	ImVec4 badColor = ImVec4(0.35f, 0.00f, 0.00f, 1.00f);
 };
 
-class IMGUI_API ThemeHelper
+class IMGUI_API ImGuiThemeHelper
 #ifdef USE_XML_CONFIG 
 	: public conf::ConfigAbstract
 #endif // USE_XML_CONFIG
@@ -44,6 +44,7 @@ public:
 private:
 	std::map<std::string, ImGuiTheme> m_ThemeContainer;
 	ImGuiTheme m_CurrentTheme;
+    std::string m_DefaultThemeName;
 
 public:
     bool init();
@@ -51,6 +52,10 @@ public:
 
 	void AddTheme(const std::string& vThemeName, const ImGuiTheme& vImGuiTheme);
 	void RemoveTheme(const std::string& vThemeName);
+    void ApplyTheme(const ImGuiTheme& vTheme);
+
+    void ApplyDefaultTheme();
+    void SetDefaultTheme(const std::string& vDefaultTheme);
 
 	void Draw();
 	void DrawMenu();
@@ -72,9 +77,9 @@ private:
 	int GetImGuiColFromName(const std::string& vName);
 
 public:
-	ThemeHelper(); // Prevent construction
-	ThemeHelper(const ThemeHelper&) {}; // Prevent construction by copying
-	ThemeHelper& operator =(const ThemeHelper&) { return *this; }; // Prevent assignment
-	~ThemeHelper(); // Prevent unwanted destruction
+	ImGuiThemeHelper(); // Prevent construction
+	ImGuiThemeHelper(const ImGuiThemeHelper&) {}; // Prevent construction by copying
+	ImGuiThemeHelper& operator =(const ImGuiThemeHelper&) { return *this; }; // Prevent assignment
+	~ImGuiThemeHelper(); // Prevent unwanted destruction
 };
 

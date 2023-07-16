@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "ThemeHelper.h"
+#include "ImGuiThemeHelper.h"
 
 #include <ImWidgets.h>
 #include <imgui.h>
@@ -30,45 +30,62 @@
 #ifdef THEME_HELPER_CONFIG_HEADER
 #    include THEME_HELPER_CONFIG_HEADER
 #else
-#    include "ThemeHelperConfigHeader.h"
+#    include "ImGuiThemeHelperConfigHeader.h"
 #endif // THEME_HELPER_CONFIG_HEADER
 
-ThemeHelper::ThemeHelper() = default;
-ThemeHelper::~ThemeHelper() = default;
+ImGuiThemeHelper::ImGuiThemeHelper() = default;
+ImGuiThemeHelper::~ImGuiThemeHelper() = default;
 
-bool ThemeHelper::init()
+bool ImGuiThemeHelper::init()
 {
 	return true;
 }
 
-void ThemeHelper::unit()
+void ImGuiThemeHelper::unit()
 {
 
 }
 
-void ThemeHelper::AddTheme(const std::string& vThemeName, const ImGuiTheme& vImGuiTheme) {
+void ImGuiThemeHelper::AddTheme(const std::string& vThemeName, const ImGuiTheme& vImGuiTheme) {
 	m_ThemeContainer[vThemeName] = vImGuiTheme;
 }
 
-void ThemeHelper::RemoveTheme(const std::string& vThemeName) {
+void ImGuiThemeHelper::RemoveTheme(const std::string& vThemeName) {
 	if (m_ThemeContainer.find(vThemeName) != m_ThemeContainer.end()) {
 		m_ThemeContainer.erase(vThemeName);
 	}
 }
 
-void ThemeHelper::Draw()
+void ImGuiThemeHelper::ApplyTheme(const ImGuiTheme& vTheme) {
+    m_CurrentTheme = vTheme;
+    ImGui::GetStyle() = m_CurrentTheme.style;
+}
+
+void ImGuiThemeHelper::ApplyDefaultTheme() {
+    if (!m_DefaultThemeName.empty()) {
+        if (m_ThemeContainer.find(m_DefaultThemeName) != m_ThemeContainer.end()) {
+            ApplyTheme(m_ThemeContainer.at(m_DefaultThemeName));
+        }
+	}
+}
+
+void ImGuiThemeHelper::SetDefaultTheme(const std::string& vDefaultTheme) {
+    m_DefaultThemeName = vDefaultTheme;
+}
+
+void ImGuiThemeHelper::Draw()
 {
 	if (puShowImGuiStyleEdtor)
 		ShowCustomImGuiStyleEditor(&puShowImGuiStyleEdtor);
 }
 
-void ThemeHelper::DrawMenu()
+void ImGuiThemeHelper::DrawMenu()
 {
 	if (ImGui::BeginMenu("General UI"))
 	{
 		for (auto& it : m_ThemeContainer) {
 			if (ImGui::MenuItem(it.first.c_str())) {
-				m_CurrentTheme = it.second;
+                ApplyTheme(it.second);
 			}
 		}
 
@@ -105,7 +122,7 @@ void ThemeHelper::DrawMenu()
 	}
 }
 
-void ThemeHelper::ApplyFileTypeColors()
+void ImGuiThemeHelper::ApplyFileTypeColors()
 {
 	for (auto &it : m_CurrentTheme.fileTypeInfos)
 	{
@@ -118,7 +135,7 @@ void ThemeHelper::ApplyFileTypeColors()
 //// CONFIGURATION ////////////////////////////////////
 ///////////////////////////////////////////////////////
 
-std::string ThemeHelper::getXml(const std::string& vOffset, const std::string& vUserDatas)
+std::string ImGuiThemeHelper::getXml(const std::string& vOffset, const std::string& vUserDatas)
 {
 	UNUSED(vUserDatas);
 
@@ -198,7 +215,7 @@ std::string ThemeHelper::getXml(const std::string& vOffset, const std::string& v
 	return str;
 }
 
-bool ThemeHelper::setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement* vParent, const std::string& vUserDatas)
+bool ImGuiThemeHelper::setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement* vParent, const std::string& vUserDatas)
 {
 	UNUSED(vUserDatas);
 
@@ -337,7 +354,7 @@ bool ThemeHelper::setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement* 
 //// PRIVVATE /////////////////////////////////////////
 ///////////////////////////////////////////////////////
 
-std::string ThemeHelper::GetStyleColorName(ImGuiCol idx)
+std::string ImGuiThemeHelper::GetStyleColorName(ImGuiCol idx)
 {
 	switch (idx)
 	{
@@ -401,7 +418,7 @@ std::string ThemeHelper::GetStyleColorName(ImGuiCol idx)
 	return "ImGuiCol_Unknown";
 }
 
-int ThemeHelper::GetImGuiColFromName(const std::string& vName)
+int ImGuiThemeHelper::GetImGuiColFromName(const std::string& vName)
 {
 	if (vName == "ImGuiCol_Text") return ImGuiCol_Text;
 	else if (vName == "ImGuiCol_TextDisabled") return ImGuiCol_TextDisabled;
@@ -595,7 +612,7 @@ inline void ExportSizes(ImGuiStyle& style_to_export, ImGuiStyle& ref_style, bool
 	}
 }
 
-void ThemeHelper::ShowCustomImGuiStyleEditor(bool* vOpen, ImGuiStyle* ref)
+void ImGuiThemeHelper::ShowCustomImGuiStyleEditor(bool* vOpen, ImGuiStyle* ref)
 {
 	if (ImGui::Begin("Styles Editor", vOpen))
 	{

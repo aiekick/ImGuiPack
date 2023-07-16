@@ -2277,7 +2277,7 @@ bool ImGui::SliderScalarCompact(float width, const char* label, ImGuiDataType da
 
     // Draw frame
 #ifdef USE_SHADOW
-    if (!ThemeHelper::puUseShadow) {
+    if (!ImGuiThemeHelper::puUseShadow) {
 #endif
         const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
         RenderNavHighlight(frame_bb, id);
@@ -2285,7 +2285,7 @@ bool ImGui::SliderScalarCompact(float width, const char* label, ImGuiDataType da
 #ifdef USE_SHADOW
     } else {
         const ImVec4 col  = GetStyleColorVec4(g.ActiveId == id ? ImGuiCol_FrameBgActive : g.HoveredId == id ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
-        float sha         = ThemeHelper::Instance()->puShadowStrength;
+        float sha         = ImGuiThemeHelper::Instance()->puShadowStrength;
         ImVec4 col_darker = ImVec4(col.x * sha, col.y * sha, col.z * sha, col.w * 0.9f);
         const ImU32 c     = GetColorU32(col);
         const ImU32 cd    = GetColorU32(col_darker);
@@ -2301,9 +2301,9 @@ bool ImGui::SliderScalarCompact(float width, const char* label, ImGuiDataType da
     // Render grab
     if (grab_bb.Max.x > grab_bb.Min.x) {
 #ifdef USE_SHADOW
-        if (ThemeHelper::puUseShadow) {
+        if (ImGuiThemeHelper::puUseShadow) {
             const ImVec4 col  = GetStyleColorVec4(g.ActiveId == id ? ImGuiCol_SliderGrabActive : ImGuiCol_SliderGrab);
-            float sha         = ThemeHelper::Instance()->puShadowStrength;
+            float sha         = ImGuiThemeHelper::Instance()->puShadowStrength;
             ImVec4 col_darker = ImVec4(col.x * sha, col.y * sha, col.z * sha, col.w * 0.9f);
             const ImU32 c     = GetColorU32(col);
             const ImU32 cd    = GetColorU32(col_darker);

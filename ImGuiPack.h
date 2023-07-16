@@ -28,4 +28,4 @@
 #include "3rdparty/imgui_tools/ImWidgets.h"
 #include "3rdparty/imgui_tools/LayoutManager.h"
 #include "3rdparty/imgui_tools/Messaging.h"
-#include "3rdparty/imgui_tools/ThemeHelper.h"
+#include "3rdparty/imgui_tools/ImGuiThemeHelper.h"
