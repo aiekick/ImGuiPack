@@ -146,7 +146,7 @@ static void OpenFile(const std::string& vFile) {
 /////////////////////////////////////
 /////////////////////////////////////
 
-float ImGui::CustomStyle::puContrastRatio       = 4.5f;
+float ImGui::CustomStyle::puContrastRatio       = 3.0f;
 ImU32 ImGui::CustomStyle::puContrastedTextColor = 0;
 int ImGui::CustomStyle::pushId                  = STARTING_CUSTOMID;
 int ImGui::CustomStyle::minorNumber             = 0;
