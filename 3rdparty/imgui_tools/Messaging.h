@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 #pragma once
+#pragma warning(disable : 4251)
 
 #include <imgui.h>
 #include <functional>
@@ -24,7 +25,7 @@ limitations under the License.
 #include <vector>
 #include <memory>
 
-class MessageData {
+class IMGUI_API MessageData {
 private:
     std::shared_ptr<void> puDatas;
 
@@ -47,7 +48,7 @@ public:
 };
 
 class ProjectManager;
-class Messaging {
+class IMGUI_API Messaging {
 public:
     static int sMessagePaneId;
     typedef std::function<void(MessageData)> MessageFunc;
