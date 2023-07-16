@@ -9,3 +9,4 @@
 #define MENU_LABEL_ARROW_LEFT "<"
 #define MENU_LABEL_ARROW_RIGHT ">"
 #define MENU_LABEL_ARROW_UP "^"
+#define MENU_LABEL_ARROW_BOTTOM "v"

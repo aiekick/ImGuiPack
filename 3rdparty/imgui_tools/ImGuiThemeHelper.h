@@ -74,7 +74,20 @@ private:
 
 	// ImGuiColorTextEdit Palette
 	std::string GetStyleColorName(ImGuiCol idx);
-	int GetImGuiColFromName(const std::string& vName);
+    int GetImGuiColFromName(const std::string& vName);
+
+public:  // singleton
+    static ImGuiThemeHelper* Instance(ImGuiThemeHelper* vCopy = nullptr, bool vForce = false) {
+        static ImGuiThemeHelper _instance;
+        static ImGuiThemeHelper* _instance_copy = nullptr;
+        if (vCopy || vForce) {
+            _instance_copy = vCopy;
+        }
+        if (_instance_copy) {
+            return _instance_copy;
+        }
+        return &_instance;
+    }
 
 public:
 	ImGuiThemeHelper(); // Prevent construction
