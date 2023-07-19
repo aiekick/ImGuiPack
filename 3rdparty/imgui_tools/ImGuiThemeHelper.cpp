@@ -131,6 +131,7 @@ void ImGuiThemeHelper::ApplyFileTypeColors()
 }
 
 #ifdef USE_XML_CONFIG
+
 ///////////////////////////////////////////////////////
 //// CONFIGURATION ////////////////////////////////////
 ///////////////////////////////////////////////////////
@@ -142,33 +143,32 @@ std::string ImGuiThemeHelper::getXml(const std::string& vOffset, const std::stri
 	std::string str;
 
 	{
-		prImGuiStyle = prImGuiStyle;
-		auto colors = prImGuiStyle.Colors;
+        auto colors = m_CurrentTheme.style.Colors;
 		
 		str += vOffset + "<ImGui_Styles>\n";
 		for (auto i = 0; i < ImGuiCol_COUNT; i++)
 		{
 			str += vOffset + "\t<" + GetStyleColorName(i) + " value=\"" + ct::fvec4(colors[i]).string() + "\"/>\n";
 		}
-		str += vOffset + "\t<WindowPadding value=\"" + ct::fvec2(prImGuiStyle.WindowPadding).string() + "\"/>\n";
-		str += vOffset + "\t<FramePadding value=\"" + ct::fvec2(prImGuiStyle.FramePadding).string() + "\"/>\n";
-		str += vOffset + "\t<ItemSpacing value=\"" + ct::fvec2(prImGuiStyle.ItemSpacing).string() + "\"/>\n";
-		str += vOffset + "\t<ItemInnerSpacing value=\"" + ct::fvec2(prImGuiStyle.ItemInnerSpacing).string() + "\"/>\n";
-		str += vOffset + "\t<IndentSpacing value=\"" + ct::toStr(prImGuiStyle.IndentSpacing) + "\"/>\n";
-		str += vOffset + "\t<ScrollbarSize value=\"" + ct::toStr(prImGuiStyle.ScrollbarSize) + "\"/>\n";
-		str += vOffset + "\t<GrabMinSize value=\"" + ct::toStr(prImGuiStyle.GrabMinSize) + "\"/>\n";
-		str += vOffset + "\t<WindowRounding value=\"" + ct::toStr(prImGuiStyle.WindowRounding) + "\"/>\n";
-		str += vOffset + "\t<ChildRounding value=\"" + ct::toStr(prImGuiStyle.ChildRounding) + "\"/>\n";
-		str += vOffset + "\t<FrameRounding value=\"" + ct::toStr(prImGuiStyle.FrameRounding) + "\"/>\n";
-		str += vOffset + "\t<PopupRounding value=\"" + ct::toStr(prImGuiStyle.PopupRounding) + "\"/>\n";
-		str += vOffset + "\t<ScrollbarRounding value=\"" + ct::toStr(prImGuiStyle.ScrollbarRounding) + "\"/>\n";
-		str += vOffset + "\t<GrabRounding value=\"" + ct::toStr(prImGuiStyle.GrabRounding) + "\"/>\n";
-		str += vOffset + "\t<TabRounding value=\"" + ct::toStr(prImGuiStyle.TabRounding) + "\"/>\n";
-		str += vOffset + "\t<WindowBorderSize value=\"" + ct::toStr(prImGuiStyle.WindowBorderSize) + "\"/>\n";
-		str += vOffset + "\t<ChildBorderSize value=\"" + ct::toStr(prImGuiStyle.ChildBorderSize) + "\"/>\n";
-		str += vOffset + "\t<PopupBorderSize value=\"" + ct::toStr(prImGuiStyle.PopupBorderSize) + "\"/>\n";
-		str += vOffset + "\t<FrameBorderSize value=\"" + ct::toStr(prImGuiStyle.FrameBorderSize) + "\"/>\n";
-		str += vOffset + "\t<TabBorderSize value=\"" + ct::toStr(prImGuiStyle.TabBorderSize) + "\"/>\n";
+		str += vOffset + "\t<WindowPadding value=\"" + ct::fvec2(m_CurrentTheme.style.WindowPadding).string() + "\"/>\n";
+		str += vOffset + "\t<FramePadding value=\"" + ct::fvec2(m_CurrentTheme.style.FramePadding).string() + "\"/>\n";
+		str += vOffset + "\t<ItemSpacing value=\"" + ct::fvec2(m_CurrentTheme.style.ItemSpacing).string() + "\"/>\n";
+		str += vOffset + "\t<ItemInnerSpacing value=\"" + ct::fvec2(m_CurrentTheme.style.ItemInnerSpacing).string() + "\"/>\n";
+		str += vOffset + "\t<IndentSpacing value=\"" + ct::toStr(m_CurrentTheme.style.IndentSpacing) + "\"/>\n";
+		str += vOffset + "\t<ScrollbarSize value=\"" + ct::toStr(m_CurrentTheme.style.ScrollbarSize) + "\"/>\n";
+		str += vOffset + "\t<GrabMinSize value=\"" + ct::toStr(m_CurrentTheme.style.GrabMinSize) + "\"/>\n";
+		str += vOffset + "\t<WindowRounding value=\"" + ct::toStr(m_CurrentTheme.style.WindowRounding) + "\"/>\n";
+		str += vOffset + "\t<ChildRounding value=\"" + ct::toStr(m_CurrentTheme.style.ChildRounding) + "\"/>\n";
+		str += vOffset + "\t<FrameRounding value=\"" + ct::toStr(m_CurrentTheme.style.FrameRounding) + "\"/>\n";
+		str += vOffset + "\t<PopupRounding value=\"" + ct::toStr(m_CurrentTheme.style.PopupRounding) + "\"/>\n";
+		str += vOffset + "\t<ScrollbarRounding value=\"" + ct::toStr(m_CurrentTheme.style.ScrollbarRounding) + "\"/>\n";
+		str += vOffset + "\t<GrabRounding value=\"" + ct::toStr(m_CurrentTheme.style.GrabRounding) + "\"/>\n";
+		str += vOffset + "\t<TabRounding value=\"" + ct::toStr(m_CurrentTheme.style.TabRounding) + "\"/>\n";
+		str += vOffset + "\t<WindowBorderSize value=\"" + ct::toStr(m_CurrentTheme.style.WindowBorderSize) + "\"/>\n";
+		str += vOffset + "\t<ChildBorderSize value=\"" + ct::toStr(m_CurrentTheme.style.ChildBorderSize) + "\"/>\n";
+		str += vOffset + "\t<PopupBorderSize value=\"" + ct::toStr(m_CurrentTheme.style.PopupBorderSize) + "\"/>\n";
+		str += vOffset + "\t<FrameBorderSize value=\"" + ct::toStr(m_CurrentTheme.style.FrameBorderSize) + "\"/>\n";
+		str += vOffset + "\t<TabBorderSize value=\"" + ct::toStr(m_CurrentTheme.style.TabBorderSize) + "\"/>\n";
 		str += vOffset + "</ImGui_Styles>\n";
 	}
 
@@ -312,7 +312,7 @@ bool ImGuiThemeHelper::setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElem
 		if (att && std::string(att->Name()) == "value")
 		{
 			strValue = att->Value();
-			const auto colors = prImGuiStyle.Colors;
+			const auto colors = m_CurrentTheme.style.Colors;
 
 			if (strName.find("ImGuiCol") != std::string::npos)
 			{
@@ -324,25 +324,25 @@ bool ImGuiThemeHelper::setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElem
 				}
 			}
 
-			if (strName == "WindowPadding") prImGuiStyle.WindowPadding = ct::toImVec2(ct::fvariant(strValue).GetV2());
-			else if (strName == "FramePadding") prImGuiStyle.FramePadding = ct::toImVec2(ct::fvariant(strValue).GetV2());
-			else if (strName == "ItemSpacing") prImGuiStyle.ItemSpacing = ct::toImVec2(ct::fvariant(strValue).GetV2());
-			else if (strName == "ItemInnerSpacing") prImGuiStyle.ItemInnerSpacing = ct::toImVec2(ct::fvariant(strValue).GetV2());
-			else if (strName == "IndentSpacing") prImGuiStyle.IndentSpacing = ct::fvariant(strValue).GetF();
-			else if (strName == "ScrollbarSize") prImGuiStyle.ScrollbarSize = ct::fvariant(strValue).GetF();
-			else if (strName == "GrabMinSize") prImGuiStyle.GrabMinSize = ct::fvariant(strValue).GetF();
-			else if (strName == "WindowRounding") prImGuiStyle.WindowRounding = ct::fvariant(strValue).GetF();
-			else if (strName == "ChildRounding") prImGuiStyle.ChildRounding = ct::fvariant(strValue).GetF();
-			else if (strName == "FrameRounding") prImGuiStyle.FrameRounding = ct::fvariant(strValue).GetF();
-			else if (strName == "PopupRounding") prImGuiStyle.PopupRounding = ct::fvariant(strValue).GetF();
-			else if (strName == "ScrollbarRounding") prImGuiStyle.ScrollbarRounding = ct::fvariant(strValue).GetF();
-			else if (strName == "GrabRounding") prImGuiStyle.GrabRounding = ct::fvariant(strValue).GetF();
-			else if (strName == "TabRounding") prImGuiStyle.TabRounding = ct::fvariant(strValue).GetF();
-			else if (strName == "WindowBorderSize") prImGuiStyle.WindowBorderSize = ct::fvariant(strValue).GetF();
-			else if (strName == "ChildBorderSize") prImGuiStyle.ChildBorderSize = ct::fvariant(strValue).GetF();
-			else if (strName == "PopupBorderSize") prImGuiStyle.PopupBorderSize = ct::fvariant(strValue).GetF();
-			else if (strName == "FrameBorderSize") prImGuiStyle.FrameBorderSize = ct::fvariant(strValue).GetF();
-			else if (strName == "TabBorderSize") prImGuiStyle.TabBorderSize = ct::fvariant(strValue).GetF();
+			if (strName == "WindowPadding") m_CurrentTheme.style.WindowPadding = ct::toImVec2(ct::fvariant(strValue).GetV2());
+			else if (strName == "FramePadding") m_CurrentTheme.style.FramePadding = ct::toImVec2(ct::fvariant(strValue).GetV2());
+			else if (strName == "ItemSpacing") m_CurrentTheme.style.ItemSpacing = ct::toImVec2(ct::fvariant(strValue).GetV2());
+			else if (strName == "ItemInnerSpacing") m_CurrentTheme.style.ItemInnerSpacing = ct::toImVec2(ct::fvariant(strValue).GetV2());
+			else if (strName == "IndentSpacing") m_CurrentTheme.style.IndentSpacing = ct::fvariant(strValue).GetF();
+			else if (strName == "ScrollbarSize") m_CurrentTheme.style.ScrollbarSize = ct::fvariant(strValue).GetF();
+			else if (strName == "GrabMinSize") m_CurrentTheme.style.GrabMinSize = ct::fvariant(strValue).GetF();
+			else if (strName == "WindowRounding") m_CurrentTheme.style.WindowRounding = ct::fvariant(strValue).GetF();
+			else if (strName == "ChildRounding") m_CurrentTheme.style.ChildRounding = ct::fvariant(strValue).GetF();
+			else if (strName == "FrameRounding") m_CurrentTheme.style.FrameRounding = ct::fvariant(strValue).GetF();
+			else if (strName == "PopupRounding") m_CurrentTheme.style.PopupRounding = ct::fvariant(strValue).GetF();
+			else if (strName == "ScrollbarRounding") m_CurrentTheme.style.ScrollbarRounding = ct::fvariant(strValue).GetF();
+			else if (strName == "GrabRounding") m_CurrentTheme.style.GrabRounding = ct::fvariant(strValue).GetF();
+			else if (strName == "TabRounding") m_CurrentTheme.style.TabRounding = ct::fvariant(strValue).GetF();
+			else if (strName == "WindowBorderSize") m_CurrentTheme.style.WindowBorderSize = ct::fvariant(strValue).GetF();
+			else if (strName == "ChildBorderSize") m_CurrentTheme.style.ChildBorderSize = ct::fvariant(strValue).GetF();
+			else if (strName == "PopupBorderSize") m_CurrentTheme.style.PopupBorderSize = ct::fvariant(strValue).GetF();
+			else if (strName == "FrameBorderSize") m_CurrentTheme.style.FrameBorderSize = ct::fvariant(strValue).GetF();
+			else if (strName == "TabBorderSize") m_CurrentTheme.style.TabBorderSize = ct::fvariant(strValue).GetF();
 		}
 	}
 
@@ -500,7 +500,7 @@ inline void DrawItem(int vIdx, const ImGuiTextFilter& vFilter, const char* vName
 
 inline void ExportColors(ImGuiStyle& style_to_export, ImGuiStyle& ref_style, bool export_only_modified)
 {
-	ImGui::LogText("ImVec4* colors = prImGuiStyle.Colors;" IM_NEWLINE);
+	ImGui::LogText("ImVec4* colors = m_CurrentTheme.style.Colors;" IM_NEWLINE);
 
 	for (auto i = 0; i < ImGuiCol_COUNT; i++)
 	{
@@ -532,7 +532,7 @@ inline void ExportSize_ImVec2(const char* name, ImVec2& size_to_export, ImVec2& 
 
 inline void ExportSizes(ImGuiStyle& style_to_export, ImGuiStyle& ref_style, bool export_only_modified)
 {
-	ImGui::LogText("ImGuiStyle& style = prImGuiStyle;" IM_NEWLINE);
+	ImGui::LogText("ImGuiStyle& style = m_CurrentTheme.style;" IM_NEWLINE);
 
 	{
 		ImGui::LogText(IM_NEWLINE "// Main" IM_NEWLINE);

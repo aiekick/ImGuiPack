@@ -16,7 +16,8 @@
 #pragma once
 
 #ifdef USE_XML_CONFIG
-#    include <ConfigAbstract.h>
+#    include <ctools/ConfigAbstract.h>
+#    include <ctools/cTools.h>
 #endif // USE_XML_CONFIG
 
 #include <ImGuiFileDialog.h>

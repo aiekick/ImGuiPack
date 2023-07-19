@@ -90,11 +90,10 @@ void LayoutManager::Init(const std::string& vMenuLabel, const std::string& vDefa
 
     ImGuiContext& g = *GImGui;
 
-	/*if (g.SettingsHandlers.find("Docking") == g.SettingsHandlers.end()) // not found
-    {
-		m_FirstLayout = true; // need default layout
-		LogVarDebug("We will apply default layout :)");
-	}*/
+    ImFileHandle f;
+    if ((f = ImFileOpen(g.IO.IniFilename, "r")) == NULL) {
+        m_FirstLayout = true;  // need default layout
+	}
 }
 
 void LayoutManager::Unit()
@@ -539,10 +538,12 @@ bool LayoutManager::setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement
 				std::string attName = attr->Name();
 				std::string attValue = attr->Value();
 
-				if (attName == "opened")
-					m_Pane_Shown = (PaneFlags)ct::ivariant(attValue).GetI();
-				if (attName == "active")
-					m_Pane_Focused = (PaneFlags)ct::ivariant(attValue).GetI();
+				if (attName == "opened") {
+                    m_Pane_Shown = (PaneFlags)ct::ivariant(attValue).GetI();
+                }
+                else if (attName == "active") {
+                    m_Pane_Focused = (PaneFlags)ct::ivariant(attValue).GetI();
+                }
 			}
 		}
 	}

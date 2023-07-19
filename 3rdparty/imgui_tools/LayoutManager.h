@@ -19,8 +19,9 @@ limitations under the License.
 #include <ImGuiPack.h>
 
 #ifdef USE_XML_CONFIG
-#include <ctools/ConfigAbstract.h>
+#    include <ctools/ConfigAbstract.h>
 #endif  // USE_XML_CONFIG
+
 #include <AbstractPane.h>
 #include <imgui.h>
 #include <array>
@@ -118,8 +119,8 @@ private: // configuration
 
 #ifdef USE_XML_CONFIG
 public: // configuration
-	std::string getXml(const std::string& vOffset, const std::string& vUserDatas = "");
-	bool setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement* vParent, const std::string& vUserDatas = "");
+	std::string getXml(const std::string& vOffset, const std::string& vUserDatas = "") override;
+    bool setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement* vParent, const std::string& vUserDatas = "") override;
 #endif // USE_XML_CONFIG
 
 public: // singleton
