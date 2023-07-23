@@ -34,3 +34,7 @@
 	path = 3rdparty/imgui_node_editor
 	url = https://github.com/aiekick/imgui-node-editor.git
 	branch = master
+[submodule "3rdparty/imgui_markdown"]
+	path = 3rdparty/imgui_markdown
+	url = https://github.com/juliettef/imgui_markdown.git
+	branch = main

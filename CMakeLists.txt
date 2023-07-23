@@ -126,6 +126,14 @@ file(GLOB_RECURSE IMGUI_IMGUINODEEDITOR_SOURCES
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUINODEEDITOR_SOURCES})
 
 #####################################################
+##### IMGUIMARKDONW
+#####################################################
+
+file(GLOB IMGUI_IMGUIMARKDONW_SOURCES
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/*.h)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIMARKDONW_SOURCES})
+
+#####################################################
 ##### IMGUIPACK
 #####################################################
 
@@ -147,6 +155,7 @@ if (IMGUIPACK_BUILD_SHARED_LIBS)
 		${IMGUI_IMGUIZMO_SOURCES}
 		${IMGUI_IMCOOLBAR_SOURCES}
 		${IMGUI_IMGUIPACK_SOURCES}
+		${IMGUI_IMGUIMARKDONW_SOURCES}
 		${IMGUI_IMGRADIENTHDR_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
 		${IMGUI_IMGUINODEEDITOR_SOURCES}
@@ -161,6 +170,7 @@ else()
 		${IMGUI_IMGUIZMO_SOURCES}
 		${IMGUI_IMCOOLBAR_SOURCES}
 		${IMGUI_IMGUIPACK_SOURCES}
+		${IMGUI_IMGUIMARKDONW_SOURCES}
 		${IMGUI_IMGRADIENTHDR_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
 		${IMGUI_IMGUINODEEDITOR_SOURCES}
@@ -175,12 +185,13 @@ target_include_directories(${PROJECT} PRIVATE
 	${TINYXML2_INCLUDE_DIR}
 	${FREETYPE_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/Include
 )
@@ -199,12 +210,13 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${TINYXML2_INCLUDE_DIR}
 	${FREETYPE_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/Include
 PARENT_SCOPE)

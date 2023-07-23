@@ -6,5 +6,6 @@ git submodule add --force -b "main" https://github.com/aiekick/ImTools.git 3rdpa
 git submodule add --force -b "main" https://github.com/effekseer/ImGradientHDR.git 3rdparty/imgui_imgradienthdr
 git submodule add --force -b "master" https://github.com/epezent/implot.git 3rdparty/imgui_implot
 git submodule add --force -b "master" https://github.com/aiekick/imgui-node-editor.git 3rdparty/imgui_node_editor
+git submodule add --force -b "main" https://github.com/juliettef/imgui_markdown.git3rdparty/imgui_markdown
 
 git submodule add --force -b "master" https://github.com/freetype/freetype2.git 3rdparty/freetype2
