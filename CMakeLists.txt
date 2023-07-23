@@ -177,9 +177,6 @@ else()
 	)
 endif()
 
-message("IMGUIPACK -> CTOOLS_INCLUDE_DIR : ${CTOOLS_INCLUDE_DIR}")
-message("IMGUIPACK -> TINYXML2_INCLUDE_DIR : ${TINYXML2_INCLUDE_DIR}")
-
 target_include_directories(${PROJECT} PRIVATE
 	${CTOOLS_INCLUDE_DIR}
 	${TINYXML2_INCLUDE_DIR}
@@ -195,9 +192,6 @@ target_include_directories(${PROJECT} PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/Include
 )
-
-message("IMGUIPACK -> CTOOLS_LIBRARIES : ${CTOOLS_LIBRARIES}")
-message("IMGUIPACK -> TINYXML2_LIBRARIES : ${TINYXML2_LIBRARIES}")
 
 target_link_libraries(${PROJECT}
 	${CTOOLS_LIBRARIES}
