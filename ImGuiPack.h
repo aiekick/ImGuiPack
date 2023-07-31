@@ -1,21 +1,6 @@
 #pragma once
 #pragma warning(disable : 4251)
-
-#if defined(__WIN32__) || defined(WIN32) || defined(_WIN32) || defined(__WIN64__) || defined(WIN64) || defined(_WIN64) || defined(_MSC_VER)
-#if defined(ImGuiPack_EXPORTS)
-#define IMGUI_API __declspec(dllexport)
-#define IMPLOT_API __declspec(dllexport)
-#elif defined(BUILD_SHARED_LIBS)
-#define IMGUI_API __declspec(dllimport)
-#define IMPLOT_API __declspec(dllimport)
-#else
-#define IMGUI_API
-#define IMPLOT_API
-#endif
-#else
-#define IMGUI_API
-#define IMPLOT_API
-#endif
+#pragma warning(disable : 4005)
 
 // Clang/GCC warnings with -Weverything
 #if defined(__clang__)
@@ -47,6 +32,22 @@
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"    // warning: format not a string literal, format string not checked
 #pragma GCC diagnostic ignored "-Wstrict-overflow"      // warning: assuming signed overflow does not occur when assuming that (X - c) > X is always false
 #pragma GCC diagnostic ignored "-Wclass-memaccess"      // [__GNUC__ >= 8] warning: 'memset/memcpy' clearing/writing an object of type 'xxxx' with no trivial copy-assignment; use assignment or value-initialization instead
+#endif
+
+#if defined(__WIN32__) || defined(WIN32) || defined(_WIN32) || defined(__WIN64__) || defined(WIN64) || defined(_WIN64) || defined(_MSC_VER)
+#if defined(ImGuiPack_EXPORTS)
+#define IMGUI_API __declspec(dllexport)
+#define IMPLOT_API __declspec(dllexport)
+#elif defined(BUILD_SHARED_LIBS)
+#define IMGUI_API __declspec(dllimport)
+#define IMPLOT_API __declspec(dllimport)
+#else
+#define IMGUI_API
+#define IMPLOT_API
+#endif
+#else
+#define IMGUI_API
+#define IMPLOT_API
 #endif
 
 #include <3rdparty/imgui/imgui.h>

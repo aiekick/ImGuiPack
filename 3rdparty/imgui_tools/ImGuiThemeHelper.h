@@ -30,8 +30,8 @@ public:
 	ImVec4 colors[ImGuiCol_COUNT];
 	std::map<std::string, IGFD::FileStyle> fileTypeInfos;
 	ImGuiStyle style;
-	ImVec4 goodColor = ImVec4(0.00f, 0.35f, 0.00f, 1.00f);
-	ImVec4 badColor = ImVec4(0.35f, 0.00f, 0.00f, 1.00f);
+    ImVec4 goodColor = ImVec4(0.00f, 0.35f, 0.00f, 1.00f);
+    ImVec4 badColor  = ImVec4(0.35f, 0.00f, 0.00f, 1.00f);
 };
 
 class IMGUI_API ImGuiThemeHelper

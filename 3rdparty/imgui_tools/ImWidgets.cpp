@@ -24,11 +24,11 @@
 #endif
 #include <imgui_internal.h>
 
-#ifdef IMWIDGET_CONFIG_HEADER
-#include IMWIDGET_CONFIG_HEADER
+#ifdef CUSTOM_IMWIDGETS_CONFIG
+#include CUSTOM_IMWIDGETS_CONFIG
 #else
 #include "ImWidgetConfigHeader.h"
-#endif  // IMWIDGET_CONFIG_HEADER
+#endif  // CUSTOM_IMWIDGETS_CONFIG
 
 #define STARTING_CUSTOMID 125
 

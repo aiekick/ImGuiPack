@@ -59,6 +59,8 @@ void ImGuiThemeHelper::RemoveTheme(const std::string& vThemeName) {
 void ImGuiThemeHelper::ApplyTheme(const ImGuiTheme& vTheme) {
     m_CurrentTheme = vTheme;
     ImGui::GetStyle() = m_CurrentTheme.style;
+    ImGui::CustomStyle::GoodColor = m_CurrentTheme.goodColor;
+    ImGui::CustomStyle::BadColor = m_CurrentTheme.badColor;
 }
 
 void ImGuiThemeHelper::ApplyDefaultTheme() {
