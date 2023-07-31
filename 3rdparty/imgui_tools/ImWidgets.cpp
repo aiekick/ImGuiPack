@@ -2415,7 +2415,7 @@ bool ImGui::SliderScalarCompact(float width, const char* label, ImGuiDataType da
     return value_changed;
 }
 
-bool ImGui::SliderInt32Compact(float width, const char* label, int32_t* v, int32_t v_min, int32_t v_max, int32_t v_step, const char* format) {
+ [[maybe_unused]] bool ImGui::SliderInt32Compact(float width, const char* label, int32_t* v, int32_t v_min, int32_t v_max, int32_t v_step, const char* format) {
     return SliderScalarCompact(width, label, ImGuiDataType_S32, v, &v_min, &v_max, &v_step, format);
 }
 

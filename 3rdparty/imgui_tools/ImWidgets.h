@@ -32,7 +32,6 @@
 #ifndef IS_FLOAT_EQUAL
 #define IS_FLOAT_EQUAL(a, b) (fabs((a) - (b)) < FLT_EPSILON)
 #endif  // IS_FLOAT_EQUAL
-
 struct ImGuiWindow;
 struct GLFWWindow;
 
@@ -405,7 +404,7 @@ IMGUI_API bool SliderFloatDefault(float width, const char* label, float* v, floa
 
 template <typename T>
 bool SliderDefault(float vWidth, const char* vName, T* vVar, T vInf, T vSup, T vDefault, T vStep = (T)0, bool vForNode = false) {
-    UNUSED(vForNode);
+    (void)(vForNode);
 
     bool change = false;
 
@@ -420,7 +419,7 @@ bool SliderDefault(float vWidth, const char* vName, T* vVar, T vInf, T vSup, T v
 
 template <typename T>
 bool SliderDefaultCompact(float vWidth, const char* vName, T* vVar, T vInf, T vSup, T vDefault, T vStep = (T)0, bool vForNode = false) {
-    UNUSED(vForNode);
+    (void)(vForNode);
 
     bool change = false;
 
