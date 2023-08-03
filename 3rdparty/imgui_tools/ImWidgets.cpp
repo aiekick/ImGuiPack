@@ -1013,7 +1013,7 @@ bool ImGui::CollapsingHeader_Button(const char* vName, float vWidth, bool vDefau
 
         // detection
         bool menuHovered, menuHeld;
-        *vButtonPressed |= ImGui::ButtonBehavior(bbMenu, extraId, &menuHovered, &menuHeld, 0);
+        *vButtonPressed = ImGui::ButtonBehavior(bbMenu, extraId, &menuHovered, &menuHeld, 0);
         const ImU32 menuCol = ImGui::GetColorU32((menuHovered) ? ImGuiCol_ButtonHovered : menuHovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
 
         // render
