@@ -88,6 +88,7 @@ IMGUI_API bool CollapsingHeader_SmallHeight(const char* vName, float vHeightRati
 IMGUI_API bool CollapsingHeader_CheckBox(const char* vName, float vWidth = -1, bool vDefaulExpanded = false, bool vShowCheckBox = false, bool* vCheckCatched = 0);
 IMGUI_API bool CollapsingHeader_Button(const char* vName, float vWidth = -1, bool vDefaulExpanded = false, const char* vLabelButton = 0, bool vShowButton = false, bool* vButtonPressed = 0, ImFont* vButtonFont = nullptr);
 
+IMGUI_API bool CheckBoxIcon(const char* vLabel, const char* vIconTrue, bool* v);
 IMGUI_API bool CheckBoxBoolDefault(const char* vName, bool* vVar, bool vDefault, const char* vHelp = 0, ImFont* vLabelFont = nullptr);
 IMGUI_API bool CheckBoxInt(const char* vName, int* vVar);
 IMGUI_API bool CheckBoxIntDefault(const char* vName, int* vVar, int vDefault, const char* vHelp = 0, ImFont* vLabelFont = nullptr);
