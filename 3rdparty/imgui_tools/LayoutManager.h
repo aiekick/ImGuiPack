@@ -60,7 +60,7 @@ protected:
 public:
 	PaneFlags m_Pane_Focused_Default = 0;
 	PaneFlags m_Pane_Opened_Default = 0;
-	PaneFlags m_Pane_Shown = 0;
+	PaneFlags pane_Shown = 0;
 	PaneFlags m_Pane_Focused = 0;
 	PaneFlags m_Pane_Hovered = 0;
 	PaneFlags m_Pane_LastHovered = 0;
@@ -99,9 +99,10 @@ public:
 	void ApplyInitialDockingLayout(const ImVec2& vSize = ImVec2(0, 0));
 
 	virtual void DisplayMenu(const ImVec2& vSize);
-	virtual int DisplayPanes(const uint32_t& vCurrentFrame, const int& vWidgetId, const std::string& vUserDatas = "");
-	virtual void DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const std::string& vUserDatas = "");
-	virtual int DrawWidgets(const uint32_t& vCurrentFrame, const int& vWidgetId, const std::string& vUserDatas = "");
+    virtual bool DrawWidgets(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr = nullptr, const std::string& vUserDatas = {});
+    virtual bool DrawOverlays(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr = nullptr, const std::string& vUserDatas = {});
+    virtual bool DrawPanes(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr = nullptr, const std::string& vUserDatas = {});
+    virtual bool DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const ImVec2& vMaxSize, ImGuiContext* vContextPtr = nullptr, const std::string& vUserDatas = {});
 
 public:
 	void ShowSpecificPane(const PaneFlags& vPane);

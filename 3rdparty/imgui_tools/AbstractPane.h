@@ -19,6 +19,10 @@ limitations under the License.
 
 #include <memory> // smart ptr
 #include <string>
+#include <cstdint>
+
+#include <imgui.h>
+#include <imgui_internal.h>
 
 typedef int PaneFlags;
 enum class PaneDisposal
@@ -30,8 +34,6 @@ enum class PaneDisposal
 	TOP,
 	Count
 };
-
-#include <string>
  
 class AbstractPane;
 typedef std::shared_ptr<AbstractPane> AbstractPanePtr;
@@ -42,24 +44,31 @@ class ProjectFile;
 class IMGUI_API AbstractPane
 {
 public:
-	std::string m_PaneName;
-	PaneFlags m_PaneFlag = 0;
-	PaneDisposal m_PaneDisposal = PaneDisposal::CENTRAL;
-	bool m_OpenedDefault = false;
-	bool m_FocusedDefault = false;
-	bool m_ShowPaneAtFirstCall = false;
-	bool m_HidePaneAtFirstCall = false;
+    std::string  m_PaneName;
+    PaneFlags    paneFlag            = 0;
+    PaneDisposal m_PaneDisposal        = PaneDisposal::CENTRAL;
+    bool         m_OpenedDefault       = false;
+    bool         m_FocusedDefault      = false;
+    bool         m_ShowPaneAtFirstCall = false;
+    bool         m_HidePaneAtFirstCall = false;
+    int32_t      m_PaneWidgetId        = 0;
 
 public:
-	int m_PaneWidgetId = 0;
-	int NewWidgetId() { return ++m_PaneWidgetId; }
+    int32_t NewWidgetId() {
+        return ++m_PaneWidgetId;
+    }
+    int32_t GetWidgetId() {
+        return m_PaneWidgetId;
+	}
 
 public:
-	virtual bool Init() = 0;
-	virtual void Unit() = 0;
-	virtual int DrawPanes(const uint32_t& vCurrentFrame, int vWidgetId, std::string vUserDatas, PaneFlags& vInOutPaneShown) = 0;
-	virtual void DrawDialogsAndPopups(const uint32_t& vCurrentFrame, std::string vUserDatas) = 0;
-	virtual int DrawWidgets(const uint32_t& vCurrentFrame, int vWidgetId, std::string vUserDatas) = 0;
+    virtual bool Init() = 0;
+    virtual void Unit() = 0;
+
+    virtual bool DrawWidgets(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr = nullptr, const std::string& vUserDatas = {})                                  = 0;
+    virtual bool DrawOverlays(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr = nullptr, const std::string& vUserDatas = {})            = 0;
+    virtual bool DrawPanes(const uint32_t& vCurrentFrame, PaneFlags& vInOutPaneShown, ImGuiContext* vContextPtr = nullptr, const std::string& vUserDatas = {})        = 0;
+    virtual bool DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const ImVec2& vMaxSize, ImGuiContext* vContextPtr = nullptr, const std::string& vUserDatas = {}) = 0;
 
 public:
 	virtual void ShowPane() { m_ShowPaneAtFirstCall = true; };
