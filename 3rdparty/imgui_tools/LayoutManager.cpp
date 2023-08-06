@@ -186,8 +186,11 @@ void LayoutManager::EndDockSpace()
 
 bool LayoutManager::IsDockSpaceHoleHovered()
 {
-	auto& g = *GImGui;
-    return g.DebugHoveredDockNode == nullptr && g.HoveredWindow == nullptr;
+    auto  central_node_ptr = ImGui::DockBuilderGetCentralNode(m_DockSpaceID);
+    if (central_node_ptr != nullptr) {
+        return ImGui::IsMouseHoveringRect(central_node_ptr->Pos, central_node_ptr->Pos + central_node_ptr->Size, true);
+	}
+    return false;
 }
 
 void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize)

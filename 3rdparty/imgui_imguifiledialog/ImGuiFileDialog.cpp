@@ -3624,7 +3624,6 @@ IGFD_API bool IGFD::FileDialog::Display(const std::string& vKey, ImGuiWindowFlag
             if (prFileDialogInternal.puDLGflags & ImGuiFileDialogFlags_NoDialog) frameSize = vMaxSize;
             if (ImGui::BeginChild(_frameId, frameSize, false, flags | ImGuiWindowFlags_NoScrollbar)) {
                 prFileDialogInternal.puName = name;  //-V820
-                puAnyWindowsHovered |= ImGui::IsWindowHovered();
 
                 if (fdFile.puDLGpath.empty()) fdFile.puDLGpath = ".";  // defaut path is '.'
 
