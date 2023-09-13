@@ -832,3 +832,15 @@ void ImGuiThemeHelper::ShowCustomImGuiStyleEditor(bool* vOpen, ImGuiStyle* ref)
 
 	memcpy(&ImGui::GetStyle(), &m_CurrentTheme.style, sizeof(ImGuiStyle));
 }
+
+void ImGuiThemeHelper::DrawFileStyle() {
+    bool fileColorUpdate = false;
+
+    for (auto& it : m_CurrentTheme.fileTypeInfos) {
+        fileColorUpdate |= ImGui::ColorEdit4(it.first.c_str(), &m_CurrentTheme.fileTypeInfos[it.first].color.x);
+    }
+
+    if (fileColorUpdate) {
+        ApplyFileTypeColors();
+    }
+}

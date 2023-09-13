@@ -9,9 +9,24 @@ project(
 	${PROJECT} 
 	VERSION ${PROJECT_VER} 
 	LANGUAGES CXX)
-	
-option(IMGUIPACK_BUILD_SHARED_LIBS "Enable Shared Lib" OFF)
+
 option(IMGUIPACK_USE_STD_FILESYSTEM "Enable the use of std::filesystem in ImGuiFileDialog" OFF)
+
+if(USE_SHARED_LIBS)
+	set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
+	set(LLVM_USE_CRT_DEBUG MDd CACHE STRING "" FORCE)
+	set(LLVM_USE_CRT_MINSIZEREL MD CACHE STRING "" FORCE)
+	set(LLVM_USE_CRT_RELEASE MD CACHE STRING "" FORCE)
+	set(LLVM_USE_CRT_RELWITHDEBINFO MD CACHE STRING "" FORCE)
+	set(USE_MSVC_RUNTIME_LIBRARY_DLL ON CACHE BOOL "")
+else()
+	set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+	set(LLVM_USE_CRT_DEBUG MTd CACHE STRING "" FORCE)
+	set(LLVM_USE_CRT_MINSIZEREL MT CACHE STRING "" FORCE)
+	set(LLVM_USE_CRT_RELEASE MT CACHE STRING "" FORCE)
+	set(LLVM_USE_CRT_RELWITHDEBINFO MT CACHE STRING "" FORCE)
+	set(USE_MSVC_RUNTIME_LIBRARY_DLL OFF CACHE BOOL "")
+endif()
 
 if(NOT CMAKE_DEBUG_POSTFIX)
   set(CMAKE_DEBUG_POSTFIX d)
@@ -29,7 +44,12 @@ set(FT_WITH_BROTLI OFF CACHE BOOL "" FORCE)
 set(FT_WITH_HARFBUZZ OFF CACHE BOOL "" FORCE)
 set(FREETYPE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/freetype2/include)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/freetype2 EXCLUDE_FROM_ALL)
-set_target_properties(freetype PROPERTIES FOLDER 3rdparty)
+
+if(USE_SHARED_LIBS)
+	set_target_properties(freetype PROPERTIES FOLDER 3rdparty/Shared)
+else()
+	set_target_properties(freetype PROPERTIES FOLDER 3rdparty/Static)
+endif()
 
 #####################################################
 #####################################################
@@ -47,7 +67,7 @@ add_definitions(-DUSE_STD_FILESYSTEM)
 add_definitions(-DFT_DEBUG_LEVEL_TRACE)
 add_definitions(-DIMGUI_ENABLE_FREETYPE)
 add_definitions(-DIMGUI_DEFINE_MATH_OPERATORS)
-add_definitions(-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS)
+#add_definitions(-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS)
 add_definitions(-DIMGUI_USER_CONFIG="${CMAKE_CURRENT_SOURCE_DIR}/CustomImConfig.h")
 
 #####################################################
@@ -119,10 +139,10 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGU
 ##### IMGUINODEEDITOR
 #####################################################
 
-file(GLOB_RECURSE IMGUI_IMGUINODEEDITOR_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/*.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/*.inl
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/*.cpp)
+file(GLOB IMGUI_IMGUINODEEDITOR_SOURCES
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.inl
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.cpp)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUINODEEDITOR_SOURCES})
 
 #####################################################
@@ -132,6 +152,15 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGU
 file(GLOB IMGUI_IMGUIMARKDONW_SOURCES
 		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/*.h)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIMARKDONW_SOURCES})
+
+#####################################################
+##### IMGUICOLORTEXTEDIT
+#####################################################
+
+file(GLOB IMGUI_IMGUICOLORTEXTEDIT_SOURCES
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolottextedit/*.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolottextedit/*.cpp)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUICOLORTEXTEDIT_SOURCES})
 
 #####################################################
 ##### IMGUIPACK
@@ -145,8 +174,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/ PREFIX header FILES ${IMGUI_IMGUI
 #####################################################
 #####################################################
 
-if (IMGUIPACK_BUILD_SHARED_LIBS)
-	set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
+if (BUILD_SHARED_LIBS)
 	set(USE_MSVC_RUNTIME_LIBRARY_DLL ON CACHE BOOL "" FORCE)
 	add_library(${PROJECT} 
 		${IMGUI_SOURCES} 
@@ -159,10 +187,12 @@ if (IMGUIPACK_BUILD_SHARED_LIBS)
 		${IMGUI_IMGRADIENTHDR_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
 		${IMGUI_IMGUINODEEDITOR_SOURCES}
+		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
 	)
-	target_compile_definitions(${PROJECT} INTERFACE BUILD_SHARED_LIBS)
+	target_compile_definitions(${PROJECT} INTERFACE IMGUI_PACK_SHARED_LIBS)
 	set_target_properties(${PROJECT} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 else()
+	set(USE_MSVC_RUNTIME_LIBRARY_DLL OFF CACHE BOOL "" FORCE)
 	add_library(${PROJECT} STATIC 
 		${IMGUI_SOURCES} 
 		${IMGUI_IMPLOT_SOURCES}
@@ -174,30 +204,9 @@ else()
 		${IMGUI_IMGRADIENTHDR_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
 		${IMGUI_IMGUINODEEDITOR_SOURCES}
+		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
 	)
 endif()
-
-target_include_directories(${PROJECT} PRIVATE
-	${CTOOLS_INCLUDE_DIR}
-	${TINYXML2_INCLUDE_DIR}
-	${FREETYPE_INCLUDE_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/Include
-)
-
-target_link_libraries(${PROJECT}
-	${CTOOLS_LIBRARIES}
-	${TINYXML2_LIBRARIES}
-	${FREETYPE_LIBRARIES}
-)
 
 set(IMGUIPACK_INCLUDE_DIRS
 	${CTOOLS_INCLUDE_DIR}
@@ -212,10 +221,28 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/Include
-PARENT_SCOPE)
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolottextedit/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/
+)
 
-set(IMGUIPACK_LIBRARIES ImGuiPack PARENT_SCOPE)
+target_include_directories(${PROJECT} PRIVATE
+	${IMGUIPACK_INCLUDE_DIRS}
+)
+
+if(USE_DEBUG_SANITIZER)
+	target_compile_options(${PROJECT} PRIVATE $<$<CONFIG:Debug>:-fsanitize=address -static-libasan -static-libasan>)
+	target_link_options(${PROJECT} PRIVATE $<$<CONFIG:Debug>:-fsanitize=address -static-libasan>)
+	message("Address Sanitizer enabled for projet ${PROJECT}")
+endif()
+
+target_link_libraries(${PROJECT}
+	${CTOOLS_LIBRARIES}
+	${TINYXML2_LIBRARIES}
+	${FREETYPE_LIBRARIES}
+)
+
+set(IMGUIPACK_INCLUDE_DIRS ${IMGUIPACK_INCLUDE_DIRS} PARENT_SCOPE)
+set(IMGUIPACK_LIBRARIES ${PROJECT} PARENT_SCOPE)
 
 #install(FILES 
 #    inc/someHeader.h

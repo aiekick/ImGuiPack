@@ -25,77 +25,120 @@ limitations under the License.
 #include <vector>
 #include <memory>
 
+typedef uint32_t MessageType;
+typedef std::string MessageDesc;
+typedef int32_t MessageExistFlags;
+typedef std::string IconLabel;
+typedef std::string CategoryName;
+typedef int32_t CategoryFlag;
+typedef const char* CategoryID;
+
 class IMGUI_API MessageData {
 private:
-    std::shared_ptr<void> puDatas;
+    std::shared_ptr<void> m_Datas;
 
 public:
     MessageData() = default;
-    MessageData(std::nullptr_t) {
-    }
+    MessageData(std::nullptr_t) {}
     template <typename T>
     MessageData(const std::shared_ptr<T>& vDatas) {
         SetUserDatas(vDatas);
     }
     template <typename T>
     void SetUserDatas(const std::shared_ptr<T>& vDatas) {
-        puDatas = vDatas;
+        m_Datas = vDatas;
     }
     template <typename T>
     std::shared_ptr<T> GetUserDatas() {
-        return std::static_pointer_cast<T>(puDatas);
+        return std::static_pointer_cast<T>(m_Datas);
     }
 };
+typedef std::function<void(MessageData)> MessageFunc;
 
-class ProjectManager;
+class IMGUI_API MessageBlock {
+public:
+    MessageDesc desc;
+    MessageType type=0;
+    MessageData data;
+    MessageFunc func;
+};
+typedef std::shared_ptr<MessageBlock> MessageBlockPtr;
+typedef std::weak_ptr<MessageBlock> MessageBlockWeak;
+
+class IMGUI_API CategoryInfos {
+public:
+    MessageType type = 0;
+    CategoryName name;
+    IconLabel icon;
+    ImVec4 color;
+    CategoryFlag flag = 0;
+    size_t count = 0U;
+};
+
 class IMGUI_API Messaging {
 public:
     static int sMessagePaneId;
-    typedef std::function<void(MessageData)> MessageFunc;
-    enum MessageTypeEnum { MESSAGE_TYPE_INFOS = 0, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_WARNING };
-    typedef std::tuple<std::string, MessageTypeEnum, MessageData, MessageFunc> MessageBlock;
+    enum class SortingFieldEnum { FIELD_NONE = 0, FIELD_ID, FIELD_TYPE, FIELD_MSG };
 
 private:
-    const ImVec4& m_ErrorColor   = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
-    const ImVec4& m_WarningColor = ImVec4(0.8f, 0.8f, 0.0f, 1.0f);
+    std::unordered_map<MessageType, CategoryInfos> m_CategorieInfos;
+    int32_t m_FlagsCount = 0;
 
-    enum _MessageExistFlags { MESSAGE_EXIST_NONE = 0, MESSAGE_EXIST_INFOS = (1 << 0), MESSAGE_EXIST_ERROR = (1 << 1), MESSAGE_EXIST_WARNING = (1 << 2) };
-
-    typedef int MessageExistFlags;
-    MessageExistFlags puMessageExistFlags = MESSAGE_EXIST_INFOS | MESSAGE_EXIST_ERROR | MESSAGE_EXIST_WARNING;
-
-    enum class SortingFieldEnum { FIELD_NONE = 0, FIELD_ID, FIELD_TYPE, FIELD_MSG } m_SortingField = SortingFieldEnum::FIELD_ID;
+    SortingFieldEnum m_SortingField = SortingFieldEnum::FIELD_ID;
 
     std::string m_HeaderIdString;
     std::string m_HeaderTypeString;
     std::string m_HeaderMessageString;
     bool m_SortingDirection[3] = {true, true, true};  // true => Descending, false => Ascending
 
-    int32_t currentMsgIdx = 0;
-    std::vector<MessageBlock> puMessages;
-    std::vector<MessageBlock> puFilteredMessages;
+    MessageExistFlags m_MessageExistFlags = 0;
+
+    int32_t m_CurrentMsgIdx = 0;
+    std::vector<MessageBlockPtr> m_Messages;
+    std::vector<MessageBlockWeak> m_FilteredMessages;
+
+    bool m_ShowTextPane = false;
+    char m_MessageText[4096 + 1] = "\0";
 
 public:
-    void DrawBar();
-    void DrawConsole();
-    void AddInfos(const bool& vSelect, const MessageData& vDatas, const MessageFunc& vFunction, const char* fmt, ...);    // select => set currentMsgIdx to this msg idx
-    void AddWarning(const bool& vSelect, const MessageData& vDatas, const MessageFunc& vFunction, const char* fmt, ...);  // select => set currentMsgIdx to this msg idx
-    void AddError(const bool& vSelect, const MessageData& vDatas, const MessageFunc& vFunction, const char* fmt, ...);    // select => set currentMsgIdx to this msg idx
-    void ClearErrors();
-    void ClearWarnings();
-    void ClearInfos();
+    void ClearMessagesOfType(const MessageType& vMessageType);
     void Clear();
 
-    void AddMessage(const std::string& vMsg, MessageTypeEnum vType, bool vSelect, const MessageData& vDatas, const MessageFunc& vFunction);
-    void AddMessage(MessageTypeEnum vType, bool vSelect, const MessageData& vDatas, const MessageFunc& vFunction, const char* fmt, va_list args);
+    void DrawStatusBar();
+    void DrawConsolePane();
 
+    void AddCategory(const MessageType& vMessageType,
+        const CategoryName& vCategoryName,
+        const IconLabel& vIconLabel,
+        const ImVec4& vColor);
+    void AddMessage(
+        const MessageType& vMessageType,
+        const bool& vSelect,
+        const MessageData& vDatas,
+        const MessageFunc& vFunction,
+        const char* fmt,
+        ...);
+    void AddMessage(const std::string& vMsg,
+        const MessageType& vMessageType,
+        bool vSelect,
+        const MessageData& vDatas,
+        const MessageFunc& vFunction);
+    
 private:
-    bool DrawMessage(const size_t& vMsgIdx);
-    bool DrawMessage(const MessageBlock& vMsg);
-    void SortFields(SortingFieldEnum vSortingField = SortingFieldEnum::FIELD_NONE, bool vCanChangeOrder = false);
+    bool m_DrawMessage(const size_t& vMsgIdx);
+    bool m_DrawMessage(const MessageBlockWeak& vMsg, const size_t& vMsgIdx);
+    void m_SortFields(SortingFieldEnum vSortingField = SortingFieldEnum::FIELD_NONE, bool vCanChangeOrder = false);
 
-    void UpdateFilteredMessages();
-    void AddToFilteredMessages(const MessageBlock& vMessageBlock);
+    void m_UpdateFilteredMessages();
+    void m_AddToFilteredMessages(const MessageBlockPtr& vMessageBlockPtr);
+    const CategoryInfos* m_GetCategoryInfos(const MessageType& vMessageType);
+
+    void m_AddMessage(const MessageType& vMessageType,
+        bool vSelect,
+        const MessageData& vDatas,
+        const MessageFunc& vFunction,
+        const char* fmt,
+        va_list args);
 
 public:  // singleton
     static Messaging* Instance(Messaging* vCopy = nullptr, bool vForce = false) {
@@ -111,10 +154,8 @@ public:  // singleton
     }
 
 public:
-    Messaging();                    // Prevent construction
-    Messaging(const Messaging&){};  // Prevent construction by copying
-    Messaging& operator=(const Messaging&) {
-        return *this;
-    };             // Prevent assignment
-    ~Messaging();  // Prevent unwanted destruction
+    Messaging();                                               // Prevent construction
+    Messaging(const Messaging&){};                             // Prevent construction by copying
+    Messaging& operator=(const Messaging&) { return *this; };  // Prevent assignment
+    ~Messaging();                                              // Prevent unwanted destruction
 };

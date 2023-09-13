@@ -40,10 +40,244 @@ int Messaging::sMessagePaneId = 0;
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 Messaging::Messaging() {
-    SortFields(m_SortingField);
+    m_SortFields(m_SortingField);
 }
 
 Messaging::~Messaging() = default;
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///// PUBLIC //////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+void Messaging::DrawStatusBar() {
+    ImGui::SetNextWindowViewport(ImGui::GetMainViewport()->ID);
+    if (!m_Messages.empty()) {
+        for (const auto& cat : m_CategorieInfos) {
+            if (cat.second.count > 0U) {
+                const auto& str = cat.second.icon + " " + ct::toStr(cat.second.count) + "##icon";
+                ImGui::PushStyleColor(ImGuiCol_Text, cat.second.color);
+                const auto& use = ImGui::MenuItem(str.c_str());
+                ImGui::PopStyleColor();
+                if (use) {
+                    m_MessageExistFlags = cat.second.flag;
+                    LayoutManager::Instance()->ShowAndFocusSpecificPane(sMessagePaneId);
+                    m_CurrentMsgIdx = ImMax(--m_CurrentMsgIdx, 0);
+                    m_UpdateFilteredMessages();
+                } 
+            }
+        }
+    }
+}
+
+void Messaging::DrawConsolePane() {
+    ImGui::SetNextWindowViewport(ImGui::GetMainViewport()->ID);
+
+    if (m_FilteredMessages.empty() && !m_Messages.empty()) {
+        m_UpdateFilteredMessages();
+    }
+
+    if (ImGui::BeginMenuBar()) {
+        if (!m_Messages.empty()) {
+            if (ImGui::BeginMenu(MENU_LABEL_CLEAR "##clear")) {
+                if (ImGui::MenuItem("Clear All"))
+                    Clear();
+                ImGui::Separator();
+                for (const auto& cat : m_CategorieInfos) {
+                    if (cat.second.count > 0U) {
+                        ImGui::PushStyleColor(ImGuiCol_Text, cat.second.color);
+                        if (ImGui::MenuItem(cat.second.name.c_str())) {
+                            ClearMessagesOfType(cat.second.type);
+                        }
+                        ImGui::PopStyleColor();
+                    }
+                }
+
+                ImGui::EndMenu();
+            }
+        }
+
+        bool needUpdate = false;
+        for (const auto& cat : m_CategorieInfos) {
+            // ImGui::PushStyleColor(ImGuiCol_Text, cat.second.color);
+            needUpdate |= ImGui::RadioButtonLabeled_BitWize<MessageExistFlags>(
+                0.0f, cat.second.name.c_str(), nullptr, &m_MessageExistFlags, cat.second.flag);
+            // ImGui::PopStyleColor();
+        }
+        if (needUpdate) {
+            m_UpdateFilteredMessages();
+        }
+
+        ImGui::EndMenuBar();
+    }
+
+    if (m_ShowTextPane) {
+        ImGui::Separator();
+        ImGui::PushID(ImGui::IncPUSHID());
+        if (ImGui::ContrastedButton("X")) {
+            m_ShowTextPane = false;
+        }
+        ImGui::SameLine();
+        ImGui::TextWrapped("%s", m_MessageText);
+        ImGui::PopID();
+        ImGui::Separator();
+    }
+
+    static ImGuiTableFlags flags = ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_RowBg | ImGuiTableFlags_Hideable |
+                                   ImGuiTableFlags_ScrollY | ImGuiTableFlags_NoHostExtendY;
+    if (ImGui::BeginTable("##messagesTable", 3, flags)) {
+        ImGui::TableSetupScrollFreeze(0, 1);  // Make header always visible
+        ImGui::TableSetupColumn(m_HeaderIdString.c_str(), ImGuiTableColumnFlags_WidthFixed, -1, 0);
+        ImGui::TableSetupColumn(m_HeaderTypeString.c_str(), ImGuiTableColumnFlags_WidthFixed, -1, 0);
+        ImGui::TableSetupColumn(m_HeaderMessageString.c_str(), ImGuiTableColumnFlags_WidthStretch, -1, 1);
+
+        ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
+        for (int column = 0; column < 3; column++) {
+            ImGui::TableSetColumnIndex(column);
+            const char* column_name = ImGui::TableGetColumnName(column);  // Retrieve name passed to TableSetupColumn()
+            ImGui::PushID(column);
+            ImGui::TableHeader(column_name);
+            ImGui::PopID();
+            if (ImGui::IsItemClicked()) {
+                m_SortFields((SortingFieldEnum)(column + 1), true);
+            }
+        }
+
+        if (!m_FilteredMessages.empty()) {
+            bool _clicked = false;
+            int _indexClicked = -1;
+
+            static ImGuiListClipper s_messagesListClipper;
+            s_messagesListClipper.Begin((int)m_FilteredMessages.size(), ImGui::GetTextLineHeightWithSpacing());
+            while (s_messagesListClipper.Step()) {
+                for (int i = s_messagesListClipper.DisplayStart; i < s_messagesListClipper.DisplayEnd; i++) {
+                    if (i < 0) {
+                        continue;
+                    }
+
+                    const auto& msg_ptr = m_FilteredMessages[i].lock();
+                    if (msg_ptr != nullptr) {
+                        auto ci_ptr = m_GetCategoryInfos(msg_ptr->type);
+                        if (ci_ptr != nullptr) {
+                            if (m_MessageExistFlags & ci_ptr->flag) {
+                                if (ImGui::TableNextColumn()) {  // id
+                                    ImGui::Text("%i", i);
+                                }
+                                if (ImGui::TableNextColumn()) {  // type
+                                    ImGui::PushID(ImGui::IncPUSHID());
+                                    ImGui::PushStyleColor(ImGuiCol_Text, ci_ptr->color);
+                                    if (ImGui::Selectable(
+                                            ci_ptr->name.c_str(), false, ImGuiSelectableFlags_SpanAllColumns)) {
+                                        _clicked = true;
+                                        _indexClicked = i;
+                                    }
+                                    if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+                                        m_ShowTextPane = true;
+                                        _clicked = true;
+                                        _indexClicked = i;
+                                    }
+                                    ImGui::PopStyleColor();
+                                    ImGui::PopID();
+                                }
+                                if (ImGui::TableNextColumn()) {  // str
+                                    ImGui::Text("%s", msg_ptr->desc.c_str());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            s_messagesListClipper.End();
+
+            if (_clicked && _indexClicked > -1) {
+                const auto& msg_ptr = m_FilteredMessages[_indexClicked].lock();
+                if (msg_ptr != nullptr) {
+                    if (m_ShowTextPane) {
+                        size_t len = msg_ptr->desc.size();
+                        if (len > 4096U) {
+                            len = 4096;
+                        }
+                        m_MessageText[len] = '\0';
+#ifdef _MSC_VER
+                        strncpy_s(m_MessageText, msg_ptr->desc.c_str(), len);
+#else
+                        strncpy(m_MessageText, msg_ptr->desc.c_str(), len);
+#endif
+                    }
+
+                    if (msg_ptr->func) {
+                        msg_ptr->func(msg_ptr->data);
+                    }
+                }
+            }
+        }
+
+        ImGui::EndTable();
+    }
+}
+
+void Messaging::AddMessage(const std::string& vMsg,
+    const MessageType& vMessageType,
+    bool vSelect,
+    const MessageData& vDatas,
+    const MessageFunc& vFunction) {
+    if (vSelect) {
+        m_CurrentMsgIdx = (int32_t)m_Messages.size();
+    }
+
+    if (m_CategorieInfos.find(vMessageType) != m_CategorieInfos.end()) {
+        ++m_CategorieInfos.at(vMessageType).count;
+    }
+
+    auto msg_ptr = std::make_shared<MessageBlock>();
+    msg_ptr->desc = vMsg;
+    msg_ptr->type = vMessageType;
+    msg_ptr->data = vDatas;
+    msg_ptr->func = vFunction;
+    m_Messages.push_back(msg_ptr);
+}
+
+void Messaging::AddMessage(const MessageType& vMessageType,
+    const bool& vSelect,
+    const MessageData& vDatas,
+    const MessageFunc& vFunction,
+    const char* fmt,
+    ...) {
+    if (m_CategorieInfos.find(vMessageType) != m_CategorieInfos.end()) {
+        va_list args;
+        va_start(args, fmt);
+        m_AddMessage(vMessageType, vSelect, vDatas, vFunction, fmt, args);
+        va_end(args);
+        m_MessageExistFlags = (MessageExistFlags)(m_MessageExistFlags | m_CategorieInfos.at(vMessageType).flag);
+        m_SortFields(m_SortingField);
+    }
+}
+
+void Messaging::Clear() {
+    m_Messages.clear();
+    m_FilteredMessages.clear();
+}
+
+void Messaging::ClearMessagesOfType(const MessageType& vMessageType) {
+    std::forward_list<int> msgToErase;
+    auto idx = 0;
+    for (auto& msg_ptr : m_Messages) {
+        if (msg_ptr->type == vMessageType) {
+            msgToErase.push_front(idx);
+        }
+        ++idx;
+    }
+
+    for (auto& id : msgToErase) {
+        m_Messages.erase(m_Messages.begin() + id);
+    }
+
+    if (m_CategorieInfos.find(vMessageType) != m_CategorieInfos.end()) {
+        m_MessageExistFlags &= ~m_CategorieInfos.at(vMessageType).flag;
+        m_CategorieInfos.at(vMessageType).count = 0U;
+    }
+
+    m_UpdateFilteredMessages();
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///// PRIVATE /////////////////////////////////////////////////////////////////////////////
@@ -51,125 +285,60 @@ Messaging::~Messaging() = default;
 
 static char Messaging_Message_Buffer[2048] = "\0";
 
-void Messaging::AddMessage(MessageTypeEnum vType, bool vSelect, const MessageData& vDatas, const MessageFunc& vFunction, const char* fmt, va_list args) {
-    const auto size = vsnprintf(Messaging_Message_Buffer, 2047, fmt, args);
-    if (size > 0) {
-        AddMessage(std::string(Messaging_Message_Buffer, size), vType, vSelect, vDatas, vFunction);
-    }
+void Messaging::AddCategory(const MessageType& vMessageType,
+    const CategoryName& vCategoryName,
+    const IconLabel& vIconLabel,
+    const ImVec4& vColor) {
+    auto& ci = m_CategorieInfos[vMessageType];
+    ci.type = vMessageType;
+    ci.name = vIconLabel + " " + vCategoryName;
+    ci.icon = vIconLabel;
+    ci.color = vColor;
+    ci.flag = (1 << m_FlagsCount++);
 }
 
-void Messaging::AddMessage(const std::string& vMsg, MessageTypeEnum vType, bool vSelect, const MessageData& vDatas, const MessageFunc& vFunction) {
-    if (vSelect) {
-        currentMsgIdx = (int32_t)puMessages.size();
-    }
-
-    puMessages.emplace_back(vMsg, vType, vDatas, vFunction);
-}
-
-bool Messaging::DrawMessage(const size_t& vMsgIdx) {
+bool Messaging::m_DrawMessage(const size_t& vMsgIdx) {
     auto res = false;
 
-    if (vMsgIdx < puMessages.size()) {
-        res |= DrawMessage(puMessages[vMsgIdx]);
+    if (vMsgIdx < m_Messages.size()) {
+        res |= m_DrawMessage(m_Messages[vMsgIdx], vMsgIdx);
     }
 
     return res;
 }
 
-bool Messaging::DrawMessage(const MessageBlock& vMsg) {
-    if (std::get<1>(vMsg) == MessageTypeEnum::MESSAGE_TYPE_INFOS) {
-        ImGui::Text("%s ", BAR_LABEL_INFOS);
-    } else if (std::get<1>(vMsg) == MessageTypeEnum::MESSAGE_TYPE_WARNING) {
-        ImGui::PushStyleColor(ImGuiCol_Text, m_WarningColor);
-        ImGui::Text("%s ", BAR_LABEL_WARNINGS);
-        ImGui::PopStyleColor();
-    } else if (std::get<1>(vMsg) == MessageTypeEnum::MESSAGE_TYPE_ERROR) {
-        ImGui::PushStyleColor(ImGuiCol_Text, m_ErrorColor);
-        ImGui::Text("%s ", BAR_LABEL_ERROR);
-        ImGui::PopStyleColor();
-    }
-
-    ImGuiWindow* window = ImGui::GetCurrentWindow();
-    if (!(window->Flags & ImGuiWindowFlags_MenuBar))
-        ImGui::SameLine();  // used only for when displayed in list. no effect when diplsayed in status bar
-
-    ImGui::PushID(&vMsg);
-    const auto check = ImGui::Selectable_FramedText("%s##Messaging", std::get<0>(vMsg).c_str());
-    ImGui::PopID();
-    if (check) {
-        LayoutManager::Instance()->ShowAndFocusSpecificPane(sMessagePaneId);
-        const auto datas = std::get<2>(vMsg);
-        const auto& func = std::get<3>(vMsg);
-        if (func)
-            func(datas);
-    }
-    return check;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////
-///// PUBLIC //////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-
-void Messaging::DrawBar() {
-    ImGui::SetNextWindowViewport(ImGui::GetMainViewport()->ID);
-
-    ImGui::Text("Messages :");
-
-    if (ImGui::MenuItem(MENU_LABEL_REFRESH "##Refresh")) {
-        LayoutManager::Instance()->ShowAndFocusSpecificPane(sMessagePaneId);
-        Clear();
-    }
-
-    if (!puMessages.empty()) {
-        // on type of message only
-        if (puMessageExistFlags == MESSAGE_EXIST_INFOS || puMessageExistFlags == MESSAGE_EXIST_WARNING || puMessageExistFlags == MESSAGE_EXIST_ERROR) {
-            if (ImGui::MenuItem(MENU_LABEL_CLEAR "##clear")) {
-                Clear();
-            }
-        } else {
-            if (ImGui::BeginMenu(MENU_LABEL_CLEAR "##clear")) {
-                if (ImGui::MenuItem("All"))
-                    Clear();
-                ImGui::Separator();
-                if (puMessageExistFlags & MESSAGE_EXIST_INFOS)
-                    if (ImGui::MenuItem("Infos"))
-                        ClearInfos();
-                if (puMessageExistFlags & MESSAGE_EXIST_WARNING)
-                    if (ImGui::MenuItem("Warnings"))
-                        ClearWarnings();
-                if (puMessageExistFlags & MESSAGE_EXIST_ERROR)
-                    if (ImGui::MenuItem("Errors"))
-                        ClearErrors();
-
-                ImGui::EndMenu();
-            }
+bool Messaging::m_DrawMessage(const MessageBlockWeak& vMsg, const size_t& vMsgIdx) {
+    auto ptr = vMsg.lock();
+    if (ptr != nullptr) {
+        auto ci_ptr = m_GetCategoryInfos(ptr->type);
+        if (ci_ptr != nullptr) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ci_ptr->color);
+            ImGui::Text("%s ", ci_ptr->icon);
+            ImGui::PopStyleColor();
         }
-    }
-    if (!puMessages.empty()) {
-        if (puMessages.size() > 1) {
-            if (ImGui::MenuItem(MENU_LABEL_ARROW_LEFT "##left")) {
+
+        // display only selected messages
+        ImGuiWindow* window = ImGui::GetCurrentWindow();
+        if (!(window->Flags & ImGuiWindowFlags_MenuBar)) {
+            ImGui::SameLine();
+            ImGui::PushID(&vMsg);
+            const auto check = ImGui::Selectable_FramedText("%s##Messaging", ptr->desc.c_str());
+            ImGui::PopID();
+            if (check) {
                 LayoutManager::Instance()->ShowAndFocusSpecificPane(sMessagePaneId);
-                currentMsgIdx = ImMax(--currentMsgIdx, 0);
-            }
-            if (ImGui::MenuItem(MENU_LABEL_ARROW_RIGHT "##right")) {
-                LayoutManager::Instance()->ShowAndFocusSpecificPane(sMessagePaneId);
-                currentMsgIdx = ImMax(++currentMsgIdx, (int32_t)puMessages.size() - 1);
-            }
-            if (ImGui::BeginMenu(MENU_LABEL_ARROW_UP "##up")) {
-                LayoutManager::Instance()->ShowAndFocusSpecificPane(sMessagePaneId);
-                for (auto& msg : puMessages) {
-                    if (DrawMessage(msg))
-                        break;
+                if (ptr->func) {
+                    ptr->func(ptr->data);
                 }
-                ImGui::EndMenu();
             }
+
+            return check;
         }
-        currentMsgIdx = ImClamp(currentMsgIdx, 0, (int32_t)puMessages.size() - 1);
-        DrawMessage(currentMsgIdx);
     }
+
+    return false;
 }
 
-void Messaging::SortFields(SortingFieldEnum vSortingField, bool vCanChangeOrder) {
+void Messaging::m_SortFields(SortingFieldEnum vSortingField, bool vCanChangeOrder) {
     if (vSortingField != SortingFieldEnum::FIELD_NONE) {
         m_HeaderIdString      = " Id";
         m_HeaderTypeString    = " Type";
@@ -241,260 +410,44 @@ void Messaging::SortFields(SortingFieldEnum vSortingField, bool vCanChangeOrder)
         m_SortingField = vSortingField;
     }
 
-    UpdateFilteredMessages();
+    m_UpdateFilteredMessages();
 }
 
-void Messaging::UpdateFilteredMessages() {
-    if (!puMessages.empty()) {
-        puFilteredMessages.clear();
+void Messaging::m_UpdateFilteredMessages() {
+    m_FilteredMessages.clear();
+    if (!m_Messages.empty()) {
+        for (auto msg_ptr : m_Messages) {
+            m_AddToFilteredMessages(msg_ptr);
+        }
+    }
+}
 
-        for (const auto& msg : puMessages) {
-            const auto& type = std::get<1>(msg);
-
-            if (type == MessageTypeEnum::MESSAGE_TYPE_INFOS && (puMessageExistFlags & MESSAGE_EXIST_INFOS)) {
-                puFilteredMessages.push_back(msg);
-            } else if (type == MessageTypeEnum::MESSAGE_TYPE_ERROR && (puMessageExistFlags & MESSAGE_EXIST_ERROR)) {
-                puFilteredMessages.push_back(msg);
-            } else if (type == MessageTypeEnum::MESSAGE_TYPE_WARNING && (puMessageExistFlags & MESSAGE_EXIST_WARNING)) {
-                puFilteredMessages.push_back(msg);
+void Messaging::m_AddToFilteredMessages(const MessageBlockPtr& vMessageBlockPtr) {
+    if (vMessageBlockPtr != nullptr) {
+        auto ci_ptr = m_GetCategoryInfos(vMessageBlockPtr->type);
+        if (ci_ptr != nullptr) {
+            if (m_MessageExistFlags & ci_ptr->flag) {
+                m_FilteredMessages.push_back(vMessageBlockPtr);
             }
         }
     }
 }
 
-void Messaging::AddToFilteredMessages(const MessageBlock& vMessageBlock) {
-    const auto& type = std::get<1>(vMessageBlock);
-
-    if (type == MessageTypeEnum::MESSAGE_TYPE_INFOS && (puMessageExistFlags & MESSAGE_EXIST_INFOS)) {
-        puFilteredMessages.push_back(vMessageBlock);
-    } else if (type == MessageTypeEnum::MESSAGE_TYPE_ERROR && (puMessageExistFlags & MESSAGE_EXIST_ERROR)) {
-        puFilteredMessages.push_back(vMessageBlock);
-    } else if (type == MessageTypeEnum::MESSAGE_TYPE_WARNING && (puMessageExistFlags & MESSAGE_EXIST_WARNING)) {
-        puFilteredMessages.push_back(vMessageBlock);
+const CategoryInfos* Messaging::m_GetCategoryInfos(const MessageType& vMessageType) {
+    if (m_CategorieInfos.find(vMessageType) != m_CategorieInfos.end()) {
+        return &m_CategorieInfos.at(vMessageType);
     }
+    return nullptr;
 }
 
-void Messaging::DrawConsole() {
-    ImGui::SetNextWindowViewport(ImGui::GetMainViewport()->ID);
-
-    if (ImGui::BeginMenuBar()) {
-        if (!puMessages.empty()) {
-            // on type of message only
-            if (puMessageExistFlags == MESSAGE_EXIST_INFOS || puMessageExistFlags == MESSAGE_EXIST_WARNING || puMessageExistFlags == MESSAGE_EXIST_ERROR) {
-                if (ImGui::MenuItem(MENU_LABEL_CLEAR "##clear")) {
-                    Clear();
-                }
-            } else {
-                if (ImGui::BeginMenu(MENU_LABEL_CLEAR "##clear")) {
-                    if (ImGui::MenuItem("All"))
-                        Clear();
-                    ImGui::Separator();
-                    if (puMessageExistFlags & MESSAGE_EXIST_INFOS)
-                        if (ImGui::MenuItem("Infos"))
-                            ClearInfos();
-                    if (puMessageExistFlags & MESSAGE_EXIST_WARNING)
-                        if (ImGui::MenuItem("Warnings"))
-                            ClearWarnings();
-                    if (puMessageExistFlags & MESSAGE_EXIST_ERROR)
-                        if (ImGui::MenuItem("Errors"))
-                            ClearErrors();
-
-                    ImGui::EndMenu();
-                }
-            }
-        }
-
-        bool needUpdate = false;
-        needUpdate |= ImGui::RadioButtonLabeled_BitWize<MessageExistFlags>(0.0f, "Infos", nullptr, &puMessageExistFlags, MESSAGE_EXIST_INFOS);
-        needUpdate |= ImGui::RadioButtonLabeled_BitWize<MessageExistFlags>(0.0f, "Warnings", nullptr, &puMessageExistFlags, MESSAGE_EXIST_WARNING);
-        needUpdate |= ImGui::RadioButtonLabeled_BitWize<MessageExistFlags>(0.0f, "Errors", nullptr, &puMessageExistFlags, MESSAGE_EXIST_ERROR);
-        if (needUpdate) {
-            UpdateFilteredMessages();
-        }
-
-        ImGui::EndMenuBar();
+void Messaging::m_AddMessage(const MessageType& vMessageType,
+    bool vSelect,
+    const MessageData& vDatas,
+    const MessageFunc& vFunction,
+    const char* fmt,
+    va_list args) {
+    const auto size = vsnprintf(Messaging_Message_Buffer, 2047, fmt, args);
+    if (size > 0) {
+        AddMessage(std::string(Messaging_Message_Buffer, size), vMessageType, vSelect, vDatas, vFunction);
     }
-
-    // std::tuple<std::string, MessageTypeEnum, MessageData, MessageFunc>
-
-    static ImGuiTableFlags flags = ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_RowBg | ImGuiTableFlags_Hideable | ImGuiTableFlags_ScrollY | ImGuiTableFlags_NoHostExtendY;
-    if (ImGui::BeginTable("##messagesTable", 3, flags)) {
-        ImGui::TableSetupScrollFreeze(0, 1);  // Make header always visible
-        ImGui::TableSetupColumn(m_HeaderIdString.c_str(), ImGuiTableColumnFlags_WidthFixed, -1, 0);
-        ImGui::TableSetupColumn(m_HeaderTypeString.c_str(), ImGuiTableColumnFlags_WidthFixed, -1, 0);
-        ImGui::TableSetupColumn(m_HeaderMessageString.c_str(), ImGuiTableColumnFlags_WidthStretch, -1, 1);
-
-        ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
-        for (int column = 0; column < 3; column++) {
-            ImGui::TableSetColumnIndex(column);
-            const char* column_name = ImGui::TableGetColumnName(column);  // Retrieve name passed to TableSetupColumn()
-            ImGui::PushID(column);
-            ImGui::TableHeader(column_name);
-            ImGui::PopID();
-            if (ImGui::IsItemClicked()) {
-                SortFields((SortingFieldEnum)(column + 1), true);
-            }
-        }
-
-        if (!puFilteredMessages.empty()) {
-            bool _clicked     = false;
-            int _indexClicked = -1;
-
-            static ImGuiListClipper s_messagesListClipper;
-            s_messagesListClipper.Begin((int)puFilteredMessages.size(), ImGui::GetTextLineHeightWithSpacing());
-            while (s_messagesListClipper.Step()) {
-                for (int i = s_messagesListClipper.DisplayStart; i < s_messagesListClipper.DisplayEnd; i++) {
-                    if (i < 0)
-                        continue;
-
-                    const auto& msg  = puFilteredMessages[i];
-                    const auto& type = std::get<1>(msg);
-
-                    if (type == MessageTypeEnum::MESSAGE_TYPE_INFOS && (puMessageExistFlags & MESSAGE_EXIST_INFOS)) {
-                        if (ImGui::TableNextColumn())  // id
-                        {
-                            ImGui::Text("%i", i);
-                        }
-                        if (ImGui::TableNextColumn())  // type
-                        {
-                            if (ImGui::Selectable("Infos", false, ImGuiSelectableFlags_SpanAllColumns)) {
-                                _clicked      = true;
-                                _indexClicked = i;
-                            }
-                        }
-                        if (ImGui::TableNextColumn())  // str
-                        {
-                            auto str = std::get<0>(msg);
-                            ImGui::Text("%s", str.c_str());
-                        }
-                    } else if (type == MessageTypeEnum::MESSAGE_TYPE_ERROR && (puMessageExistFlags & MESSAGE_EXIST_ERROR)) {
-                        if (ImGui::TableNextColumn())  // id
-                        {
-                            ImGui::Text("%i", i);
-                        }
-                        if (ImGui::TableNextColumn())  // type
-                        {
-                            if (ImGui::Selectable("Error", false, ImGuiSelectableFlags_SpanAllColumns)) {
-                                _clicked      = true;
-                                _indexClicked = i;
-                            }
-                        }
-                        if (ImGui::TableNextColumn())  // str
-                        {
-                            auto str = std::get<0>(msg);
-                            ImGui::Text("%s", str.c_str());
-                        }
-                    } else if (type == MessageTypeEnum::MESSAGE_TYPE_WARNING && (puMessageExistFlags & MESSAGE_EXIST_WARNING)) {
-                        if (ImGui::TableNextColumn())  // id
-                        {
-                            ImGui::Text("%i", i);
-                        }
-                        if (ImGui::TableNextColumn())  // type
-                        {
-                            if (ImGui::Selectable("Warnings", false, ImGuiSelectableFlags_SpanAllColumns)) {
-                                _clicked      = true;
-                                _indexClicked = i;
-                            }
-                        }
-                        if (ImGui::TableNextColumn())  // str
-                        {
-                            auto str = std::get<0>(msg);
-                            ImGui::Text("%s", str.c_str());
-                        }
-                    }
-                }
-            }
-            s_messagesListClipper.End();
-
-            if (_clicked && _indexClicked > -1) {
-                const auto& msg  = puFilteredMessages[_indexClicked];
-                const auto datas = std::get<2>(msg);
-                const auto& func = std::get<3>(msg);
-                if (func)
-                    func(datas);
-            }
-        }
-
-        ImGui::EndTable();
-    }
-}
-
-void Messaging::AddInfos(const bool& vSelect, const MessageData& vDatas, const MessageFunc& vFunction, const char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    AddMessage(MessageTypeEnum::MESSAGE_TYPE_INFOS, vSelect, vDatas, vFunction, fmt, args);
-    va_end(args);
-    puMessageExistFlags = (MessageExistFlags)(puMessageExistFlags | MESSAGE_EXIST_INFOS);
-    SortFields(m_SortingField);
-}
-
-void Messaging::AddWarning(const bool& vSelect, const MessageData& vDatas, const MessageFunc& vFunction, const char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    AddMessage(MessageTypeEnum::MESSAGE_TYPE_WARNING, vSelect, vDatas, vFunction, fmt, args);
-    va_end(args);
-    puMessageExistFlags = (MessageExistFlags)(puMessageExistFlags | MESSAGE_EXIST_WARNING);
-    SortFields(m_SortingField);
-}
-
-void Messaging::AddError(const bool& vSelect, const MessageData& vDatas, const MessageFunc& vFunction, const char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    AddMessage(MessageTypeEnum::MESSAGE_TYPE_ERROR, vSelect, vDatas, vFunction, fmt, args);
-    va_end(args);
-    puMessageExistFlags = (MessageExistFlags)(puMessageExistFlags | MESSAGE_EXIST_ERROR);
-    SortFields(m_SortingField);
-}
-
-void Messaging::ClearErrors() {
-    std::forward_list<int> msgToErase;
-    auto idx = 0;
-    for (auto& msg : puMessages) {
-        if (std::get<1>(msg) == MessageTypeEnum::MESSAGE_TYPE_ERROR)
-            msgToErase.push_front(idx);
-        ++idx;
-    }
-
-    for (auto& id : msgToErase) {
-        puMessages.erase(puMessages.begin() + id);
-    }
-
-    puMessageExistFlags &= ~MESSAGE_EXIST_ERROR;
-}
-
-void Messaging::ClearWarnings() {
-    std::forward_list<int> msgToErase;
-    auto idx = 0;
-    for (auto& msg : puMessages) {
-        if (std::get<1>(msg) == MessageTypeEnum::MESSAGE_TYPE_WARNING)
-            msgToErase.push_front(idx);
-        ++idx;
-    }
-
-    for (auto& id : msgToErase) {
-        puMessages.erase(puMessages.begin() + id);
-    }
-
-    puMessageExistFlags &= ~MESSAGE_EXIST_WARNING;
-}
-
-void Messaging::ClearInfos() {
-    std::forward_list<int> msgToErase;
-    auto idx = 0;
-    for (auto& msg : puMessages) {
-        if (std::get<1>(msg) == MessageTypeEnum::MESSAGE_TYPE_INFOS)
-            msgToErase.push_front(idx);
-        ++idx;
-    }
-
-    for (auto& id : msgToErase) {
-        puMessages.erase(puMessages.begin() + id);
-    }
-
-    puMessageExistFlags &= ~MESSAGE_EXIST_INFOS;
-}
-
-void Messaging::Clear() {
-    puMessages.clear();
-    puFilteredMessages.clear();
 }

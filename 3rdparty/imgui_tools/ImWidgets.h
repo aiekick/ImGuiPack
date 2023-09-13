@@ -23,6 +23,10 @@
 #include <vector>
 #include <string>
 
+#ifdef USE_OPENGL
+#include <ctools/cTools.h>
+#endif
+
 #define ImWidgets_VERSION "ImWidgets v1.0"
 
 #ifndef IS_FLOAT_DIFFERENT
@@ -367,7 +371,8 @@ IMGUI_API void ImageRatio(ImTextureID vTexId, float vRatioX, float vWidth, ImVec
 
 #ifdef USE_OPENGL
 // show overlay text on mousehover // l'epaisseur du cadre vient de BorderColor.w
-IMGUI_API bool TextureOverLay(float vWidth, ct::texture* vTex, ImVec4 vBorderColor, const char* vOverlayText, ImVec4 vOverLayTextColor, ImVec4 vOverLayBgColor);
+IMGUI_API bool TextureOverLay(float vWidth, ct::texture* vTex, ImVec4 vBorderColor, const char* vOverlayText, ImVec4 vOverLayTextColor,
+                              ImVec4 vOverLayBgColor, ImVec2 vUV0 = ImVec2(0, 0), ImVec2 vUV1 = ImVec2(1, 1));
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -441,14 +446,47 @@ IMGUI_API bool BeginContrastedCombo(const char* label, const char* preview_value
 IMGUI_API bool ContrastedCombo(float vWidth, const char* label, int* current_item, const char* const items[], int items_count, int popup_max_height_in_items = -1);
 IMGUI_API bool ContrastedCombo(float vWidth, const char* label, int* current_item, const char* items_separated_by_zeros, int popup_max_height_in_items = -1);
 IMGUI_API bool ContrastedCombo(float vWidth, const char* label, int* current_item, bool (*items_getter)(void* data, int idx, const char** out_text), void* data, int items_count, int popup_max_height_in_items = -1);
-IMGUI_API bool ContrastedComboVectorDefault(float vWidth, const char* label, int* current_item, const std::vector<std::string>& items, int items_count, int vDefault, int height_in_items = -1);
+IMGUI_API bool ContrastedComboVectorDefault(float vWidth, const char* label, int* current_item, const std::vector<std::string>& items, int vDefault, int height_in_items = -1);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///// INPUT ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 IMGUI_API bool InputFloatDefault(float vWidth, const char* vName, float* vVar, float vDefault, const char* vInputPrec = "%.3f", const char* vPopupPrec = "%.3f", bool vShowResetButton = true, float vStep = 0.0f, float vStepFast = 0.0f);
+IMGUI_API bool InputDoubleDefault(float vWidth, const char* vName, double* vVar, double vDefault, const char* vInputPrec = "%.3f", const char* vPopupPrec = "%.3f", bool vShowResetButton = true, double vStep = 0.0, double vStepFast = 0.0);
 IMGUI_API bool InputFloatDefaultStepper(float vWidth, const char* vName, float* vVar, float vDefault, float vStep, float vStepFast, const char* vInputPrec = "%.3f", const char* vPopupPrec = "%.3f", bool vShowResetButton = true);
 IMGUI_API bool InputIntDefault(float vWidth, const char* vName, int* vVar, int step, int step_fast, int vDefault);
+IMGUI_API bool InputUIntDefault(float vWidth, const char* vName, uint32_t* vVar, uint32_t step, uint32_t step_fast, uint32_t vDefault);
 
 }  // namespace ImGui
+
+namespace ImWidgets {
+class IMGUI_API InputText {
+private:
+    static constexpr size_t m_Len = 512U;
+    char buffer[m_Len + 1] = "";
+    std::string m_Text;
+
+public:
+    InputText() = default;
+    InputText(const std::string& vText) { SetText(vText); }
+
+    bool DisplayInputText(const float& vWidth, const std::string& vLabel, const std::string& vDefaultText);
+    void SetText(const std::string& vText);
+    std::string GetText(const std::string& vNumericType = "") const;
+    const char* GetConstCharPtrText() const;
+};
+
+class IMGUI_API QuickStringCombo {
+private:
+    std::vector<std::string> m_Array;
+
+public:
+    int32_t index = 0;
+
+public:
+    QuickStringCombo() = default;
+    QuickStringCombo(const int32_t& vDefaultIndex, const std::vector<std::string>& vArray);
+    bool DisplayCombo(const float& vWidth, const char* vLabel);
+};
+}  // namespace ImWidgets

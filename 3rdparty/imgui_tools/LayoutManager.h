@@ -28,8 +28,6 @@ limitations under the License.
 #include <string>
 #include <map>
 
-typedef std::string PaneCategoryName;
-
 class ProjectFile;
 class IMGUI_API LayoutManager
 #ifdef USE_XML_CONFIG
@@ -51,7 +49,7 @@ private:
 	};
 
 protected:
-	std::map<PaneDisposal, AbstractPaneWeak> m_PanesByDisposal;
+    std::map<PaneDisposal, std::vector<AbstractPaneWeak>> m_PanesByDisposal;
 	std::map<std::string, AbstractPaneWeak> m_PanesByName;
 	std::map<PaneCategoryName, std::vector<AbstractPaneWeak>> m_PanesInDisplayOrder;
 	std::map<PaneFlags, AbstractPaneWeak> m_PanesByFlag;
@@ -83,8 +81,10 @@ public:
 		const bool& vIsOpenedDefault,
 		const bool& vIsFocusedDefault);
 	void SetPaneDisposalSize(const PaneDisposal& vPaneDisposal, const float& vSize);
+	void RemovePane(const std::string& vName);
 
-public:
+public
+        :
 	void Init(const std::string& vMenuLabel, const std::string& vDefaultMenuLabel);
 	void Unit();
 

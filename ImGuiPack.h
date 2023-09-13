@@ -38,20 +38,29 @@
 #if defined(ImGuiPack_EXPORTS)
 #define IMGUI_API __declspec(dllexport)
 #define IMPLOT_API __declspec(dllexport)
-#elif defined(BUILD_SHARED_LIBS)
+#define IGFD_API __declspec(dllexport)
+#define IMGUI_IMPL_API __declspec(dllexport)
+#elif defined(IMGUI_PACK_SHARED_LIBS)
 #define IMGUI_API __declspec(dllimport)
 #define IMPLOT_API __declspec(dllimport)
+#define IGFD_API __declspec(dllimport)
+#define IMGUI_IMPL_API __declspec(dllimport)
 #else
 #define IMGUI_API
 #define IMPLOT_API
+#define IGFD_API
+#define IMGUI_IMPL_API
 #endif
 #else
 #define IMGUI_API
 #define IMPLOT_API
+#define IGFD_API
+#define IMGUI_IMPL_API
 #endif
 
 #include <3rdparty/imgui/imgui.h>
 #include <3rdparty/imgui_implot/implot.h>
+#include <3rdparty/imgui/imgui_internal.h>
 #include <3rdparty/imgui_tools/ImWidgets.h>
 #include <3rdparty/imgui_tools/Messaging.h>
 #include <3rdparty/imgui_imguizmo/ImGuizmo.h>
@@ -60,6 +69,7 @@
 #include <3rdparty/imgui_tools/LayoutManager.h>
 #include <3rdparty/imgui_tools/ImGuiThemeHelper.h>
 #include <3rdparty/imgui_markdown/imgui_markdown.h>
+#include <3rdparty/imgui_node_editor/imgui_node_editor.h>
+#include <3rdparty/imgui_imguicolottextedit/TextEditor.h>
 #include <3rdparty/imgui_imgradienthdr/src/ImGradientHDR.h>
 #include <3rdparty/imgui_imguifiledialog/ImGuiFileDialog.h>
-#include <3rdparty/imgui_node_editor/NodeEditor/Include/imgui_node_editor.h>
