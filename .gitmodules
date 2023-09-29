@@ -1,0 +1,8 @@
+[submodule "3rdparty/3rdparty/imgui_imguifiledialog"]
+	path = 3rdparty/3rdparty/imgui_imguifiledialog
+	url = https://github.com/aiekick/ImGuiFileDialog.git
+	branch = master
+[submodule "3rdparty/imgui_imguifiledialog"]
+	path = 3rdparty/imgui_imguifiledialog
+	url = https://github.com/aiekick/ImGuiFileDialog.git
+	branch = master
