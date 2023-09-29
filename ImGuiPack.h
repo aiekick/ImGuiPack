@@ -40,22 +40,26 @@
 #define IMPLOT_API __declspec(dllexport)
 #define IGFD_API __declspec(dllexport)
 #define IMGUI_IMPL_API __declspec(dllexport)
+#define IN_APP_GPU_PROFILER_API __declspec(dllexport)
 #elif defined(IMGUI_PACK_SHARED_LIBS)
 #define IMGUI_API __declspec(dllimport)
 #define IMPLOT_API __declspec(dllimport)
 #define IGFD_API __declspec(dllimport)
 #define IMGUI_IMPL_API __declspec(dllimport)
+#define IN_APP_GPU_PROFILER_API __declspec(dllimport)
 #else
 #define IMGUI_API
 #define IMPLOT_API
 #define IGFD_API
 #define IMGUI_IMPL_API
+#define IN_APP_GPU_PROFILER_API
 #endif
 #else
 #define IMGUI_API
 #define IMPLOT_API
 #define IGFD_API
 #define IMGUI_IMPL_API
+#define IN_APP_GPU_PROFILER_API
 #endif
 
 #include <3rdparty/imgui/imgui.h>
@@ -69,6 +73,7 @@
 #include <3rdparty/imgui_tools/LayoutManager.h>
 #include <3rdparty/imgui_tools/ImGuiThemeHelper.h>
 #include <3rdparty/imgui_markdown/imgui_markdown.h>
+#include <3rdparty/inappgpuprofiler/InAppGpuProfiler.h>
 #include <3rdparty/imgui_node_editor/imgui_node_editor.h>
 #include <3rdparty/imgui_imguicolottextedit/TextEditor.h>
 #include <3rdparty/imgui_imgradienthdr/src/ImGradientHDR.h>

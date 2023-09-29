@@ -54,7 +54,7 @@ void Messaging::DrawStatusBar() {
     if (!m_Messages.empty()) {
         for (const auto& cat : m_CategorieInfos) {
             if (cat.second.count > 0U) {
-                const auto& str = cat.second.icon + " " + ct::toStr(cat.second.count) + "##icon";
+                const auto& str = cat.second.icon + " " + std::to_string(cat.second.count) + "##icon";
                 ImGui::PushStyleColor(ImGuiCol_Text, cat.second.color);
                 const auto& use = ImGui::MenuItem(str.c_str());
                 ImGui::PopStyleColor();
@@ -313,7 +313,7 @@ bool Messaging::m_DrawMessage(const MessageBlockWeak& vMsg, const size_t& vMsgId
         auto ci_ptr = m_GetCategoryInfos(ptr->type);
         if (ci_ptr != nullptr) {
             ImGui::PushStyleColor(ImGuiCol_Text, ci_ptr->color);
-            ImGui::Text("%s ", ci_ptr->icon);
+            ImGui::Text("%s ", ci_ptr->icon.c_str());
             ImGui::PopStyleColor();
         }
 

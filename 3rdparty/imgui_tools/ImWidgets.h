@@ -287,13 +287,20 @@ bool MenuItem(const char* label, const char* shortcut, T* vContainer, T vFlag, b
 }
 
 template <typename T>
-bool Begin(const char* name, T* vContainer, T vFlag, ImGuiWindowFlags flags) {
-    bool check     = *vContainer & vFlag;
+bool Begin(const char* name, T* vContainer, T vFlag, ImGuiWindowFlags flags, bool* opened = nullptr) {
+    bool check = *vContainer & vFlag;
+    if (opened) {
+        check |= *opened;
+    }
     const bool res = Begin(name, &check, flags);
-    if (check)
+    if (check) {
         *vContainer = (T)(*vContainer | vFlag);  // add
-    else
+    } else {
         *vContainer = (T)(*vContainer & ~vFlag);  // remove
+        if (opened) {
+            *opened = false;
+        }
+    }
     return res;
 }
 

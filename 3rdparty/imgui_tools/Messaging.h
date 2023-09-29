@@ -17,13 +17,14 @@ limitations under the License.
 #pragma once
 #pragma warning(disable : 4251)
 
-#include <imgui.h>
-#include <functional>
-#include <cstdarg>
 #include <string>
-#include <utility>  // std::pair
 #include <vector>
 #include <memory>
+#include <imgui.h>
+#include <cstdarg>
+#include <utility>  // std::pair
+#include <functional>
+#include <unordered_map>
 
 typedef uint32_t MessageType;
 typedef std::string MessageDesc;

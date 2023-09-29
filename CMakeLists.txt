@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
 
 set(PROJECT ImGuiPack)
-set(PROJECT_VER 1.89.6)
+set(PROJECT_VER 1.89.9)
 
 enable_language(C CXX)
 
@@ -10,7 +10,17 @@ project(
 	VERSION ${PROJECT_VER} 
 	LANGUAGES CXX)
 
+option(USE_IMPLOT "Use ImPlot" OFF)
+option(USE_IMCOOL_BAR "ImCoolBar" OFF)
+option(USE_IM_GRADIENT_HDR "ImGradientHDR" OFF)
+option(USE_IMGUI_FILE_DIALOG "ImGuiFileDialog" OFF)
 option(IMGUIPACK_USE_STD_FILESYSTEM "Enable the use of std::filesystem in ImGuiFileDialog" OFF)
+option(USE_IM_GUIZMO "ImGuizmo" OFF)
+option(USE_IM_TOOLS "ImTools" OFF)
+option(USE_IMGUI_NODE_EDITOR "ImGuiNodeEditor" OFF)
+option(USE_IMGUI_MARKDOW "ImGuiMarkDown" OFF)
+option(USE_IMGUI_COLOR_TEXT_EDIT "Use ImGuiColorTextEdit" OFF)
+option(USE_IN_APP_GPU_PROFILER "Use In App Gpu Prtofiler" OFF)
 
 if(USE_SHARED_LIBS)
 	set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
@@ -18,14 +28,14 @@ if(USE_SHARED_LIBS)
 	set(LLVM_USE_CRT_MINSIZEREL MD CACHE STRING "" FORCE)
 	set(LLVM_USE_CRT_RELEASE MD CACHE STRING "" FORCE)
 	set(LLVM_USE_CRT_RELWITHDEBINFO MD CACHE STRING "" FORCE)
-	set(USE_MSVC_RUNTIME_LIBRARY_DLL ON CACHE BOOL "")
+	set(USE_MSVC_RUNTIME_LIBRARY_DLL ON CACHE BOOL "" FORCE)
 else()
 	set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 	set(LLVM_USE_CRT_DEBUG MTd CACHE STRING "" FORCE)
 	set(LLVM_USE_CRT_MINSIZEREL MT CACHE STRING "" FORCE)
 	set(LLVM_USE_CRT_RELEASE MT CACHE STRING "" FORCE)
 	set(LLVM_USE_CRT_RELWITHDEBINFO MT CACHE STRING "" FORCE)
-	set(USE_MSVC_RUNTIME_LIBRARY_DLL OFF CACHE BOOL "")
+	set(USE_MSVC_RUNTIME_LIBRARY_DLL OFF CACHE BOOL "" FORCE)
 endif()
 
 if(NOT CMAKE_DEBUG_POSTFIX)
@@ -85,82 +95,111 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGU
 ##### IMPLOT
 #####################################################
 
-file(GLOB IMGUI_IMPLOT_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/*.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/*.cpp)
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMPLOT_SOURCES})
+if (USE_IMPLOT)
+	file(GLOB IMGUI_IMPLOT_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/*.cpp)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMPLOT_SOURCES})
+endif()
 
 #####################################################
 ##### IMCOOLBAR
 #####################################################
 
-file(GLOB IMGUI_IMCOOLBAR_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.cpp)
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMCOOLBAR_SOURCES})
+if (USE_IMCOOL_BAR)
+	file(GLOB IMGUI_IMCOOLBAR_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.cpp)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMCOOLBAR_SOURCES})
+endif()
 
 #####################################################
 ##### IMGRADIENTHDR
 #####################################################
 
-file(GLOB IMGUI_IMGRADIENTHDR_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/src/*.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/src/*.cpp)
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGRADIENTHDR_SOURCES})
+if (USE_IM_GRADIENT_HDR)
+	file(GLOB IMGUI_IMGRADIENTHDR_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/src/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/src/*.cpp)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGRADIENTHDR_SOURCES})
+endif()
 
 #####################################################
 ##### IMGUIFILEDIALOG
 #####################################################
 
-file(GLOB IMGUI_IMGUIFILEDIALOG_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/*.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/*.cpp)
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIFILEDIALOG_SOURCES})
+if (USE_IMGUI_FILE_DIALOG)
+	file(GLOB IMGUI_IMGUIFILEDIALOG_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/*.cpp)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIFILEDIALOG_SOURCES})
+endif()
 
 #####################################################
 ##### IMGUIZMO
 #####################################################
 
-file(GLOB IMGUI_IMGUIZMO_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.cpp)
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIZMO_SOURCES})
+if (USE_IM_GUIZMO)
+	file(GLOB IMGUI_IMGUIZMO_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.cpp)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIZMO_SOURCES})
+endif()
 
 #####################################################
 ##### IMTOOLS
 #####################################################
 
-file(GLOB IMGUI_IMTOOLS_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.cpp)
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMTOOLS_SOURCES})
+if (USE_IM_TOOLS)
+	file(GLOB IMGUI_IMTOOLS_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.cpp)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMTOOLS_SOURCES})
+endif()
 
 #####################################################
 ##### IMGUINODEEDITOR
 #####################################################
 
-file(GLOB IMGUI_IMGUINODEEDITOR_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.inl
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.cpp)
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUINODEEDITOR_SOURCES})
+if (USE_IMGUI_NODE_EDITOR)
+	file(GLOB IMGUI_IMGUINODEEDITOR_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.inl
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.cpp)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUINODEEDITOR_SOURCES})
+endif()
 
 #####################################################
 ##### IMGUIMARKDONW
 #####################################################
 
-file(GLOB IMGUI_IMGUIMARKDONW_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/*.h)
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIMARKDONW_SOURCES})
+if (USE_IMGUI_MARKDOW)
+	file(GLOB IMGUI_IMGUIMARKDONW_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/*.h)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIMARKDONW_SOURCES})
+endif()
 
 #####################################################
 ##### IMGUICOLORTEXTEDIT
 #####################################################
 
-file(GLOB IMGUI_IMGUICOLORTEXTEDIT_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolottextedit/*.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolottextedit/*.cpp)
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUICOLORTEXTEDIT_SOURCES})
+if (USE_IMGUI_COLOR_TEXT_EDIT)
+	file(GLOB IMGUI_IMGUICOLORTEXTEDIT_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolottextedit/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolottextedit/*.cpp)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUICOLORTEXTEDIT_SOURCES})
+endif()
+
+#####################################################
+##### INAPPGPUPROFILER
+#####################################################
+
+if (USE_IN_APP_GPU_PROFILER)
+	file(GLOB IMGUI_INAPPGPUPROFILER_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/inappgpuprofiler/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/inappgpuprofiler/*.cpp)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_INAPPGPUPROFILER_SOURCES})
+endif()
 
 #####################################################
 ##### IMGUIPACK
@@ -187,6 +226,7 @@ if (BUILD_SHARED_LIBS)
 		${IMGUI_IMGRADIENTHDR_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
 		${IMGUI_IMGUINODEEDITOR_SOURCES}
+		${IMGUI_INAPPGPUPROFILER_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
 	)
 	target_compile_definitions(${PROJECT} INTERFACE IMGUI_PACK_SHARED_LIBS)
@@ -204,6 +244,7 @@ else()
 		${IMGUI_IMGRADIENTHDR_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
 		${IMGUI_IMGUINODEEDITOR_SOURCES}
+		${IMGUI_INAPPGPUPROFILER_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
 	)
 endif()
@@ -219,16 +260,21 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/inappgpuprofiler/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolottextedit/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/
-)
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/Source
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/Include)
 
 target_include_directories(${PROJECT} PRIVATE
 	${IMGUIPACK_INCLUDE_DIRS}
 )
 
+if(UNIX)
+    target_compile_options(${PROJECT} PUBLIC "-Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-parameter")
+endif()
+ 
 if(USE_DEBUG_SANITIZER)
 	target_compile_options(${PROJECT} PRIVATE $<$<CONFIG:Debug>:-fsanitize=address -static-libasan -static-libasan>)
 	target_link_options(${PROJECT} PRIVATE $<$<CONFIG:Debug>:-fsanitize=address -static-libasan>)
