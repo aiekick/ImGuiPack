@@ -17,36 +17,13 @@
 #pragma warning(disable : 4251)
 #pragma warning(disable : 4275)
 
+#include <ImGuiPack.h>
+
 #ifdef USE_XML_CONFIG
 #    include <ctools/ConfigAbstract.h>
 #    include <ctools/cTools.h>
 #endif // USE_XML_CONFIG
 
-#if defined(__WIN32__) || defined(WIN32) || defined(_WIN32) || defined(__WIN64__) || defined(WIN64) || defined(_WIN64) || defined(_MSC_VER)
-#if defined(ImGuiPack_EXPORTS)
-#define IMGUI_API __declspec(dllexport)
-#define IMPLOT_API __declspec(dllexport)
-#define IGFD_API __declspec(dllexport)
-#define IMGUI_IMPL_API __declspec(dllexport)
-#elif defined(IMGUI_PACK_SHARED_LIBS)
-#define IMGUI_API __declspec(dllimport)
-#define IMPLOT_API __declspec(dllimport)
-#define IGFD_API __declspec(dllimport)
-#define IMGUI_IMPL_API __declspec(dllimport)
-#else
-#define IMGUI_API
-#define IMPLOT_API
-#define IGFD_API
-#define IMGUI_IMPL_API
-#endif
-#else
-#define IMGUI_API
-#define IMPLOT_API
-#define IGFD_API
-#define IMGUI_IMPL_API
-#endif
-
-#include <ImGuiFileDialog.h>
 #include <imgui.h>
 #include <string>
 #include <map>

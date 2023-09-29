@@ -41,7 +41,7 @@
 #define IGFD_API __declspec(dllexport)
 #define IMGUI_IMPL_API __declspec(dllexport)
 #define IN_APP_GPU_PROFILER_API __declspec(dllexport)
-#elif defined(IMGUI_PACK_SHARED_LIBS)
+#elif defined(BUILD_IMGUI_PACK_SHARED_LIBS)
 #define IMGUI_API __declspec(dllimport)
 #define IMPLOT_API __declspec(dllimport)
 #define IGFD_API __declspec(dllimport)
@@ -63,18 +63,48 @@
 #endif
 
 #include <3rdparty/imgui/imgui.h>
-#include <3rdparty/imgui_implot/implot.h>
 #include <3rdparty/imgui/imgui_internal.h>
+
+#ifdef USE_IMPLOT
+#include <3rdparty/imgui_implot/implot.h>
+#endif
+
+#ifdef USE_IM_GUIZMO
+#include <3rdparty/imgui_imguizmo/ImGuizmo.h>
+#endif
+
+#ifdef USE_IM_TOOLS
 #include <3rdparty/imgui_tools/ImWidgets.h>
 #include <3rdparty/imgui_tools/Messaging.h>
-#include <3rdparty/imgui_imguizmo/ImGuizmo.h>
 #include <3rdparty/imgui_tools/AbstractPane.h>
-#include <3rdparty/imgui_imcoolbar/ImCoolbar.h>
 #include <3rdparty/imgui_tools/LayoutManager.h>
 #include <3rdparty/imgui_tools/ImGuiThemeHelper.h>
+#endif
+
+#ifdef USE_IMCOOL_BAR
+#include <3rdparty/imgui_imcoolbar/ImCoolbar.h>
+#endif
+
+#ifdef USE_IMGUI_MARKDOW
 #include <3rdparty/imgui_markdown/imgui_markdown.h>
+#endif
+
+#ifdef USE_IN_APP_GPU_PROFILER
 #include <3rdparty/inappgpuprofiler/InAppGpuProfiler.h>
+#endif
+
+#ifdef USE_IMGUI_NODE_EDITOR
 #include <3rdparty/imgui_node_editor/imgui_node_editor.h>
+#endif
+
+#ifdef USE_IMGUI_COLOR_TEXT_EDIT
 #include <3rdparty/imgui_imguicolottextedit/TextEditor.h>
+#endif
+
+#ifdef USE_IM_GRADIENT_HDR
 #include <3rdparty/imgui_imgradienthdr/src/ImGradientHDR.h>
+#endif
+
+#ifdef USE_IMGUI_FILE_DIALOG
 #include <3rdparty/imgui_imguifiledialog/ImGuiFileDialog.h>
+#endif

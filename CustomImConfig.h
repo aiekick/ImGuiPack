@@ -30,7 +30,7 @@
 #define IMPLOT_API __declspec(dllexport)
 #define IGFD_API __declspec(dllexport) 
 #define IMGUI_IMPL_API __declspec(dllexport)
-#elif defined(BUILD_SHARED_LIBS)
+#elif defined(BUILD_IMGUI_PACK_SHARED_LIBS)
 #define IMGUI_API __declspec(dllimport)
 #define IMPLOT_API __declspec(dllimport)
 #define IGFD_API __declspec(dllimport)

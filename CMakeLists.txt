@@ -195,6 +195,7 @@ endif()
 #####################################################
 
 if (USE_IN_APP_GPU_PROFILER)
+	message("USE IN APP GPU PROFILER")
 	file(GLOB IMGUI_INAPPGPUPROFILER_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/inappgpuprofiler/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/inappgpuprofiler/*.cpp)
@@ -229,7 +230,7 @@ if (BUILD_SHARED_LIBS)
 		${IMGUI_INAPPGPUPROFILER_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
 	)
-	target_compile_definitions(${PROJECT} INTERFACE IMGUI_PACK_SHARED_LIBS)
+	target_compile_definitions(${PROJECT} INTERFACE BUILD_IMGUI_PACK_SHARED_LIBS)
 	set_target_properties(${PROJECT} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 else()
 	set(USE_MSVC_RUNTIME_LIBRARY_DLL OFF CACHE BOOL "" FORCE)
@@ -273,6 +274,87 @@ target_include_directories(${PROJECT} PRIVATE
 
 if(UNIX)
     target_compile_options(${PROJECT} PUBLIC "-Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-parameter")
+endif()
+
+
+#####################################################
+##### IMPLOT
+#####################################################
+
+if (USE_IMPLOT)
+	target_compile_definitions(${PROJECT} PRIVATE USE_IMPLOT)
+endif()
+
+#####################################################
+##### IMCOOLBAR
+#####################################################
+
+if (USE_IMCOOL_BAR)
+	target_compile_definitions(${PROJECT} PRIVATE USE_IMCOOL_BAR)
+endif()
+
+#####################################################
+##### IMGRADIENTHDR
+#####################################################
+
+if (USE_IM_GRADIENT_HDR)
+	target_compile_definitions(${PROJECT} PRIVATE USE_IM_GRADIENT_HDR)
+endif()
+
+#####################################################
+##### IMGUIFILEDIALOG
+#####################################################
+
+if (USE_IMGUI_FILE_DIALOG)
+	target_compile_definitions(${PROJECT} PRIVATE USE_IMGUI_FILE_DIALOG)
+endif()
+
+#####################################################
+##### IMGUIZMO
+#####################################################
+
+if (USE_IM_GUIZMO)
+	target_compile_definitions(${PROJECT} PRIVATE USE_IM_GUIZMO)
+endif()
+
+#####################################################
+##### IMTOOLS
+#####################################################
+
+if (USE_IM_TOOLS)
+	target_compile_definitions(${PROJECT} PRIVATE USE_IM_TOOLS)
+endif()
+
+#####################################################
+##### IMGUINODEEDITOR
+#####################################################
+
+if (USE_IMGUI_NODE_EDITOR)
+	target_compile_definitions(${PROJECT} PRIVATE USE_IMGUI_NODE_EDITOR)
+endif()
+
+#####################################################
+##### IMGUIMARKDONW
+#####################################################
+
+if (USE_IMGUI_MARKDOW)
+	target_compile_definitions(${PROJECT} PRIVATE USE_IMGUI_MARKDOW)
+endif()
+
+#####################################################
+##### IMGUICOLORTEXTEDIT
+#####################################################
+
+if (USE_IMGUI_COLOR_TEXT_EDIT)
+	target_compile_definitions(${PROJECT} PRIVATE USE_IMGUI_COLOR_TEXT_EDIT)
+endif()
+
+#####################################################
+##### INAPPGPUPROFILER
+#####################################################
+
+if (USE_IN_APP_GPU_PROFILER)
+	target_compile_definitions(${PROJECT} USE_IN_APP_GPU_PROFILER)
 endif()
  
 if(USE_DEBUG_SANITIZER)

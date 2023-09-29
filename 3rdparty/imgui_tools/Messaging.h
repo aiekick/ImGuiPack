@@ -17,6 +17,8 @@ limitations under the License.
 #pragma once
 #pragma warning(disable : 4251)
 
+#include <ImGuiPack.h>
+
 #include <string>
 #include <vector>
 #include <memory>
