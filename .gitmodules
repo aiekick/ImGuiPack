@@ -1,8 +1,16 @@
-[submodule "3rdparty/3rdparty/imgui_imguifiledialog"]
-	path = 3rdparty/3rdparty/imgui_imguifiledialog
-	url = https://github.com/aiekick/ImGuiFileDialog.git
-	branch = master
 [submodule "3rdparty/imgui_imguifiledialog"]
 	path = 3rdparty/imgui_imguifiledialog
 	url = https://github.com/aiekick/ImGuiFileDialog.git
+	branch = master
+[submodule "3rdparty/inappgpuprofiler"]
+	path = 3rdparty/inappgpuprofiler
+	url = https://github.com/aiekick/InAppGpuProfiler.git
+	branch = master
+[submodule "3rdparty/imgui_tools"]
+	path = 3rdparty/imgui_tools
+	url = https://github.com/aiekick/ImTools.git
+	branch = main
+[submodule "3rdparty/imgui_imcoolbar"]
+	path = 3rdparty/imgui_imcoolbar
+	url = https://github.com/aiekick/ImCoolBar.git
 	branch = master
