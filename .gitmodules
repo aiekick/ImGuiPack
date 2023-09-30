@@ -10,7 +10,3 @@
 	path = 3rdparty/imgui_tools
 	url = https://github.com/aiekick/ImTools.git
 	branch = main
-[submodule "3rdparty/imgui_imcoolbar"]
-	path = 3rdparty/imgui_imcoolbar
-	url = https://github.com/aiekick/ImCoolBar.git
-	branch = master
