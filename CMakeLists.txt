@@ -255,6 +255,7 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${TINYXML2_INCLUDE_DIR}
 	${FREETYPE_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/
@@ -262,11 +263,11 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/inappgpuprofiler/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolottextedit/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/Source
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/NodeEditor/Include)
+)
 
 target_include_directories(${PROJECT} PRIVATE
 	${IMGUIPACK_INCLUDE_DIRS}
@@ -276,83 +277,33 @@ if(UNIX)
     target_compile_options(${PROJECT} PUBLIC "-Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-parameter")
 endif()
 
-
-#####################################################
-##### IMPLOT
-#####################################################
-
 if (USE_IMPLOT)
 	target_compile_definitions(${PROJECT} PRIVATE USE_IMPLOT)
 endif()
-
-#####################################################
-##### IMCOOLBAR
-#####################################################
-
 if (USE_IMCOOL_BAR)
 	target_compile_definitions(${PROJECT} PRIVATE USE_IMCOOL_BAR)
 endif()
-
-#####################################################
-##### IMGRADIENTHDR
-#####################################################
-
 if (USE_IM_GRADIENT_HDR)
 	target_compile_definitions(${PROJECT} PRIVATE USE_IM_GRADIENT_HDR)
 endif()
-
-#####################################################
-##### IMGUIFILEDIALOG
-#####################################################
-
 if (USE_IMGUI_FILE_DIALOG)
 	target_compile_definitions(${PROJECT} PRIVATE USE_IMGUI_FILE_DIALOG)
 endif()
-
-#####################################################
-##### IMGUIZMO
-#####################################################
-
 if (USE_IM_GUIZMO)
 	target_compile_definitions(${PROJECT} PRIVATE USE_IM_GUIZMO)
 endif()
-
-#####################################################
-##### IMTOOLS
-#####################################################
-
 if (USE_IM_TOOLS)
 	target_compile_definitions(${PROJECT} PRIVATE USE_IM_TOOLS)
 endif()
-
-#####################################################
-##### IMGUINODEEDITOR
-#####################################################
-
 if (USE_IMGUI_NODE_EDITOR)
 	target_compile_definitions(${PROJECT} PRIVATE USE_IMGUI_NODE_EDITOR)
 endif()
-
-#####################################################
-##### IMGUIMARKDONW
-#####################################################
-
 if (USE_IMGUI_MARKDOW)
 	target_compile_definitions(${PROJECT} PRIVATE USE_IMGUI_MARKDOW)
 endif()
-
-#####################################################
-##### IMGUICOLORTEXTEDIT
-#####################################################
-
 if (USE_IMGUI_COLOR_TEXT_EDIT)
 	target_compile_definitions(${PROJECT} PRIVATE USE_IMGUI_COLOR_TEXT_EDIT)
 endif()
-
-#####################################################
-##### INAPPGPUPROFILER
-#####################################################
-
 if (USE_IN_APP_GPU_PROFILER)
 	target_compile_definitions(${PROJECT} USE_IN_APP_GPU_PROFILER)
 endif()

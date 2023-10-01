@@ -183,6 +183,7 @@ struct Canvas
 
     // Returns current view.
     const CanvasView& View() const { return m_View; }
+    CanvasView& ViewRef() { return m_View; }
 
     // Returns origin of the view.
     //

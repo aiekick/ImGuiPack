@@ -566,15 +566,22 @@ int ax::NodeEditor::BreakLinks(PinId pinId)
     return s_Editor->BreakLinks(pinId);
 }
 
-void ax::NodeEditor::NavigateToContent(float duration)
-{
-    s_Editor->NavigateTo(s_Editor->GetContentBounds(), true, duration);
+void ax::NodeEditor::NavigateToContent(bool zoomIn, float duration) {
+    s_Editor->NavigateTo(s_Editor->GetContentBounds(), zoomIn, duration);
 }
 
 void ax::NodeEditor::NavigateToSelection(bool zoomIn, float duration)
 {
     s_Editor->NavigateTo(s_Editor->GetSelectionBounds(), zoomIn, duration);
 }
+
+ImVec2 ax::NodeEditor::GetCanvasOffset() { return s_Editor->GetView().Origin; }
+
+void ax::NodeEditor::SetCanvasOffset(const ImVec2& vOffset) { s_Editor->GetViewRef().Origin = vOffset; }
+
+float ax::NodeEditor::GetCanvasScale() { return s_Editor->GetView().Scale; }
+
+void ax::NodeEditor::SetCanvasScale(const float& vScale) { s_Editor->GetViewRef().Scale = vScale; }
 
 bool ax::NodeEditor::ShowNodeContextMenu(NodeId* nodeId)
 {
