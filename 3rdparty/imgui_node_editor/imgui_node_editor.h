@@ -274,10 +274,11 @@ struct Style
 
 
 //------------------------------------------------------------------------------
+
 struct EditorContext;
 
-
 //------------------------------------------------------------------------------
+
 IMGUI_NODE_EDITOR_API void SetCurrentEditor(EditorContext* ctx);
 IMGUI_NODE_EDITOR_API EditorContext* GetCurrentEditor();
 IMGUI_NODE_EDITOR_API EditorContext* CreateEditor(const Config* config = nullptr);
@@ -428,13 +429,8 @@ IMGUI_NODE_EDITOR_API ImVec2 CanvasToScreen(const ImVec2& pos);
 IMGUI_NODE_EDITOR_API int GetNodeCount();                                // Returns number of submitted nodes since Begin() call
 IMGUI_NODE_EDITOR_API int GetOrderedNodeIds(NodeId* nodes, int size);    // Fills an array with node id's in order they're drawn; up to 'size` elements are set. Returns actual size of filled id's.
 
-
-
-
-
-
-
 //------------------------------------------------------------------------------
+
 namespace Details {
 
 template <typename T, typename Tag>
