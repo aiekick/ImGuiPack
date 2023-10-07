@@ -24,18 +24,21 @@
 #    include <ctools/cTools.h>
 #endif // USE_XML_CONFIG
 
-#include <imgui.h>
 #include <string>
 #include <map>
 
+#ifdef USE_IMGUI_FILE_DIALOG
 namespace IGFD {
 class FileStyle;
 }
+#endif
 
 class IMGUI_API ImGuiTheme {
 public:
-	ImVec4 colors[ImGuiCol_COUNT];
-	std::map<std::string, IGFD::FileStyle> fileTypeInfos;
+    ImVec4 colors[ImGuiCol_COUNT];
+#ifdef USE_IMGUI_FILE_DIALOG
+    std::map<std::string, IGFD::FileStyle> fileTypeInfos;
+#endif  // USE_IMGUI_FILE_DIALOG
 	ImGuiStyle style;
     ImVec4 goodColor = ImVec4(0.00f, 0.35f, 0.00f, 1.00f);
     ImVec4 badColor  = ImVec4(0.35f, 0.00f, 0.00f, 1.00f);
@@ -69,7 +72,9 @@ public:
 	void DrawMenu();
     void ShowCustomImGuiStyleEditor(bool* vOpen, ImGuiStyle* ref = nullptr);
 
+#ifdef USE_IMGUI_FILE_DIALOG
     void DrawFileStyle();
+#endif  // USE_IMGUI_FILE_DIALOG
 
 public:  // configuration
 #ifdef USE_XML_CONFIG
@@ -80,7 +85,9 @@ public:  // configuration
 	ImGuiStyle GetImGuiStyle() { return m_CurrentTheme.style; }
 
 private:
-	void ApplyFileTypeColors();
+#ifdef USE_IMGUI_FILE_DIALOG
+    void ApplyFileTypeColors();
+#endif  // USE_IMGUI_FILE_DIALOG
 
 	// ImGuiColorTextEdit Palette
 	std::string GetStyleColorName(ImGuiCol idx);
