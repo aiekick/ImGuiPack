@@ -56,9 +56,9 @@ set(FREETYPE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/freetype2/include)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/freetype2 EXCLUDE_FROM_ALL)
 
 if(USE_SHARED_LIBS)
-	set_target_properties(freetype PROPERTIES FOLDER 3rdparty/Shared)
+	set_target_properties(freetype PROPERTIES FOLDER Libs/Shared)
 else()
-	set_target_properties(freetype PROPERTIES FOLDER 3rdparty/Static)
+	set_target_properties(freetype PROPERTIES FOLDER Libs/Static)
 endif()
 
 #####################################################
@@ -96,6 +96,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGU
 #####################################################
 
 if (USE_IMPLOT)
+	message("USE IM PLOT")
 	file(GLOB IMGUI_IMPLOT_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/*.cpp)
@@ -107,6 +108,7 @@ endif()
 #####################################################
 
 if (USE_IMCOOL_BAR)
+	message("USE IM COOLBAR")
 	file(GLOB IMGUI_IMCOOLBAR_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.cpp)
@@ -118,6 +120,7 @@ endif()
 #####################################################
 
 if (USE_IM_GRADIENT_HDR)
+	message("USE GRADIENT HDR")
 	file(GLOB IMGUI_IMGRADIENTHDR_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/src/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/src/*.cpp)
@@ -129,6 +132,7 @@ endif()
 #####################################################
 
 if (USE_IMGUI_FILE_DIALOG)
+	message("USE IMGUI FILE DIALOG")
 	file(GLOB IMGUI_IMGUIFILEDIALOG_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/*.cpp)
@@ -140,6 +144,7 @@ endif()
 #####################################################
 
 if (USE_IM_GUIZMO)
+	message("USE IM GUIZMO")
 	file(GLOB IMGUI_IMGUIZMO_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.cpp)
@@ -151,6 +156,7 @@ endif()
 #####################################################
 
 if (USE_IM_TOOLS)
+	message("USE IN TOOLS")
 	file(GLOB IMGUI_IMTOOLS_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.cpp)
@@ -162,6 +168,7 @@ endif()
 #####################################################
 
 if (USE_IMGUI_NODE_EDITOR)
+	message("USE IMGUI NODE EDITOR")
 	file(GLOB IMGUI_IMGUINODEEDITOR_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.inl
@@ -174,6 +181,7 @@ endif()
 #####################################################
 
 if (USE_IMGUI_MARKDOW)
+	message("USE IMGUI MARKDOWN")
 	file(GLOB IMGUI_IMGUIMARKDONW_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/*.h)
 	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIMARKDONW_SOURCES})
@@ -184,6 +192,7 @@ endif()
 #####################################################
 
 if (USE_IMGUI_COLOR_TEXT_EDIT)
+	message("USE IMGUI COLOR TEXT EDIT")
 	file(GLOB IMGUI_IMGUICOLORTEXTEDIT_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolottextedit/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolottextedit/*.cpp)
@@ -278,34 +287,34 @@ if(UNIX)
 endif()
 
 if (USE_IMPLOT)
-	target_compile_definitions(${PROJECT} PRIVATE USE_IMPLOT)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IMPLOT)
 endif()
 if (USE_IMCOOL_BAR)
-	target_compile_definitions(${PROJECT} PRIVATE USE_IMCOOL_BAR)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IMCOOL_BAR)
 endif()
 if (USE_IM_GRADIENT_HDR)
-	target_compile_definitions(${PROJECT} PRIVATE USE_IM_GRADIENT_HDR)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IM_GRADIENT_HDR)
 endif()
 if (USE_IMGUI_FILE_DIALOG)
-	target_compile_definitions(${PROJECT} PRIVATE USE_IMGUI_FILE_DIALOG)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_FILE_DIALOG)
 endif()
 if (USE_IM_GUIZMO)
-	target_compile_definitions(${PROJECT} PRIVATE USE_IM_GUIZMO)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IM_GUIZMO)
 endif()
 if (USE_IM_TOOLS)
-	target_compile_definitions(${PROJECT} PRIVATE USE_IM_TOOLS)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IM_TOOLS)
 endif()
 if (USE_IMGUI_NODE_EDITOR)
-	target_compile_definitions(${PROJECT} PRIVATE USE_IMGUI_NODE_EDITOR)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_NODE_EDITOR)
 endif()
 if (USE_IMGUI_MARKDOW)
-	target_compile_definitions(${PROJECT} PRIVATE USE_IMGUI_MARKDOW)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_MARKDOW)
 endif()
 if (USE_IMGUI_COLOR_TEXT_EDIT)
-	target_compile_definitions(${PROJECT} PRIVATE USE_IMGUI_COLOR_TEXT_EDIT)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_COLOR_TEXT_EDIT)
 endif()
 if (USE_IN_APP_GPU_PROFILER)
-	target_compile_definitions(${PROJECT} USE_IN_APP_GPU_PROFILER)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IN_APP_GPU_PROFILER)
 endif()
  
 if(USE_DEBUG_SANITIZER)

@@ -106,6 +106,7 @@ void ImGuiThemeHelper::DrawMenu()
 		ImGui::EndMenu();
 	}
 
+#ifdef USE_IMGUI_FILE_DIALOG
 	if (ImGui::BeginMenu("File Type Colors"))
 	{
 		bool fileColorUpdate = false;
@@ -121,16 +122,17 @@ void ImGuiThemeHelper::DrawMenu()
 		}
 
 		ImGui::EndMenu();
-	}
+    }
+#endif  // USE_IMGUI_FILE_DIALOG
 }
 
-void ImGuiThemeHelper::ApplyFileTypeColors()
-{
-	for (auto &it : m_CurrentTheme.fileTypeInfos)
-	{
-		ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, it.first.c_str(), it.second.color, it.second.icon);
-	}
+#ifdef USE_IMGUI_FILE_DIALOG
+void ImGuiThemeHelper::ApplyFileTypeColors() {
+    for (auto& it : m_CurrentTheme.fileTypeInfos) {
+        ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, it.first.c_str(), it.second.color, it.second.icon);
+    }
 }
+#endif  // USE_IMGUI_FILE_DIALOG
 
 #ifdef USE_XML_CONFIG
 
@@ -833,6 +835,7 @@ void ImGuiThemeHelper::ShowCustomImGuiStyleEditor(bool* vOpen, ImGuiStyle* ref)
 	memcpy(&ImGui::GetStyle(), &m_CurrentTheme.style, sizeof(ImGuiStyle));
 }
 
+#ifdef USE_IMGUI_FILE_DIALOG
 void ImGuiThemeHelper::DrawFileStyle() {
     bool fileColorUpdate = false;
 
@@ -844,3 +847,4 @@ void ImGuiThemeHelper::DrawFileStyle() {
         ApplyFileTypeColors();
     }
 }
+#endif  // USE_IMGUI_FILE_DIALOG

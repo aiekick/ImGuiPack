@@ -19,8 +19,6 @@
 
 #include <ImGuiPack.h>
 
-#include <imgui.h>
-
 #include <cstdint>  // types like uint32_t
 #include <vector>
 #include <string>
