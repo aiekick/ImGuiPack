@@ -68,6 +68,7 @@ public:
 typedef std::shared_ptr<MessageBlock> MessageBlockPtr;
 typedef std::weak_ptr<MessageBlock> MessageBlockWeak;
 
+class LayoutManager;
 class IMGUI_API CategoryInfos {
 public:
     MessageType type = 0;
@@ -107,7 +108,7 @@ public:
     void ClearMessagesOfType(const MessageType& vMessageType);
     void Clear();
 
-    void DrawStatusBar();
+    void DrawStatusBar(LayoutManager* vLayoutManagerPtr);
     void DrawConsolePane();
 
     void AddCategory(const MessageType& vMessageType,

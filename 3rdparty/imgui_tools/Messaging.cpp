@@ -49,7 +49,7 @@ Messaging::~Messaging() = default;
 ///// PUBLIC //////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-void Messaging::DrawStatusBar() {
+void Messaging::DrawStatusBar(LayoutManager* vLayoutManagerPtr) {
     ImGui::SetNextWindowViewport(ImGui::GetMainViewport()->ID);
     if (!m_Messages.empty()) {
         for (const auto& cat : m_CategorieInfos) {
@@ -60,7 +60,9 @@ void Messaging::DrawStatusBar() {
                 ImGui::PopStyleColor();
                 if (use) {
                     m_MessageExistFlags = cat.second.flag;
-                    LayoutManager::Instance()->ShowAndFocusSpecificPane(sMessagePaneId);
+                    if (vLayoutManagerPtr) {
+                        vLayoutManagerPtr->ShowAndFocusSpecificPane(sMessagePaneId);
+                    }
                     m_CurrentMsgIdx = ImMax(--m_CurrentMsgIdx, 0);
                     m_UpdateFilteredMessages();
                 } 
