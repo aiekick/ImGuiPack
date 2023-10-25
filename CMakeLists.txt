@@ -62,6 +62,23 @@ else()
 endif()
 
 #####################################################
+##### REGEX for ImGuiColorTextEdit
+#####################################################
+
+if (USE_IMGUI_COLOR_TEXT_EDIT)
+	message("ImGuiColorTextEdit is using the library boost_regex")
+	set(BOOST_REGEX_LIBRARIES boost_regex)
+	set(BOOST_REGEX_STANDALONE ON CACHE BOOL "" FORCE)
+	set(BOOST_REGEX_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/regex/include)
+	add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/regex EXCLUDE_FROM_ALL)
+	if(USE_SHARED_LIBS)
+		set_target_properties(boost_regex PROPERTIES FOLDER Libs/Shared)
+	else()
+		set_target_properties(boost_regex PROPERTIES FOLDER Libs/Static)
+	endif()
+endif()
+
+#####################################################
 #####################################################
 
 ## for group smake targets in the dir cmakeTargets
@@ -263,6 +280,7 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${CTOOLS_INCLUDE_DIR}
 	${TINYXML2_INCLUDE_DIR}
 	${FREETYPE_INCLUDE_DIR}
+	${BOOST_REGEX_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/
@@ -327,6 +345,7 @@ target_link_libraries(${PROJECT}
 	${CTOOLS_LIBRARIES}
 	${TINYXML2_LIBRARIES}
 	${FREETYPE_LIBRARIES}
+	${BOOST_REGEX_LIBRARIES}
 )
 
 set(IMGUIPACK_INCLUDE_DIRS ${IMGUIPACK_INCLUDE_DIRS} PARENT_SCOPE)
