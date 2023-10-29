@@ -335,6 +335,9 @@ IMGUI_NODE_EDITOR_API void RejectNewItem();
 IMGUI_NODE_EDITOR_API void RejectNewItem(const ImVec4& color, float thickness = 1.0f);
 IMGUI_NODE_EDITOR_API void EndCreate();
 
+IMGUI_NODE_EDITOR_API bool IsDirty();
+IMGUI_NODE_EDITOR_API void ClearDirty();
+
 IMGUI_NODE_EDITOR_API bool BeginDelete();
 IMGUI_NODE_EDITOR_API bool QueryDeletedLink(LinkId* linkId, PinId* startId = nullptr, PinId* endId = nullptr);
 IMGUI_NODE_EDITOR_API bool QueryDeletedNode(NodeId* nodeId);

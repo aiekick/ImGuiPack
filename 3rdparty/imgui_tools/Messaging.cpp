@@ -49,7 +49,7 @@ Messaging::~Messaging() = default;
 ///// PUBLIC //////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-void Messaging::DrawStatusBar(LayoutManager* vLayoutManagerPtr) {
+void Messaging::DrawStatusBar() {
     ImGui::SetNextWindowViewport(ImGui::GetMainViewport()->ID);
     if (!m_Messages.empty()) {
         for (const auto& cat : m_CategorieInfos) {
@@ -60,8 +60,8 @@ void Messaging::DrawStatusBar(LayoutManager* vLayoutManagerPtr) {
                 ImGui::PopStyleColor();
                 if (use) {
                     m_MessageExistFlags = cat.second.flag;
-                    if (vLayoutManagerPtr) {
-                        vLayoutManagerPtr->ShowAndFocusSpecificPane(sMessagePaneId);
+                    if (m_LayoutManagerPtr) {
+                        m_LayoutManagerPtr->ShowAndFocusSpecificPane(sMessagePaneId);
                     }
                     m_CurrentMsgIdx = ImMax(--m_CurrentMsgIdx, 0);
                     m_UpdateFilteredMessages();
@@ -236,6 +236,10 @@ void Messaging::AddMessage(const std::string& vMsg,
     msg_ptr->data = vDatas;
     msg_ptr->func = vFunction;
     m_Messages.push_back(msg_ptr);
+
+    if (m_LayoutManagerPtr && m_LayoutManagerPtr->pane_Shown & sMessagePaneId) {
+        m_AddToFilteredMessages(msg_ptr);
+    }
 }
 
 void Messaging::AddMessage(const MessageType& vMessageType,
@@ -327,7 +331,9 @@ bool Messaging::m_DrawMessage(const MessageBlockWeak& vMsg, const size_t& vMsgId
             const auto check = ImGui::Selectable_FramedText("%s##Messaging", ptr->desc.c_str());
             ImGui::PopID();
             if (check) {
-                LayoutManager::Instance()->ShowAndFocusSpecificPane(sMessagePaneId);
+                if (m_LayoutManagerPtr) {
+                    m_LayoutManagerPtr->ShowAndFocusSpecificPane(sMessagePaneId);
+                }
                 if (ptr->func) {
                     ptr->func(ptr->data);
                 }

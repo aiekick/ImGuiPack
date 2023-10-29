@@ -1309,7 +1309,12 @@ struct EditorContext
 
     CreateItemAction& GetItemCreator() { return m_CreateItemAction; }
     DeleteItemsAction& GetItemDeleter() { return m_DeleteItemsAction; }
-    ContextMenuAction& GetContextMenu() { return m_ContextMenuAction; }
+    ContextMenuAction& GetContextMenu() {
+        return m_ContextMenuAction;
+    }
+    NavigateAction& GetNavigateAction() {
+        return m_NavigateAction;
+    }
     ShortcutAction& GetShortcut() { return m_ShortcutAction; }
 
     ImGuiEx::CanvasView& GetViewRef() { return m_Canvas.ViewRef(); }
@@ -1471,6 +1476,13 @@ struct EditorContext
     }
 
     ImDrawList* GetDrawList() { return m_DrawList; }
+
+    bool IsDirty() {
+        return m_Settings.m_IsDirty;
+    }
+    void ClearDirty() {
+        return m_Settings.ClearDirty();
+    }
 
 private:
     void LoadSettings();

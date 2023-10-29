@@ -570,9 +570,15 @@ std::string LayoutManager::getXml(const std::string& vOffset, const std::string&
 		str += vOffset + "\t<panes opened=\"" + ct::ivariant((int32_t)pane_Shown).GetS() + "\" active=\"" + ct::ivariant((int32_t)m_Pane_Focused).GetS() + "\"/>\n";
 		str += vOffset + "</layout>\n";
 	}
-	else if (vUserDatas == "project")
-	{
-		// per pane settings
+	else if (vUserDatas == "project") {
+        /*str += vOffset + "<layout>\n";
+        for (auto pane : m_PanesByName) {
+            auto ptr = std::dynamic_pointer_cast<conf::ConfigAbstract>(pane.second.lock());
+            if (ptr) {
+                str += ptr->getXml(vOffset + "\t", "project");
+			}
+		}
+        str += vOffset + "</layout>\n";*/
 	}
 
 	return str;
@@ -608,13 +614,19 @@ bool LayoutManager::setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement
                 }
 			}
 		}
+        return true;
+	} else if (vUserDatas == "project") {
+        if (strParentName == "layout") {
+            /*for (auto pane : m_PanesByName) {
+                auto ptr = std::dynamic_pointer_cast<conf::ConfigAbstract>(pane.second.lock());
+                if (ptr) {
+                    ptr->RecursParsingConfig(vElem, vParent , "project");
+                }
+            }*/
+        }
 	}
-	else if (vUserDatas == "project")
-	{
 
-	}
-
-	return true;
+	return false;
 }
 
 #endif // USE_XML_CONFIG

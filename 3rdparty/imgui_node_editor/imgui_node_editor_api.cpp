@@ -345,6 +345,19 @@ void ax::NodeEditor::EndCreate()
     context.End();
 }
 
+bool ax::NodeEditor::IsDirty() {
+    if (s_Editor) {
+        return s_Editor->IsDirty();
+    }
+    return false;
+}
+
+void ax::NodeEditor::ClearDirty() {
+    if (s_Editor) {
+        s_Editor->ClearDirty();
+    }
+}
+
 bool ax::NodeEditor::BeginDelete()
 {
     auto& context = s_Editor->GetItemDeleter();

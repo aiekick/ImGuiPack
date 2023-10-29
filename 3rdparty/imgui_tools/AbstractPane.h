@@ -38,7 +38,6 @@ typedef std::shared_ptr<AbstractPane> AbstractPanePtr;
 typedef std::weak_ptr<AbstractPane> AbstractPaneWeak;
 
 class BaseNode;
-class ProjectFile;
 class IMGUI_API AbstractPane {
 public:
     std::string paneName;

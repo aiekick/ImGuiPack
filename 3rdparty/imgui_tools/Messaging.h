@@ -104,11 +104,13 @@ private:
     bool m_ShowTextPane = false;
     char m_MessageText[4096 + 1] = "\0";
 
+    LayoutManager* m_LayoutManagerPtr = nullptr;
+
 public:
     void ClearMessagesOfType(const MessageType& vMessageType);
     void Clear();
 
-    void DrawStatusBar(LayoutManager* vLayoutManagerPtr);
+    void DrawStatusBar();
     void DrawConsolePane();
 
     void AddCategory(const MessageType& vMessageType,
@@ -128,6 +130,10 @@ public:
         const MessageData& vDatas,
         const MessageFunc& vFunction);
     
+    void SetLayoutManager(LayoutManager* vLayoutManagerPtr) {
+        m_LayoutManagerPtr = vLayoutManagerPtr;
+    }
+
 private:
     bool m_DrawMessage(const size_t& vMsgIdx);
     bool m_DrawMessage(const MessageBlockWeak& vMsg, const size_t& vMsgIdx);
