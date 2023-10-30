@@ -75,6 +75,7 @@
 
 #ifdef USE_IM_GUIZMO
 #include <3rdparty/imgui_imguizmo/ImGuizmo.h>
+#include <3rdparty/imgui_imguizmo/ImSequencer.h>
 #endif
 
 #ifdef USE_IM_TOOLS
