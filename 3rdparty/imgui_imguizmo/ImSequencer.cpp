@@ -23,13 +23,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-#include "ImSequencer.h"
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "ImSequencer.h"
 #include <cstdlib>
 
-namespace ImSequencer
-{
+namespace IMSEQUENCER_NAMESPACE {
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
    static ImVec2 operator+(const ImVec2& a, const ImVec2& b) {
       return ImVec2(a.x + b.x, a.y + b.y);

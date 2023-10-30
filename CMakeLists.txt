@@ -11,16 +11,16 @@ project(
 	LANGUAGES CXX)
 
 option(USE_IMPLOT "Use ImPlot" OFF)
+option(USE_IM_TOOLS "ImTools" OFF)
+option(USE_IM_GUIZMO "ImGuizmo" OFF)
 option(USE_IMCOOL_BAR "ImCoolBar" OFF)
+option(USE_IMGUI_MARKDOW "ImGuiMarkDown" OFF)
 option(USE_IM_GRADIENT_HDR "ImGradientHDR" OFF)
 option(USE_IMGUI_FILE_DIALOG "ImGuiFileDialog" OFF)
-option(IMGUIPACK_USE_STD_FILESYSTEM "Enable the use of std::filesystem in ImGuiFileDialog" OFF)
-option(USE_IM_GUIZMO "ImGuizmo" OFF)
-option(USE_IM_TOOLS "ImTools" OFF)
 option(USE_IMGUI_NODE_EDITOR "ImGuiNodeEditor" OFF)
-option(USE_IMGUI_MARKDOW "ImGuiMarkDown" OFF)
 option(USE_IMGUI_COLOR_TEXT_EDIT "Use ImGuiColorTextEdit" OFF)
 option(USE_IN_APP_GPU_PROFILER "Use In App Gpu Prtofiler" OFF)
+option(IMGUIPACK_USE_STD_FILESYSTEM "Enable the use of std::filesystem in ImGuiFileDialog" OFF)
 
 if(USE_SHARED_LIBS)
 	set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
@@ -355,9 +355,3 @@ set(FREETYPE_LIBRARIES ${FREETYPE_LIBRARIES} PARENT_SCOPE)
 install(TARGETS ${PROJECT} RUNTIME DESTINATION / COMPONENT APP_LIBS_${TINYXML2_LIBRARIES})
 install(TARGETS ${TINYXML2_LIBRARIES} RUNTIME DESTINATION / COMPONENT APP_LIBS_${TINYXML2_LIBRARIES})
 install(TARGETS ${FREETYPE_LIBRARIES} RUNTIME DESTINATION / COMPONENT APP_LIBS_${FREETYPE_LIBRARIES})
-
-#install(FILES 
-#    inc/someHeader.h
-#    inc/someHeaderB.h
-#    DESTINATION include/MyLibrary
-#)
