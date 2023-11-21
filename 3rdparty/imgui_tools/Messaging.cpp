@@ -261,6 +261,9 @@ void Messaging::AddMessage(const MessageType& vMessageType,
 void Messaging::Clear() {
     m_Messages.clear();
     m_FilteredMessages.clear();
+    for (auto& cat : m_CategorieInfos) {
+        cat.second.count = 0U;
+    }
 }
 
 void Messaging::ClearMessagesOfType(const MessageType& vMessageType) {
