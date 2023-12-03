@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(PROJECT ImGuiPack)
-set(PROJECT_VER 1.89.9)
+set(PROJECT_VER 1.90.1)
 
 enable_language(C CXX)
 
@@ -19,7 +19,6 @@ option(USE_IM_GRADIENT_HDR "ImGradientHDR" OFF)
 option(USE_IMGUI_FILE_DIALOG "ImGuiFileDialog" OFF)
 option(USE_IMGUI_NODE_EDITOR "ImGuiNodeEditor" OFF)
 option(USE_IMGUI_COLOR_TEXT_EDIT "Use ImGuiColorTextEdit" OFF)
-option(USE_IN_APP_GPU_PROFILER "Use In App Gpu Prtofiler" OFF)
 option(IMGUIPACK_USE_STD_FILESYSTEM "Enable the use of std::filesystem in ImGuiFileDialog" OFF)
 
 if(USE_SHARED_LIBS)
@@ -217,18 +216,6 @@ if (USE_IMGUI_COLOR_TEXT_EDIT)
 endif()
 
 #####################################################
-##### INAPPGPUPROFILER
-#####################################################
-
-if (USE_IN_APP_GPU_PROFILER)
-	message("USE IN APP GPU PROFILER")
-	file(GLOB IMGUI_INAPPGPUPROFILER_SOURCES
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/inappgpuprofiler/*.h
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/inappgpuprofiler/*.cpp)
-	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_INAPPGPUPROFILER_SOURCES})
-endif()
-
-#####################################################
 ##### IMGUIPACK
 #####################################################
 
@@ -253,7 +240,6 @@ if (BUILD_SHARED_LIBS)
 		${IMGUI_IMGRADIENTHDR_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
 		${IMGUI_IMGUINODEEDITOR_SOURCES}
-		${IMGUI_INAPPGPUPROFILER_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
 	)
 	target_compile_definitions(${PROJECT} INTERFACE BUILD_IMGUI_PACK_SHARED_LIBS)
@@ -271,7 +257,6 @@ else()
 		${IMGUI_IMGRADIENTHDR_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
 		${IMGUI_IMGUINODEEDITOR_SOURCES}
-		${IMGUI_INAPPGPUPROFILER_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
 	)
 endif()
@@ -289,7 +274,6 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/inappgpuprofiler/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
@@ -330,9 +314,6 @@ if (USE_IMGUI_MARKDOW)
 endif()
 if (USE_IMGUI_COLOR_TEXT_EDIT)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_COLOR_TEXT_EDIT)
-endif()
-if (USE_IN_APP_GPU_PROFILER)
-	target_compile_definitions(${PROJECT} PUBLIC USE_IN_APP_GPU_PROFILER)
 endif()
  
 if(USE_DEBUG_SANITIZER)
