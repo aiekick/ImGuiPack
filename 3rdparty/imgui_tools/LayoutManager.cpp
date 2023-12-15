@@ -345,7 +345,7 @@ void LayoutManager::DisplayMenu(const ImVec2& vSize) {
     }
 }
 
-bool LayoutManager::DrawPanes(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr, const std::string& vUserDatas) {
+bool LayoutManager::DrawPanes(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr, void* vUserDatas) {
     bool change = false;
     for (const auto& pane : m_PanesByFlag) {
         auto panePtr = pane.second.lock();
@@ -366,8 +366,7 @@ bool LayoutManager::DrawPanes(const uint32_t& vCurrentFrame, ImGuiContext* vCont
     return change;
 }
 
-bool LayoutManager::DrawDialogsAndPopups(
-    const uint32_t& vCurrentFrame, const ImVec2& vMaxSize, ImGuiContext* vContextPtr, const std::string& vUserDatas) {
+bool LayoutManager::DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const ImVec2& vMaxSize, ImGuiContext* vContextPtr, void* vUserDatas) {
     bool change = false;
     for (const auto& pane : m_PanesByFlag) {
         auto panePtr = pane.second.lock();
@@ -378,7 +377,7 @@ bool LayoutManager::DrawDialogsAndPopups(
     return change;
 }
 
-bool LayoutManager::DrawWidgets(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr, const std::string& vUserDatas) {
+bool LayoutManager::DrawWidgets(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr, void* vUserDatas) {
     bool change = false;
     for (const auto& pane : m_PanesByFlag) {
         auto panePtr = pane.second.lock();
@@ -389,7 +388,7 @@ bool LayoutManager::DrawWidgets(const uint32_t& vCurrentFrame, ImGuiContext* vCo
     return change;
 }
 
-bool LayoutManager::DrawOverlays(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr, const std::string& vUserDatas) {
+bool LayoutManager::DrawOverlays(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr, void* vUserDatas) {
     bool change = false;
     for (const auto& pane : m_PanesByFlag) {
         auto panePtr = pane.second.lock();
