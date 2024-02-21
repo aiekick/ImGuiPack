@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(PROJECT ImGuiPack)
-set(PROJECT_VER 1.89.9)
+set(PROJECT_VER 1.90.1)
 
 enable_language(C CXX)
 
@@ -11,16 +11,15 @@ project(
 	LANGUAGES CXX)
 
 option(USE_IMPLOT "Use ImPlot" OFF)
+option(USE_IM_TOOLS "ImTools" OFF)
+option(USE_IM_GUIZMO "ImGuizmo" OFF)
 option(USE_IMCOOL_BAR "ImCoolBar" OFF)
+option(USE_IMGUI_MARKDOW "ImGuiMarkDown" OFF)
 option(USE_IM_GRADIENT_HDR "ImGradientHDR" OFF)
 option(USE_IMGUI_FILE_DIALOG "ImGuiFileDialog" OFF)
-option(IMGUIPACK_USE_STD_FILESYSTEM "Enable the use of std::filesystem in ImGuiFileDialog" OFF)
-option(USE_IM_GUIZMO "ImGuizmo" OFF)
-option(USE_IM_TOOLS "ImTools" OFF)
 option(USE_IMGUI_NODE_EDITOR "ImGuiNodeEditor" OFF)
-option(USE_IMGUI_MARKDOW "ImGuiMarkDown" OFF)
 option(USE_IMGUI_COLOR_TEXT_EDIT "Use ImGuiColorTextEdit" OFF)
-option(USE_IN_APP_GPU_PROFILER "Use In App Gpu Prtofiler" OFF)
+option(IMGUIPACK_USE_STD_FILESYSTEM "Enable the use of std::filesystem in ImGuiFileDialog" OFF)
 
 if(USE_SHARED_LIBS)
 	set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
@@ -59,6 +58,23 @@ if(USE_SHARED_LIBS)
 	set_target_properties(freetype PROPERTIES FOLDER Libs/Shared)
 else()
 	set_target_properties(freetype PROPERTIES FOLDER Libs/Static)
+endif()
+
+#####################################################
+##### REGEX for ImGuiColorTextEdit
+#####################################################
+
+if (USE_IMGUI_COLOR_TEXT_EDIT)
+	message("ImGuiColorTextEdit is using the library boost_regex")
+	set(BOOST_REGEX_LIBRARIES boost_regex)
+	set(BOOST_REGEX_STANDALONE ON CACHE BOOL "" FORCE)
+	set(BOOST_REGEX_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/regex/include)
+	add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/regex EXCLUDE_FROM_ALL)
+	if(USE_SHARED_LIBS)
+		set_target_properties(boost_regex PROPERTIES FOLDER Libs/Shared)
+	else()
+		set_target_properties(boost_regex PROPERTIES FOLDER Libs/Static)
+	endif()
 endif()
 
 #####################################################
@@ -200,18 +216,6 @@ if (USE_IMGUI_COLOR_TEXT_EDIT)
 endif()
 
 #####################################################
-##### INAPPGPUPROFILER
-#####################################################
-
-if (USE_IN_APP_GPU_PROFILER)
-	message("USE IN APP GPU PROFILER")
-	file(GLOB IMGUI_INAPPGPUPROFILER_SOURCES
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/inappgpuprofiler/*.h
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/inappgpuprofiler/*.cpp)
-	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_INAPPGPUPROFILER_SOURCES})
-endif()
-
-#####################################################
 ##### IMGUIPACK
 #####################################################
 
@@ -236,7 +240,6 @@ if (BUILD_SHARED_LIBS)
 		${IMGUI_IMGRADIENTHDR_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
 		${IMGUI_IMGUINODEEDITOR_SOURCES}
-		${IMGUI_INAPPGPUPROFILER_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
 	)
 	target_compile_definitions(${PROJECT} INTERFACE BUILD_IMGUI_PACK_SHARED_LIBS)
@@ -254,7 +257,6 @@ else()
 		${IMGUI_IMGRADIENTHDR_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
 		${IMGUI_IMGUINODEEDITOR_SOURCES}
-		${IMGUI_INAPPGPUPROFILER_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
 	)
 endif()
@@ -263,6 +265,7 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${CTOOLS_INCLUDE_DIR}
 	${TINYXML2_INCLUDE_DIR}
 	${FREETYPE_INCLUDE_DIR}
+	${BOOST_REGEX_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/
@@ -271,7 +274,6 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/inappgpuprofiler/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
@@ -313,9 +315,6 @@ endif()
 if (USE_IMGUI_COLOR_TEXT_EDIT)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_COLOR_TEXT_EDIT)
 endif()
-if (USE_IN_APP_GPU_PROFILER)
-	target_compile_definitions(${PROJECT} PUBLIC USE_IN_APP_GPU_PROFILER)
-endif()
  
 if(USE_DEBUG_SANITIZER)
 	target_compile_options(${PROJECT} PRIVATE $<$<CONFIG:Debug>:-fsanitize=address -static-libasan -static-libasan>)
@@ -327,13 +326,13 @@ target_link_libraries(${PROJECT}
 	${CTOOLS_LIBRARIES}
 	${TINYXML2_LIBRARIES}
 	${FREETYPE_LIBRARIES}
+	${BOOST_REGEX_LIBRARIES}
 )
 
 set(IMGUIPACK_INCLUDE_DIRS ${IMGUIPACK_INCLUDE_DIRS} PARENT_SCOPE)
 set(IMGUIPACK_LIBRARIES ${PROJECT} PARENT_SCOPE)
+set(FREETYPE_LIBRARIES ${FREETYPE_LIBRARIES} PARENT_SCOPE)
 
-#install(FILES 
-#    inc/someHeader.h
-#    inc/someHeaderB.h
-#    DESTINATION include/MyLibrary
-#)
+install(TARGETS ${PROJECT} RUNTIME DESTINATION / COMPONENT APP_LIBS_${TINYXML2_LIBRARIES})
+install(TARGETS ${TINYXML2_LIBRARIES} RUNTIME DESTINATION / COMPONENT APP_LIBS_${TINYXML2_LIBRARIES})
+install(TARGETS ${FREETYPE_LIBRARIES} RUNTIME DESTINATION / COMPONENT APP_LIBS_${FREETYPE_LIBRARIES})

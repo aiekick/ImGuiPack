@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2022 Stephane Cuillerdier (aka aiekick)
+Copyright 2022-2023 Stephane Cuillerdier (aka aiekick)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,32 +15,10 @@ limitations under the License.
 */
 
 #pragma once
+#ifdef _MSC_VER
 #pragma warning(disable : 4005)
 #pragma warning(disable : 4100)
 #pragma warning(disable : 4251)
-
-#if defined(__WIN32__) || defined(WIN32) || defined(_WIN32) || defined(__WIN64__) || defined(WIN64) || defined(_WIN64) || defined(_MSC_VER)
-#if defined(ImGuiPack_EXPORTS)
-#define IMGUI_API __declspec(dllexport)
-#define IMPLOT_API __declspec(dllexport)
-#define IGFD_API __declspec(dllexport)
-#define IMGUI_IMPL_API __declspec(dllexport)
-#elif defined(IMGUI_PACK_SHARED_LIBS)
-#define IMGUI_API __declspec(dllimport)
-#define IMPLOT_API __declspec(dllimport)
-#define IGFD_API __declspec(dllimport)
-#define IMGUI_IMPL_API __declspec(dllimport)
-#else
-#define IMGUI_API
-#define IMPLOT_API
-#define IGFD_API
-#define IMGUI_IMPL_API
-#endif
-#else
-#define IMGUI_API
-#define IMPLOT_API
-#define IGFD_API
-#define IMGUI_IMPL_API
 #endif
 
 #include <memory>  // smart ptr
@@ -60,7 +38,6 @@ typedef std::shared_ptr<AbstractPane> AbstractPanePtr;
 typedef std::weak_ptr<AbstractPane> AbstractPaneWeak;
 
 class BaseNode;
-class ProjectFile;
 class IMGUI_API AbstractPane {
 public:
     std::string paneName;
@@ -85,17 +62,15 @@ public:
     virtual bool Init() = 0;
     virtual void Unit() = 0;
 
-    virtual bool DrawPanes(const uint32_t& vCurrentFrame, PaneFlags& vInOutPaneShown, ImGuiContext* vContextPtr = nullptr,
-                           const std::string& vUserDatas = {}) = 0;
-    virtual bool DrawWidgets(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr = nullptr, const std::string& vUserDatas = {}) {
+    virtual bool DrawPanes(
+        const uint32_t& vCurrentFrame, PaneFlags& vInOutPaneShown, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr) = 0;
+    virtual bool DrawWidgets(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr) {
         return false;
     }
-    virtual bool DrawOverlays(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr = nullptr,
-                              const std::string& vUserDatas = {}) {
+    virtual bool DrawOverlays(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr) {
         return false;
     }
-    virtual bool DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const ImVec2& vMaxSize, ImGuiContext* vContextPtr = nullptr,
-                                      const std::string& vUserDatas = {}) {
+    virtual bool DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const ImVec2& vMaxSize, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr) {
         return false;
     }
 

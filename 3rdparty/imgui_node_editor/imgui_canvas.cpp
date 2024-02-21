@@ -434,8 +434,8 @@ void ImGuiEx::Canvas::EnterLocalSpace()
     //     different clip rectangle.
     //
     //     More investigation is needed. To get to the bottom of this.
-    if ((!m_DrawList->CmdBuffer.empty() && m_DrawList->CmdBuffer.back().ElemCount > 0) || m_DrawList->_Splitter._Count > 1)
-        m_DrawList->AddCallback(&ImCanvasDetails::SentinelDrawCallback, nullptr);
+    //if ((!m_DrawList->CmdBuffer.empty() && m_DrawList->CmdBuffer.back().ElemCount > 0) || m_DrawList->_Splitter._Count > 1)
+    //    m_DrawList->AddCallback(&ImCanvasDetails::SentinelDrawCallback, nullptr);
 
 # if IMGUI_EX_CANVAS_DEFERED()
     m_Ranges.resize(m_Ranges.Size + 1);

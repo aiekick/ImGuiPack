@@ -68,6 +68,7 @@ public:
 typedef std::shared_ptr<MessageBlock> MessageBlockPtr;
 typedef std::weak_ptr<MessageBlock> MessageBlockWeak;
 
+class LayoutManager;
 class IMGUI_API CategoryInfos {
 public:
     MessageType type = 0;
@@ -103,6 +104,8 @@ private:
     bool m_ShowTextPane = false;
     char m_MessageText[4096 + 1] = "\0";
 
+    LayoutManager* m_LayoutManagerPtr = nullptr;
+
 public:
     void ClearMessagesOfType(const MessageType& vMessageType);
     void Clear();
@@ -127,6 +130,10 @@ public:
         const MessageData& vDatas,
         const MessageFunc& vFunction);
     
+    void SetLayoutManager(LayoutManager* vLayoutManagerPtr) {
+        m_LayoutManagerPtr = vLayoutManagerPtr;
+    }
+
 private:
     bool m_DrawMessage(const size_t& vMsgIdx);
     bool m_DrawMessage(const MessageBlockWeak& vMsg, const size_t& vMsgIdx);
