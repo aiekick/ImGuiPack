@@ -263,26 +263,22 @@ void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize) {
         auto panePtr = pane.second.lock();
         if (panePtr) {
             switch (panePtr->paneDisposal) {
-                case PaneDisposal::CENTRAL: {
+                case PaneDisposal::CENTRAL: 
                     ImGui::DockBuilderDockWindow(pane.first.c_str(), dockMainID);
                     break;
-                }
-                case PaneDisposal::LEFT: {
+                case PaneDisposal::LEFT: 
                     ImGui::DockBuilderDockWindow(pane.first.c_str(), dockLeftID);
                     break;
-                }
-                case PaneDisposal::RIGHT: {
+                case PaneDisposal::RIGHT: 
                     ImGui::DockBuilderDockWindow(pane.first.c_str(), dockRightID);
                     break;
-                }
-                case PaneDisposal::BOTTOM: {
+                case PaneDisposal::BOTTOM: 
                     ImGui::DockBuilderDockWindow(pane.first.c_str(), dockBottomID);
                     break;
-                }
-                case PaneDisposal::TOP: {
+                case PaneDisposal::TOP: 
                     ImGui::DockBuilderDockWindow(pane.first.c_str(), dockTopID);
                     break;
-                }
+                case PaneDisposal::Count: break;
             };
         }
     }

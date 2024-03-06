@@ -8,7 +8,7 @@
         android:hasCode="true">
 
         <activity
-            android:name="imgui.example.android.MainActivity"
+            android:name="imguifiledialog.demo.android.MainActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false">

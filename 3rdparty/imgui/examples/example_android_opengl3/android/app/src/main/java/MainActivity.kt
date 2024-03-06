@@ -1,4 +1,4 @@
-package imgui.example.android
+package imguifiledialog.demo.android
 
 import android.app.NativeActivity
 import android.os.Bundle

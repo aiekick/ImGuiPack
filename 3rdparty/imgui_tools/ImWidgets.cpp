@@ -429,7 +429,7 @@ bool BeginFramedGroup(const char* vLabel, ImVec2 vSize, ImVec4 /*vCol*/, ImVec4 
     window->ContentRegionRect.Max.x -= style.FramePadding.x * 3.0f;
     window->WorkRect.Max.x -= style.FramePadding.x * 3.0f;
 
-    const ImGuiID id = window->GetID(vLabel);
+    //const ImGuiID id = window->GetID(vLabel);
     BeginGroup();
     Indent();
 
@@ -621,7 +621,7 @@ bool CheckBoxBoolDefault(const char* vName, bool* vVar, bool vDefault, const cha
 
     if (vHelp)
         if (IsItemHovered())
-            SetTooltip(vHelp);
+            SetTooltip("%s", vHelp);
 
     return change;
 }
@@ -659,7 +659,7 @@ bool CheckBoxIntDefault(const char* vName, int* vVar, int vDefault, const char* 
 
     if (vHelp)
         if (IsItemHovered())
-            SetTooltip(vHelp);
+            SetTooltip("%s", vHelp);
 
     return change;
 }
@@ -691,7 +691,7 @@ bool CheckBoxFloatDefault(const char* vName, float* vVar, float vDefault, const 
 
     if (vHelp)
         if (IsItemHovered())
-            SetTooltip(vHelp);
+            SetTooltip("%s", vHelp);
 
     return change;
 }
@@ -724,7 +724,7 @@ bool RadioFloatDefault(const char* vName, float* vVar, int vCount, float* vDefau
 
         SameLine(0, GetStyle().ItemInnerSpacing.x);
 
-        Text(vName);
+        Text("%s", vName);
 
         if (change) {
             for (int j = 0; j < vCount; j++) {
@@ -736,7 +736,7 @@ bool RadioFloatDefault(const char* vName, float* vVar, int vCount, float* vDefau
 
     if (vHelp)
         if (IsItemHovered())
-            SetTooltip(vHelp);
+            SetTooltip("%s", vHelp);
 
     return change;
 }
@@ -1109,7 +1109,7 @@ bool ButtonNoFrame(const char* vLabel, ImVec2 size, ImVec4 vColor, const char* v
 
     if (vHelp)
         if (IsItemHovered())
-            SetTooltip(vHelp);
+            SetTooltip("%s", vHelp);
 
     return pressed;
 }
@@ -1606,7 +1606,7 @@ void EndMainStatusBar() {
 }
 
 bool BeginLeftToolBar(float vWidth) {
-    ImGuiContext& g          = *GImGui;
+    //ImGuiContext& g          = *GImGui;
     ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)GetMainViewport();
 
     // Notify of viewport change so GetFrameHeight() can be accurate in case of DPI change
@@ -1922,7 +1922,7 @@ bool TransparentButton(const char* label, const ImVec2& size_arg, ImGuiButtonFla
     const bool pressed = ButtonBehavior(bb, id, &hovered, &held, flags);
 
     // Render
-    const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
+    //const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
     RenderNavHighlight(bb, id);
     // RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
     RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, label, nullptr, &label_size, style.ButtonTextAlign, &bb);
@@ -1989,7 +1989,7 @@ void ImageRatio(ImTextureID vTexId, float vRatioX, float vWidth, ImVec4 vColor, 
     if (IsItemHovered()) {
         char arr[3];
         if (snprintf(arr, 3, "%i", (int)(size_t)vTexId)) {
-            SetTooltip(arr);
+            SetTooltip("%s", arr);
         }
     }
 #endif
@@ -2418,17 +2418,17 @@ inline bool inSliderBehaviorStepperT(const ImRect& bb, ImGuiID id, ImGuiDataType
 // It would be possible to lift that limitation with some work but it doesn't seem to be worth it for sliders.
 inline bool inSliderBehaviorStepper(const ImRect& bb, ImGuiID id, ImGuiDataType data_type, void* p_v, const void* p_min, const void* p_max, const void* p_step, const char* format, ImGuiSliderFlags flags, ImRect* out_grab_bb) {
     // Those MIN/MAX values are not define because we need to point to them
-    static const signed char IM_S8_MIN     = -128;
-    static const signed char IM_S8_MAX     = 127;
-    static const unsigned char IM_U8_MIN   = 0;
-    static const unsigned char IM_U8_MAX   = 0xFF;
-    static const signed short IM_S16_MIN   = -32768;
-    static const signed short IM_S16_MAX   = 32767;
-    static const unsigned short IM_U16_MIN = 0;
-    static const unsigned short IM_U16_MAX = 0xFFFF;
+    //static const signed char IM_S8_MIN     = -128;
+    //static const signed char IM_S8_MAX     = 127;
+   // static const unsigned char IM_U8_MIN   = 0;
+    //static const unsigned char IM_U8_MAX   = 0xFF;
+    //static const signed short IM_S16_MIN   = -32768;
+    //static const signed short IM_S16_MAX   = 32767;
+    //static const unsigned short IM_U16_MIN = 0;
+    //static const unsigned short IM_U16_MAX = 0xFFFF;
     static const ImS32 IM_S32_MIN          = INT_MIN;  // (-2147483647 - 1), (0x80000000);
     static const ImS32 IM_S32_MAX          = INT_MAX;  // (2147483647), (0x7FFFFFFF)
-    static const ImU32 IM_U32_MIN          = 0;
+    //static const ImU32 IM_U32_MIN          = 0;
     static const ImU32 IM_U32_MAX          = UINT_MAX;  // (0xFFFFFFFF)
 #ifdef LLONG_MIN
     static const ImS64 IM_S64_MIN = LLONG_MIN;  // (-9223372036854775807ll - 1ll);
@@ -2437,7 +2437,7 @@ inline bool inSliderBehaviorStepper(const ImRect& bb, ImGuiID id, ImGuiDataType 
     static const ImS64 IM_S64_MIN = -9223372036854775807LL - 1;
     static const ImS64 IM_S64_MAX = 9223372036854775807LL;
 #endif
-    static const ImU64 IM_U64_MIN = 0;
+    //static const ImU64 IM_U64_MIN = 0;
 #ifdef ULLONG_MAX
     static const ImU64 IM_U64_MAX = ULLONG_MAX;  // (0xFFFFFFFFFFFFFFFFull);
 #else
@@ -3289,7 +3289,7 @@ bool InputFloatDefaultStepper(float vWidth, const char* vName, float* vVar, floa
     return change;
 }
 
-bool InputIntDefault(float vWidth, const char* vName, int* vVar, int step, int step_fast, int vDefault) {
+bool InputIntDefault(float vWidth, const char* vName, int* vVar, int vDefault, int step, int step_fast) {
     bool change = false;
 
     const float padding = GetStyle().FramePadding.x;
@@ -3312,13 +3312,12 @@ bool InputIntDefault(float vWidth, const char* vName, int* vVar, int step, int s
     PopID();
 
     if (IsItemActive() || IsItemHovered())
-        SetTooltip("%.3f", *vVar);
+        SetTooltip("%i", *vVar);
 
     return change;
 }
 
-bool InputUIntDefault(
-    float vWidth, const char* vName, uint32_t* vVar, uint32_t step, uint32_t step_fast, uint32_t vDefault) {
+bool InputUIntDefault(float vWidth, const char* vName, uint32_t* vVar, uint32_t vDefault, uint32_t step, uint32_t step_fast) {
     bool change = false;
 
     const float padding = GetStyle().FramePadding.x;
@@ -3342,7 +3341,7 @@ bool InputUIntDefault(
     PopID();
 
     if (IsItemActive() || IsItemHovered())
-        SetTooltip("%.3f", *vVar);
+        SetTooltip("%i", *vVar);
 
     return change;
 }
@@ -3353,7 +3352,7 @@ bool ImWidgets::InputText::DisplayInputText(
     const float& vWidth, const std::string& vLabel, const std::string& vDefaultText) {
     bool res = false;
     float px = ImGui::GetCursorPosX();
-    ImGui::Text(vLabel.c_str());
+    ImGui::Text("%s", vLabel.c_str());
     ImGui::SameLine();
     const float w = vWidth - (ImGui::GetCursorPosX() - px);
     ImGui::PushID(++ImGui::CustomStyle::pushId);

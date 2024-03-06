@@ -824,7 +824,7 @@ static void ImGui::BalanceChildLayouts(ImGuiLayout& layout)
 
 static ImGuiLayoutItem* ImGui::GenerateLayoutItem(ImGuiLayout& layout, ImGuiLayoutItemType type)
 {
-    ImGuiContext& g = *GImGui;
+    //ImGuiContext& g = *GImGui;
     IM_ASSERT(layout.CurrentItemIndex <= layout.Items.Size);
 
     if (layout.CurrentItemIndex < layout.Items.Size)
