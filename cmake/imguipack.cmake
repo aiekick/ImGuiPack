@@ -1,9 +1,53 @@
-set(IMGUIPACK_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/ImGuiPack)
-
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdparty/ImGuiPack)
-    
-set_target_properties(ImGuiPack PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(ImGuiPack PROPERTIES FOLDER 3rdparty)
-
+set(IMGUIPACK_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ImGuiPack)
 set(IMGUIPACK_LIBRARIES ImGuiPack)
+
+# ON
+set(USE_IMPLOT ON CACHE BOOL "" FORCE)
+set(USE_IM_TOOLS ON CACHE BOOL "" FORCE)
+set(USE_IM_GUIZMO ON CACHE BOOL "" FORCE)
+set(USE_IMCOOL_BAR ON CACHE BOOL "" FORCE)
+set(USE_IMGUI_MARKDOW ON CACHE BOOL "" FORCE)
+set(USE_IMGUI_NODE_FLOW ON CACHE BOOL "" FORCE)
+set(USE_IM_GRADIENT_HDR ON CACHE BOOL "" FORCE)
+set(USE_IMGUI_FILE_DIALOG ON CACHE BOOL "" FORCE)
+set(USE_IMGUI_COLOR_TEXT_EDIT ON CACHE BOOL "" FORCE)
+set(IMGUIPACK_USE_STD_FILESYSTEM ON CACHE BOOL "" FORCE)
+
+# OFF
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ImGuiPack)
+
+target_compile_definitions(${IMGUIPACK_LIBRARIES} INTERFACE BUILD_CTOOLS_SHARED_LIBS)	
+
+if(USE_SHARED_LIBS)
+	set_target_properties(${IMGUIPACK_LIBRARIES} PROPERTIES FOLDER 3rdparty/Shared/ImGuiPack)
+	set_target_properties(freetype PROPERTIES FOLDER 3rdparty/Shared/ImGuiPack)
+	set_target_properties(boost_regex PROPERTIES FOLDER 3rdparty/Shared/ImGuiPack)
+else()
+	set_target_properties(${IMGUIPACK_LIBRARIES} PROPERTIES FOLDER 3rdparty/Static/ImGuiPack)
+	set_target_properties(freetype PROPERTIES FOLDER 3rdparty/Static/ImGuiPack)
+	set_target_properties(boost_regex PROPERTIES FOLDER 3rdparty/Static/ImGuiPack)
+endif()
+
+set_target_properties(${IMGUIPACK_LIBRARIES} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${FINAL_BIN_DIR}")
+set_target_properties(${IMGUIPACK_LIBRARIES} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${FINAL_BIN_DIR}")
+set_target_properties(${IMGUIPACK_LIBRARIES} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${FINAL_BIN_DIR}")
+
+set_target_properties(freetype PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${FINAL_BIN_DIR}")
+set_target_properties(freetype PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${FINAL_BIN_DIR}")
+set_target_properties(freetype PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${FINAL_BIN_DIR}")
+
+set_target_properties(boost_regex PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${FINAL_BIN_DIR}")
+set_target_properties(boost_regex PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${FINAL_BIN_DIR}")
+set_target_properties(boost_regex PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${FINAL_BIN_DIR}")
+
+add_definitions(-DUSE_IMPLOT)
+add_definitions(-DUSE_IMCOOL_BAR)
+add_definitions(-DUSE_IM_GRADIENT_HDR)
+add_definitions(-DUSE_IMGUI_FILE_DIALOG)
+add_definitions(-DUSE_IM_GUIZMO)
+add_definitions(-DUSE_IM_TOOLS)
+add_definitions(-DUSE_IMGUI_NODE_FLOW)
+add_definitions(-DUSE_IMGUI_MARKDOW)
+add_definitions(-DUSE_IMGUI_COLOR_TEXT_EDIT)
 

@@ -31,3 +31,4 @@
 *.exe
 *.out
 *.app
+/bin/debug/Debug/*.pdb

@@ -11,6 +11,8 @@ set_target_properties(glad PROPERTIES FOLDER 3rdparty)
 
 set(GLAD_LIBRARIES glad)
 
+set_target_properties(glad PROPERTIES FOLDER 3rdparty/Static)
+
 if(NOT WIN32)
     set(GLAD_LIBRARIES ${GLAD_LIBRARIES} dl)
 endif()
