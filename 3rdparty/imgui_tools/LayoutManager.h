@@ -23,7 +23,7 @@ limitations under the License.
 #endif  // USE_XML_CONFIG
 
 #include <3rdparty/imgui_tools/AbstractPane.h>
-#include <3rdparty/imgui/imgui.h>
+#include <3rdparty/imgui_docking/imgui.h>
 #include <array>
 #include <string>
 #include <map>

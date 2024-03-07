@@ -66,8 +66,8 @@
 #define IN_APP_GPU_PROFILER_API
 #endif
 
-#include <3rdparty/imgui/imgui.h>
-#include <3rdparty/imgui/imgui_internal.h>
+#include <3rdparty/imgui_docking/imgui.h>
+#include <3rdparty/imgui_docking/imgui_internal.h>
 
 #ifdef USE_IMPLOT
 #include <3rdparty/imgui_implot/implot.h>
@@ -94,16 +94,12 @@
 #include <3rdparty/imgui_markdown/imgui_markdown.h>
 #endif
 
-#ifdef USE_IN_APP_GPU_PROFILER
-#include <3rdparty/inappgpuprofiler/InAppGpuProfiler.h>
-#endif
-
-#ifdef USE_IMGUI_NODE_EDITOR
-#include <3rdparty/imgui_node_editor/imgui_node_editor.h>
+#ifdef USE_IMGUI_NODE_FLOW
+#include <3rdparty/imgui_imnodeflow/include/ImNodeFlow.h>
 #endif
 
 #ifdef USE_IMGUI_COLOR_TEXT_EDIT
-#include <3rdparty/imgui_imguicolottextedit/TextEditor.h>
+#include <3rdparty/imgui_imguicolortextedit/TextEditor.h>
 #endif
 
 #ifdef USE_IM_GRADIENT_HDR

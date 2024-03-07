@@ -11,13 +11,13 @@ project(
 	LANGUAGES CXX)
 
 option(USE_IMPLOT "Use ImPlot" OFF)
-option(USE_IM_TOOLS "ImTools" OFF)
-option(USE_IM_GUIZMO "ImGuizmo" OFF)
-option(USE_IMCOOL_BAR "ImCoolBar" OFF)
-option(USE_IMGUI_MARKDOW "ImGuiMarkDown" OFF)
-option(USE_IM_GRADIENT_HDR "ImGradientHDR" OFF)
-option(USE_IMGUI_FILE_DIALOG "ImGuiFileDialog" OFF)
-option(USE_IMGUI_NODE_EDITOR "ImGuiNodeEditor" OFF)
+option(USE_IM_TOOLS "Use ImTools" OFF)
+option(USE_IM_GUIZMO "Use ImGuizmo" OFF)
+option(USE_IMCOOL_BAR "Use ImCoolBar" OFF)
+option(USE_IMGUI_MARKDOW "Use ImGuiMarkDown" OFF)
+option(USE_IM_GRADIENT_HDR "Use ImGradientHDR" OFF)
+option(USE_IMGUI_FILE_DIALOG "Use ImGuiFileDialog" OFF)
+option(USE_IMGUI_NODE_FLOW "Use ImGuiNodeFlow" OFF)
 option(USE_IMGUI_COLOR_TEXT_EDIT "Use ImGuiColorTextEdit" OFF)
 option(IMGUIPACK_USE_STD_FILESYSTEM "Enable the use of std::filesystem in ImGuiFileDialog" OFF)
 
@@ -55,9 +55,9 @@ set(FREETYPE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/freetype2/include)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/freetype2 EXCLUDE_FROM_ALL)
 
 if(USE_SHARED_LIBS)
-	set_target_properties(freetype PROPERTIES FOLDER Libs/Shared)
+	set_target_properties(freetype PROPERTIES FOLDER libs/Shared)
 else()
-	set_target_properties(freetype PROPERTIES FOLDER Libs/Static)
+	set_target_properties(freetype PROPERTIES FOLDER libs/Static)
 endif()
 
 #####################################################
@@ -71,9 +71,9 @@ if (USE_IMGUI_COLOR_TEXT_EDIT)
 	set(BOOST_REGEX_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/regex/include)
 	add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/regex EXCLUDE_FROM_ALL)
 	if(USE_SHARED_LIBS)
-		set_target_properties(boost_regex PROPERTIES FOLDER Libs/Shared)
+		set_target_properties(boost_regex PROPERTIES FOLDER libs/Shared)
 	else()
-		set_target_properties(boost_regex PROPERTIES FOLDER Libs/Static)
+		set_target_properties(boost_regex PROPERTIES FOLDER libs/Static)
 	endif()
 endif()
 
@@ -101,10 +101,10 @@ add_definitions(-DIMGUI_USER_CONFIG="${CMAKE_CURRENT_SOURCE_DIR}/CustomImConfig.
 #####################################################
 
 file(GLOB IMGUI_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/*.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/*.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/misc/freetype/imgui_freetype.h
-		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/misc/freetype/imgui_freetype.cpp)
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking/*.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking/*.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking/misc/freetype/imgui_freetype.h
+		${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking/misc/freetype/imgui_freetype.cpp)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_SOURCES})
 
 #####################################################
@@ -180,16 +180,18 @@ if (USE_IM_TOOLS)
 endif()
 
 #####################################################
-##### IMGUINODEEDITOR
+##### IMGUINODEFLOW
 #####################################################
 
-if (USE_IMGUI_NODE_EDITOR)
-	message("USE IMGUI NODE EDITOR")
-	file(GLOB IMGUI_IMGUINODEEDITOR_SOURCES
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.h
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.inl
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.cpp)
-	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUINODEEDITOR_SOURCES})
+if (USE_IMGUI_NODE_FLOW)
+	message("USE IMGUI NODE FLOW")
+	file(GLOB IMGUI_IMGUINODEFLOW_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/include/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/src/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/src/*.inl
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/src/*.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/*.md)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUINODEFLOW_SOURCES})
 endif()
 
 #####################################################
@@ -210,8 +212,8 @@ endif()
 if (USE_IMGUI_COLOR_TEXT_EDIT)
 	message("USE IMGUI COLOR TEXT EDIT")
 	file(GLOB IMGUI_IMGUICOLORTEXTEDIT_SOURCES
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolottextedit/*.h
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolottextedit/*.cpp)
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolortextedit/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolortextedit/*.cpp)
 	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUICOLORTEXTEDIT_SOURCES})
 endif()
 
@@ -238,8 +240,8 @@ if (BUILD_SHARED_LIBS)
 		${IMGUI_IMGUIPACK_SOURCES}
 		${IMGUI_IMGUIMARKDONW_SOURCES}
 		${IMGUI_IMGRADIENTHDR_SOURCES}
+		${IMGUI_IMGUINODEFLOW_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
-		${IMGUI_IMGUINODEEDITOR_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
 	)
 	target_compile_definitions(${PROJECT} INTERFACE BUILD_IMGUI_PACK_SHARED_LIBS)
@@ -255,8 +257,8 @@ else()
 		${IMGUI_IMGUIPACK_SOURCES}
 		${IMGUI_IMGUIMARKDONW_SOURCES}
 		${IMGUI_IMGRADIENTHDR_SOURCES}
+		${IMGUI_IMGUINODEFLOW_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
-		${IMGUI_IMGUINODEEDITOR_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
 	)
 endif()
@@ -268,16 +270,16 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${BOOST_REGEX_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/include/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolottextedit/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolortextedit/
 )
 
 target_include_directories(${PROJECT} PRIVATE
@@ -306,8 +308,8 @@ endif()
 if (USE_IM_TOOLS)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IM_TOOLS)
 endif()
-if (USE_IMGUI_NODE_EDITOR)
-	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_NODE_EDITOR)
+if (USE_IMGUI_NODE_FLOW)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_NODE_FLOW)
 endif()
 if (USE_IMGUI_MARKDOW)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_MARKDOW)
