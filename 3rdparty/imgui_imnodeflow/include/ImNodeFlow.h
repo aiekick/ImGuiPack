@@ -2,6 +2,10 @@
 #define IM_NODE_FLOW
 #pragma once
 
+#ifndef IM_NODE_FLOW_API
+#define IM_NODE_FLOW_API
+#endif
+
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif
@@ -82,7 +86,7 @@ namespace ImFlow
     /**
      * @brief Extra pin's style setting
      */
-    struct PinStyleExtras
+    struct IM_NODE_FLOW_API PinStyleExtras
     {
         /// @brief Top and bottom spacing
         ImVec2 padding = ImVec2(3.f, 1.f);
@@ -116,7 +120,7 @@ namespace ImFlow
     /**
      * @brief Defines the visual appearance of a pin
      */
-    class PinStyle
+    class IM_NODE_FLOW_API PinStyle
     {
     public:
         PinStyle(ImU32 color, int socket_shape, float socket_radius, float socket_hovered_radius, float socket_connected_radius, float socket_thickness)
@@ -159,7 +163,7 @@ namespace ImFlow
     /**
      * @brief Defines the visual appearance of a node
      */
-    class NodeStyle
+    class IM_NODE_FLOW_API NodeStyle
     {
     public:
         NodeStyle(ImU32 header_bg, ImColor header_title_color, float radius) :header_bg(header_bg), header_title_color(header_title_color), radius(radius) {}
@@ -200,7 +204,7 @@ namespace ImFlow
     /**
      * @brief Link between two Pins of two different Nodes
      */
-    class Link
+    class IM_NODE_FLOW_API Link
     {
     public:
         /**
@@ -287,7 +291,7 @@ namespace ImFlow
      * @brief Main node editor
      * @details Handles the infinite grid, nodes and links. Also handles all the logic.
      */
-    class ImNodeFlow
+    class IM_NODE_FLOW_API ImNodeFlow
     {
     private:
         static int m_instances;
@@ -523,7 +527,7 @@ namespace ImFlow
      * @brief Parent class for custom nodes
      * @details Main class from which custom nodes can be created. All interactions with the main grid are handled internally.
      */
-    class BaseNode
+    class IM_NODE_FLOW_API BaseNode
     {
     public:
         BaseNode() = default;
@@ -891,7 +895,7 @@ namespace ImFlow
     /**
      * @brief Generic base class for pins
      */
-    class Pin
+    class IM_NODE_FLOW_API Pin
     {
     public:
         /**
