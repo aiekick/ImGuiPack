@@ -27,7 +27,8 @@ limitations under the License.
 #include <3rdparty/imgui_docking/backends/imgui_impl_glfw.h>
 #include <stdio.h>
 
-#include <src/MainFrame.h>
+#include <Gui/MainFrame.h>
+#include <Graph/Manager/NodeManager.h>
 
 #define SHOW_CONSOLE
 
@@ -101,8 +102,8 @@ int main(int, char** argv) {
     fonts_ptr->AddFontFromMemoryCompressedBase85TTF(FONT_ICON_BUFFER_NAME_NDPTB, 15.0f, &icons_config, icons_ranges3);
 */
     auto* mainFramePtr = MainFrame::Instance();
-    
     mainFramePtr->init();
+    NodeManager::Instance()->init();
 
     // Main loop
     int display_w, display_h;

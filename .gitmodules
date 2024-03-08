@@ -10,3 +10,7 @@
 	path = 3rdparty/ImGuiPack
 	url = https://github.com/aiekick/ImGuiPack.git
 	branch = master
+[submodule "3rdparty/InAppGpuProfiler"]
+	path = 3rdparty/InAppGpuProfiler
+	url = https://github.com/aiekick/InAppGpuProfiler.git
+	branch = master

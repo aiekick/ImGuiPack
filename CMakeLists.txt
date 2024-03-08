@@ -26,7 +26,7 @@ set(CMAKE_PDB_OUTPUT_DIRECTORY "${FINAL_BIN_DIR}/debug")
 set(CMAKE_INSTALL_PREFIX .)
 set(CMAKE_INSTALL_BINDIR .)
 
-set(USE_SHARED_LIBS ON CACHE BOOL "" FORCE)
+set(USE_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
 set(LLVM_USE_CRT_DEBUG MDd CACHE STRING "" FORCE)
 set(LLVM_USE_CRT_MINSIZEREL MD CACHE STRING "" FORCE)
@@ -45,13 +45,18 @@ if(NOT CMAKE_DEBUG_POSTFIX)
 endif()
 
 if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /FR /Zo")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /Zo")
     add_definitions(-D_USE_MATH_DEFINES)
     add_definitions(-DMSVC)
 	add_definitions(-DNOMINMAX) ## for avoid issue regarding std::max and std::min
 else ()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wunused-parameter -Wno-unknown-pragmas")
 endif ()
+
+add_definitions(-DUSE_STD_FILESYSTEM)
+add_definitions(-DIMGUI_ENABLE_FREETYPE)
+add_definitions(-DIMGUI_DEFINE_MATH_OPERATORS)
+add_definitions(-DUSE_DECORATIONS_FOR_RESIZE_CHILD_WINDOWS) ## for the resize imgui issue when we have child glfw windows
 
 include(cmake/3rdparty.cmake)
 
@@ -73,10 +78,10 @@ file(GLOB_RECURSE PROJECT_CMAKE_FILES
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/cmake PREFIX cmake FILES ${PROJECT_CMAKE_FILES})
 
 file(GLOB IMGUI_IMPL_SOURCES 
-		${CMAKE_SOURCE_DIR}/3rdparty/ImGuiPack/3rdparty/imgui/backends/imgui_impl_glfw.cpp
-		${CMAKE_SOURCE_DIR}/3rdparty/ImGuiPack/3rdparty/imgui/backends/imgui_impl_glfw.h
-		${CMAKE_SOURCE_DIR}/3rdparty/ImGuiPack/3rdparty/imgui/backends/imgui_impl_opengl3.cpp
-		${CMAKE_SOURCE_DIR}/3rdparty/ImGuiPack/3rdparty/imgui/backends/imgui_impl_opengl3.h)
+		${CMAKE_SOURCE_DIR}/3rdparty/ImGuiPack/3rdparty/imgui_docking/backends/imgui_impl_glfw.cpp
+		${CMAKE_SOURCE_DIR}/3rdparty/ImGuiPack/3rdparty/imgui_docking/backends/imgui_impl_glfw.h
+		${CMAKE_SOURCE_DIR}/3rdparty/ImGuiPack/3rdparty/imgui_docking/backends/imgui_impl_opengl3.cpp
+		${CMAKE_SOURCE_DIR}/3rdparty/ImGuiPack/3rdparty/imgui_docking/backends/imgui_impl_opengl3.h)
 source_group(src\\ImGuiImpl FILES ${IMGUI_IMPL_SOURCES})
 
 if (APPLE)
@@ -85,6 +90,7 @@ if (APPLE)
 endif()
 
 include_directories(
+	${CMAKE_SOURCE_DIR}/src
 	${GLM_INCLUDE_DIR}
 	${CMAKE_SOURCE_DIR}
 	${PLOG_INCLUDE_DIR}
@@ -140,7 +146,7 @@ target_link_libraries(${PROJECT} PRIVATE
 	${IMGUIPACK_LIBRARIES}
 )
 
-target_include_directories(${PROJECT} PRIVATE
+target_include_directories(${PROJECT} PUBLIC
 	${CMAKE_SOURCE_DIR}
 	${IMGUIPACK_INCLUDE_DIR}
 )

@@ -1,3 +1,4 @@
 git submodule add --force -b "c" https://github.com/Dav1dde/glad.git 3rdparty/glad
 git submodule add --force -b "master" https://github.com/glfw/glfw.git 3rdparty/glfw
 git submodule add --force -b "master" https://github.com/aiekick/ImGuiPack.git 3rdparty/ImGuiPack
+git submodule add --force -b "master" https://github.com/aiekick/InAppGpuProfiler.git 3rdparty/InAppGpuProfiler
