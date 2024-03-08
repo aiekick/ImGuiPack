@@ -335,6 +335,7 @@ void ImNodeFlow::destroyNodesIfNeeded() {
         }
         m_node_to_destroy.clear();
     }
+    m_node_to_destroy.clear();
 }
 
 }  // namespace ImFlow
