@@ -321,6 +321,12 @@ namespace ImFlow
         void update();
 
         /**
+         * @brief node destroying
+         * @details will destroy nodes markes as to delete
+         */
+        void destroyNodesIfNeeded();
+
+        /**
          * @brief <BR>Add a node to the grid
          * @tparam T Derived class of <BaseNode> to be added
          * @tparam Params types of optional args to forward to derived class ctor
@@ -497,6 +503,12 @@ namespace ImFlow
          * @return [TRUE] if the mouse is not hovering a node or a link
          */
         bool on_free_space();
+
+        /**
+         * @brief mark a node to destroy
+         */
+        void needToDestroyNode(std::weak_ptr<BaseNode> vnode);
+
     private:
         std::string m_name;
         ContainedContext m_context;
@@ -505,6 +517,7 @@ namespace ImFlow
 
         std::unordered_map<NodeUID, std::shared_ptr<BaseNode>> m_nodes;
         std::vector<std::weak_ptr<Link>> m_links;
+        std::vector<std::weak_ptr<BaseNode>> m_node_to_destroy;
 
         std::function<void(Pin* dragged)> m_droppedLinkPopUp;
         ImGuiKey m_droppedLinkPupUpComboKey = ImGuiKey_None;
