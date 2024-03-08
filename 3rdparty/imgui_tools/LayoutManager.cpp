@@ -26,22 +26,24 @@ LayoutManager::LayoutManager() = default;
 LayoutManager::~LayoutManager() = default;
 
 void LayoutManager::AddPane(AbstractPaneWeak vPane,
-    const std::string& vName,
-    const PaneCategoryName& vCategory,
-    const PaneDisposal& vPaneDisposal,
-    const bool& vIsOpenedDefault,
-    const bool& vIsFocusedDefault) {
+                            const std::string& vName,
+                            const PaneCategoryName& vCategory,
+                            const PaneDisposal& vPaneDisposal,
+                            const float& vPaneDisposalRatio,
+                            const bool& vIsOpenedDefault,
+                            const bool& vIsFocusedDefault) {
     PaneFlags flag = (1 << ++m_FlagCount);
-    AddPane(vPane, vName, vCategory, flag, vPaneDisposal, vIsOpenedDefault, vIsFocusedDefault);
+    AddPane(vPane, vName, vCategory, flag, vPaneDisposal, vPaneDisposalRatio, vIsOpenedDefault, vIsFocusedDefault);
 }
 
 void LayoutManager::AddPane(AbstractPaneWeak vPane,
-    const std::string& vName,
-    const PaneCategoryName& vCategory,
-    const PaneFlags& vFlag,
-    const PaneDisposal& vPaneDisposal,
-    const bool& vIsOpenedDefault,
-    const bool& vIsFocusedDefault) {
+                            const std::string& vName,
+                            const PaneCategoryName& vCategory,
+                            const PaneFlags& vFlag,
+                            const PaneDisposal& vPaneDisposal,
+                            const float& vPaneDisposalRatio,
+                            const bool& vIsOpenedDefault,
+                            const bool& vIsFocusedDefault) {
     if (vFlag == 0)
         return;
     if (vPane.expired())
@@ -57,28 +59,23 @@ void LayoutManager::AddPane(AbstractPaneWeak vPane,
     if (panePtr) {
         panePtr->paneName = vName;
         panePtr->paneFlag = vFlag;
+        panePtr->paneCategory = vCategory;
         panePtr->paneDisposal = vPaneDisposal;
         panePtr->openedDefault = vIsOpenedDefault;
         panePtr->focusedDefault = vIsFocusedDefault;
-        panePtr->paneCategory = vCategory;
+        panePtr->paneDisposalRatio = vPaneDisposalRatio;
         if (vIsOpenedDefault) {
             m_Pane_Opened_Default |= panePtr->paneFlag;
         }
         if (vIsFocusedDefault) {
             m_Pane_Focused_Default |= panePtr->paneFlag;
         }
+        m_PanesDisposalRatios[panePtr->paneDisposal] = panePtr->paneDisposalRatio;
         m_PanesByDisposal[panePtr->paneDisposal].push_back(panePtr);
         m_PanesByName[panePtr->paneName] = panePtr;
         m_PanesByFlag[panePtr->paneFlag] = panePtr;
         m_PanesInDisplayOrder[panePtr->paneCategory].push_back(panePtr);
     }
-}
-
-void LayoutManager::SetPaneDisposalSize(const PaneDisposal& vPaneDisposal, const float& vSize) {
-    if (vPaneDisposal == PaneDisposal::CENTRAL || vPaneDisposal == PaneDisposal::Count)
-        return;
-
-    m_PaneDisposalSizes[(int)vPaneDisposal] = vSize;
 }
 
 void LayoutManager::RemovePane(const std::string& vName) {
@@ -131,7 +128,17 @@ void LayoutManager::RemovePane(const std::string& vName) {
     }
 }
 
-void LayoutManager::Init(const std::string& vMenuLabel, const std::string& vDefaultMenuLabel) {
+void LayoutManager::SetPaneDisposalRatio(const PaneDisposal& vPaneDisposal, const float& vRatio) {
+    if (!vPaneDisposal.empty()) {
+        if (vPaneDisposal != "LEFT" && vPaneDisposal != "RIGHT" && vPaneDisposal != "TOP" && vPaneDisposal != "BOTTOM") {
+            std::string msg = "bad split name \"" + vPaneDisposal + "\". must be CENTRAL, LEFT, RIGHT, TOP or BOTTOM";
+            throw std::exception(msg.c_str());
+        }
+        m_PanesDisposalRatios[vPaneDisposal] = vRatio;
+    }
+}
+
+void LayoutManager::Init(const std::string& vMenuLabel, const std::string& vDefaultMenuLabel, const bool& vForceDefaultLayout) {
     assert(!vMenuLabel.empty());
     assert(!vDefaultMenuLabel.empty());
 
@@ -140,9 +147,13 @@ void LayoutManager::Init(const std::string& vMenuLabel, const std::string& vDefa
 
     ImGuiContext& g = *GImGui;
 
-    ImFileHandle f;
-    if ((f = ImFileOpen(g.IO.IniFilename, "r")) == NULL) {
-        m_FirstLayout = true;  // need default layout
+    if (vForceDefaultLayout) {
+        m_FirstLayout = true;
+    } else {
+        ImFileHandle f;
+        if ((f = ImFileOpen(g.IO.IniFilename, "r")) == NULL) {
+            m_FirstLayout = true;  // need default layout
+        }
     }
 }
 
@@ -198,8 +209,7 @@ bool LayoutManager::BeginDockSpace(const ImGuiDockNodeFlags& vFlags) {
     ImGui::SetNextWindowViewport(viewport->ID);
 
     auto host_window_flags = 0;
-    host_window_flags |=
-        ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
+    host_window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
     host_window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
     if (vFlags & ImGuiDockNodeFlags_PassthruCentralNode)
         host_window_flags |= ImGuiWindowFlags_NoBackground;
@@ -219,9 +229,7 @@ bool LayoutManager::BeginDockSpace(const ImGuiDockNodeFlags& vFlags) {
     return res;
 }
 
-void LayoutManager::EndDockSpace() {
-    ImGui::End();
-}
+void LayoutManager::EndDockSpace() { ImGui::End(); }
 
 bool LayoutManager::IsDockSpaceHoleHovered() {
     auto central_node_ptr = ImGui::DockBuilderGetCentralNode(m_DockSpaceID);
@@ -246,40 +254,69 @@ void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize) {
     ImGui::DockBuilderAddNode(m_DockSpaceID, ImGuiDockNodeFlags_DockSpace);  // Add empty node
     ImGui::DockBuilderSetNodeSize(m_DockSpaceID, _size);
 
-    // just for readability
-    const auto& left_size = m_PaneDisposalSizes[1];
-    const auto& right_size = m_PaneDisposalSizes[2];
-    const auto& bottom_size = m_PaneDisposalSizes[3];
-    const auto& top_size = m_PaneDisposalSizes[4];
+    float leftColumnRatio = 0.3f;
+    if (m_PanesDisposalRatios.find("LEFT") != m_PanesDisposalRatios.end()) {
+        leftColumnRatio = m_PanesDisposalRatios.at("LEFT");
+    }
+    float rightColumnRatio = 0.3f;
+    if (m_PanesDisposalRatios.find("RIGHT") != m_PanesDisposalRatios.end()) {
+        rightColumnRatio = m_PanesDisposalRatios.at("RIGHT");
+    }
+    float bottomColumnRatio = 0.3f;
+    if (m_PanesDisposalRatios.find("BOTTOM") != m_PanesDisposalRatios.end()) {
+        bottomColumnRatio = m_PanesDisposalRatios.at("BOTTOM");
+    }
+    float topColumnRatio = 0.3f;
+    if (m_PanesDisposalRatios.find("TOP") != m_PanesDisposalRatios.end()) {
+        topColumnRatio = m_PanesDisposalRatios.at("TOP");
+    }
 
-    auto dockMainID =
-        m_DockSpaceID;  // This variable will track the document node, however we are not using it here as we aren't docking anything into it.
-    const auto dockLeftID = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Left, left_size / _size.x, nullptr, &dockMainID);
-    const auto dockRightID = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Right, right_size / (_size.x - left_size), nullptr, &dockMainID);
-    const auto dockBottomID = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Down, bottom_size / _size.y, nullptr, &dockMainID);
-    const auto dockTopID = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Up, top_size / (_size.y - bottom_size), nullptr, &dockMainID);
+    std::unordered_map<PaneDisposal, ImGuiID> guiids;
+    
+    // This variable will track the document node, however we are not using it here as we aren't docking anything into it.
+    auto dockMainID = m_DockSpaceID;
+
+    // a first split is needed
+    guiids["LEFT"] = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Left, leftColumnRatio, nullptr, &dockMainID);
+    guiids["RIGHT"] = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Right, rightColumnRatio, nullptr, &dockMainID);
+    guiids["TOP"] = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Up, topColumnRatio, nullptr, &dockMainID);
+    guiids["BOTTOM"] = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Down, bottomColumnRatio, nullptr, &dockMainID);
 
     for (const auto& pane : m_PanesByName) {
         auto panePtr = pane.second.lock();
         if (panePtr) {
-            switch (panePtr->paneDisposal) {
-                case PaneDisposal::CENTRAL: 
-                    ImGui::DockBuilderDockWindow(pane.first.c_str(), dockMainID);
-                    break;
-                case PaneDisposal::LEFT: 
-                    ImGui::DockBuilderDockWindow(pane.first.c_str(), dockLeftID);
-                    break;
-                case PaneDisposal::RIGHT: 
-                    ImGui::DockBuilderDockWindow(pane.first.c_str(), dockRightID);
-                    break;
-                case PaneDisposal::BOTTOM: 
-                    ImGui::DockBuilderDockWindow(pane.first.c_str(), dockBottomID);
-                    break;
-                case PaneDisposal::TOP: 
-                    ImGui::DockBuilderDockWindow(pane.first.c_str(), dockTopID);
-                    break;
-                case PaneDisposal::Count: break;
-            };
+            auto arr = ParsePaneDisposal(panePtr->paneDisposal);
+            if (!arr.empty()) {
+                ImGuiDir dir = ImGuiDir_None;
+                size_t idx = 0U;
+                std::string path = arr[0];
+                for (const auto& a : arr) {
+                    if (a == "CENTRAL") {
+                        ImGui::DockBuilderDockWindow(pane.first.c_str(), dockMainID);
+                        break;
+                    } else {
+                        if (a != "LEFT" && a != "RIGHT" && a != "TOP" && a != "BOTTOM") {
+                            std::string msg = "bad split name \"" + a + "\" for pane \"" + pane.first + "\". must be CENTRAL, LEFT, RIGHT, TOP or BOTTOM";
+                            throw std::exception(msg.c_str());
+                        }
+                        if (idx++ > 0) {
+                            if (a == "LEFT") {
+                                dir = ImGuiDir_Left;  // 0
+                            } else if (a == "RIGHT") {
+                                dir = ImGuiDir_Right;  // 1
+                            } else if (a == "TOP") {
+                                dir = ImGuiDir_Up;  // 2
+                            } else if (a == "BOTTOM") {
+                                dir = ImGuiDir_Down;  // 3
+                            }
+                            auto guiid_to_split = guiids[path];
+                            path += "/" + a;
+                            guiids[path] = ImGui::DockBuilderSplitNode(guiid_to_split, dir, panePtr->paneDisposalRatio, nullptr, &guiid_to_split);
+                        }
+                        ImGui::DockBuilderDockWindow(pane.first.c_str(), guiids[path]);
+                    }
+                }
+            }
         }
     }
 
@@ -395,13 +432,9 @@ bool LayoutManager::DrawOverlays(const uint32_t& vCurrentFrame, const ImRect& vR
     return change;
 }
 
-void LayoutManager::ShowSpecificPane(const PaneFlags& vPane) {
-    pane_Shown = (PaneFlags)((int32_t)pane_Shown | (int32_t)vPane);
-}
+void LayoutManager::ShowSpecificPane(const PaneFlags& vPane) { pane_Shown = (PaneFlags)((int32_t)pane_Shown | (int32_t)vPane); }
 
-void LayoutManager::HideSpecificPane(const PaneFlags& vPane) {
-    pane_Shown = (PaneFlags)((int32_t)pane_Shown & ~(int32_t)vPane);
-}
+void LayoutManager::HideSpecificPane(const PaneFlags& vPane) { pane_Shown = (PaneFlags)((int32_t)pane_Shown & ~(int32_t)vPane); }
 
 void LayoutManager::FocusSpecificPane(const PaneFlags& vPane) {
     ShowSpecificPane(vPane);
@@ -482,6 +515,29 @@ void LayoutManager::Internal_SetFocusedPanes(const PaneFlags& vActivePanes) {
     }
 }
 
+static inline std::vector<std::string> s_splitStringToVector(const std::string& text, const std::string& delimiters, bool pushEmpty) {
+    std::vector<std::string> arr;
+    if (!text.empty()) {
+        std::string::size_type start = 0;
+        std::string::size_type end = text.find_first_of(delimiters, start);
+        while (end != std::string::npos) {
+            std::string token = text.substr(start, end - start);
+            if (!token.empty() || (token.empty() && pushEmpty)) {
+                arr.emplace_back(token);
+            }
+            start = end + 1;
+            end = text.find_first_of(delimiters, start);
+        }
+        std::string token = text.substr(start);
+        if (!token.empty() || (token.empty() && pushEmpty)) {
+            arr.emplace_back(token);
+        }
+    }
+    return arr;
+}
+
+std::vector<std::string> LayoutManager::ParsePaneDisposal(const PaneDisposal& vPaneDisposal) { return s_splitStringToVector(vPaneDisposal, "/", false); }
+
 ///////////////////////////////////////////////////////
 //// CONFIGURATION PUBLIC /////////////////////////////
 ///////////////////////////////////////////////////////
@@ -494,8 +550,7 @@ std::string LayoutManager::getXml(const std::string& vOffset, const std::string&
     if (vUserDatas == "app") {
         str += vOffset + "<layout>\n";
         m_Pane_Focused = Internal_GetFocusedPanes();
-        str += vOffset + "\t<panes opened=\"" + ct::ivariant((int32_t)pane_Shown).GetS() + "\" active=\"" +
-               ct::ivariant((int32_t)m_Pane_Focused).GetS() + "\"/>\n";
+        str += vOffset + "\t<panes opened=\"" + ct::ivariant((int32_t)pane_Shown).GetS() + "\" active=\"" + ct::ivariant((int32_t)m_Pane_Focused).GetS() + "\"/>\n";
         str += vOffset + "</layout>\n";
     } else if (vUserDatas == "project") {
         /*str += vOffset + "<layout>\n";

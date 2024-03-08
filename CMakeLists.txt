@@ -282,7 +282,7 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolortextedit/
 )
 
-target_include_directories(${PROJECT} PRIVATE
+target_include_directories(${PROJECT} PUBLIC
 	${IMGUIPACK_INCLUDE_DIRS}
 )
 

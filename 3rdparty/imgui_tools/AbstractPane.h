@@ -29,7 +29,13 @@ limitations under the License.
 #include <imgui_internal.h>
 
 typedef int PaneFlags;
-enum class PaneDisposal { CENTRAL = 0, LEFT, RIGHT, BOTTOM, TOP, Count };
+typedef std::string PaneDisposal;
+// can be :
+// CENTRAL
+// LEFT
+// RIGHT
+// TOP
+// BOTTOM
 
 typedef std::string PaneCategoryName;
 
@@ -42,7 +48,8 @@ class IMGUI_API AbstractPane {
 public:
     std::string paneName;
     PaneFlags paneFlag = 0;
-    PaneDisposal paneDisposal = PaneDisposal::CENTRAL;
+    PaneDisposal paneDisposal = "CENTRAL";
+    float paneDisposalRatio = 0.5f;
     bool openedDefault = false;
     bool focusedDefault = false;
     bool showPaneAtFirstCall = false;

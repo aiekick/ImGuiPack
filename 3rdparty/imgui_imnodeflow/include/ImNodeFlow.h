@@ -2,6 +2,10 @@
 #define IM_NODE_FLOW
 #pragma once
 
+#ifndef IMGUI_DEFINE_MATH_OPERATORS
+#define IMGUI_DEFINE_MATH_OPERATORS
+#endif
+
 #include <iostream>
 #include <string>
 #include <utility>
@@ -12,6 +16,7 @@
 #include <functional>
 #include <unordered_map>
 #include <imgui.h>
+#include <imgui_internal.h>
 #include "../src/imgui_bezier_math.h"
 #include "../src/context_wrapper.h"
 

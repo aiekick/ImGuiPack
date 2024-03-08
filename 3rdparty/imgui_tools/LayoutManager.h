@@ -26,6 +26,7 @@ limitations under the License.
 #include <3rdparty/imgui_docking/imgui.h>
 #include <array>
 #include <string>
+#include <unordered_map>
 #include <map>
 
 class ProjectFile;
@@ -40,20 +41,18 @@ private:
     bool m_FirstStart = true;
     std::string m_MenuLabel;
     std::string m_DefaultMenuLabel;
-    std::array<float, (size_t)PaneDisposal::Count> m_PaneDisposalSizes = {
-        0.0f,    // central size is ignored because dependant of others
-        200.0f,  // left size
-        200.0f,  // right size
-        200.0f,  // bottom size
-        200.0f   // top size
-    };
+    float m_LeftColumnRatio = 0.5f;
+    float m_RightColumnRatio = 0.5f;
+    float m_TopColumnRatio = 0.5f;
+    float m_BottomColumnRatio = 0.5f;
 
 protected:
     int32_t m_FlagCount = 0U;
     std::map<PaneFlags, AbstractPaneWeak> m_PanesByFlag;
     std::map<std::string, AbstractPaneWeak> m_PanesByName;
-    std::map<PaneDisposal, std::vector<AbstractPaneWeak>> m_PanesByDisposal;
-    std::map<PaneCategoryName, std::vector<AbstractPaneWeak>> m_PanesInDisplayOrder;
+    std::map<PaneDisposal, std::vector<AbstractPaneWeak> > m_PanesByDisposal;
+    std::map<PaneCategoryName, std::vector<AbstractPaneWeak> > m_PanesInDisplayOrder;
+    std::unordered_map<PaneDisposal, float> m_PanesDisposalRatios;
 
 public:
     PaneFlags m_Pane_Focused_Default = 0;
@@ -65,13 +64,26 @@ public:
     ImVec2 m_LastSize;
 
 public:
-    void AddPane(AbstractPaneWeak vPane, const std::string& vName, const PaneCategoryName& vCategory, const PaneDisposal& vPaneDisposal, const bool& vIsOpenedDefault, const bool& vIsFocusedDefault);
-    void AddPane(AbstractPaneWeak vPane, const std::string& vName, const PaneCategoryName& vCategory, const PaneFlags& vFlag, const PaneDisposal& vPaneDisposal, const bool& vIsOpenedDefault, const bool& vIsFocusedDefault);
-    void SetPaneDisposalSize(const PaneDisposal& vPaneDisposal, const float& vSize);
+    void AddPane(AbstractPaneWeak vPane,
+                 const std::string& vName,
+                 const PaneCategoryName& vCategory,
+                 const PaneDisposal& vPaneDisposal,
+                 const float& vPaneDisposalRatio,
+                 const bool& vIsOpenedDefault,
+                 const bool& vIsFocusedDefault);
+    void AddPane(AbstractPaneWeak vPane,
+                 const std::string& vName,
+                 const PaneCategoryName& vCategory,
+                 const PaneFlags& vFlag,
+                 const PaneDisposal& vPaneDisposal,
+                 const float& vPaneDisposalRatio,
+                 const bool& vIsOpenedDefault,
+                 const bool& vIsFocusedDefault);
     void RemovePane(const std::string& vName);
+    void SetPaneDisposalRatio(const PaneDisposal& vPaneDisposal, const float& vRatio);
 
 public:
-    void Init(const std::string& vMenuLabel, const std::string& vDefaultMenuLabel);
+    void Init(const std::string& vMenuLabel, const std::string& vDefaultMenuLabel, const bool& vForceDefaultLayout = false);
     void Unit();
 
     bool InitPanes();
@@ -88,8 +100,7 @@ public:
     virtual bool DrawWidgets(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr);
     virtual bool DrawOverlays(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr);
     virtual bool DrawPanes(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr);
-    virtual bool DrawDialogsAndPopups(
-        const uint32_t& vCurrentFrame, const ImVec2& vMaxSize, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr);
+    virtual bool DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const ImVec2& vMaxSize, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr);
 
 public:
     void ShowSpecificPane(const PaneFlags& vPane);
@@ -104,6 +115,7 @@ public:
 private:  // configuration
     PaneFlags Internal_GetFocusedPanes();
     void Internal_SetFocusedPanes(const PaneFlags& vActivePanes);
+    std::vector<std::string> ParsePaneDisposal(const PaneDisposal& vPaneDisposal);
 
 #ifdef USE_XML_CONFIG
 public:  // configuration

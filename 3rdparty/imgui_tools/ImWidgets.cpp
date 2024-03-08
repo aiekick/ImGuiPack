@@ -227,7 +227,6 @@ ImVec2 GetLocalMousePos(GLFWWindow* vWin) {
 #else
     return GetMousePos();
 #endif
-    return ImVec2(0.0f, 0.0f);
 }
 
 /////////////////////////////////////
@@ -2643,8 +2642,9 @@ bool SliderUInt64Compact(float width, const char* label, uint64_t* v, uint64_t v
 }
 
 bool SliderSizeTCompact(float width, const char* label, size_t* v, size_t v_min, size_t v_max, size_t v_step, const char* format) {
-    if (sizeof(size_t) == 8)
+    if constexpr (sizeof(size_t) == 8) {
         return SliderScalarCompact(width, label, ImGuiDataType_U64, v, &v_min, &v_max, &v_step, format);
+    }
     return SliderScalarCompact(width, label, ImGuiDataType_U32, v, &v_min, &v_max, &v_step, format);
 }
 
@@ -3366,7 +3366,7 @@ std::string ImWidgets::InputText::GetText(const std::string& vNumericType) const
         if (pos == std::string::npos) {
             return m_Text + ".0f";
         } else {
-            auto pos = m_Text.find('f');
+            pos = m_Text.find('f');
             if (pos == std::string::npos) {
                 return m_Text + "f";
             } else {
