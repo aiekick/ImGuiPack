@@ -2719,6 +2719,9 @@ bool SliderUIntDefaultCompact(float width, const char* label, uint32_t* v, uint3
 }
 
 bool SliderSizeTDefaultCompact(float width, const char* label, size_t* v, size_t v_min, size_t v_max, size_t v_default, size_t v_step, const char* format) {
+    if constexpr (sizeof(size_t) == 8) {
+        return SliderScalarDefaultCompact(width, label, ImGuiDataType_U64, v, &v_min, &v_max, &v_default, &v_step, format);
+    }
     return SliderScalarDefaultCompact(width, label, ImGuiDataType_U32, v, &v_min, &v_max, &v_default, &v_step, format);
 }
 

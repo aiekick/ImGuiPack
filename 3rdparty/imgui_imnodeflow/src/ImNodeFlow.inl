@@ -289,7 +289,7 @@ namespace ImFlow
     // IN PIN
 
     template<class T>
-    const T& InPin<T>::val()
+    T& InPin<T>::val()
     {
         if(!m_link)
             return m_emptyVal;
@@ -321,7 +321,7 @@ namespace ImFlow
     // OUT PIN
 
     template<class T>
-    const T &OutPin<T>::val() { return m_val; }
+    T &OutPin<T>::val() { return m_val; }
 
     template<class T>
     void OutPin<T>::createLink(ImFlow::Pin *other)

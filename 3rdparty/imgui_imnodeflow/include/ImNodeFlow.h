@@ -2,14 +2,6 @@
 #define IM_NODE_FLOW
 #pragma once
 
-#ifndef IM_NODE_FLOW_API
-#define IM_NODE_FLOW_API
-#endif
-
-#ifndef IMGUI_DEFINE_MATH_OPERATORS
-#define IMGUI_DEFINE_MATH_OPERATORS
-#endif
-
 #include <iostream>
 #include <string>
 #include <utility>
@@ -20,7 +12,6 @@
 #include <functional>
 #include <unordered_map>
 #include <imgui.h>
-#include <imgui_internal.h>
 #include "../src/imgui_bezier_math.h"
 #include "../src/context_wrapper.h"
 
@@ -86,7 +77,7 @@ namespace ImFlow
     /**
      * @brief Extra pin's style setting
      */
-    struct IM_NODE_FLOW_API PinStyleExtras
+    struct PinStyleExtras
     {
         /// @brief Top and bottom spacing
         ImVec2 padding = ImVec2(3.f, 1.f);
@@ -120,7 +111,7 @@ namespace ImFlow
     /**
      * @brief Defines the visual appearance of a pin
      */
-    class IM_NODE_FLOW_API PinStyle
+    class PinStyle
     {
     public:
         PinStyle(ImU32 color, int socket_shape, float socket_radius, float socket_hovered_radius, float socket_connected_radius, float socket_thickness)
@@ -163,7 +154,7 @@ namespace ImFlow
     /**
      * @brief Defines the visual appearance of a node
      */
-    class IM_NODE_FLOW_API NodeStyle
+    class NodeStyle
     {
     public:
         NodeStyle(ImU32 header_bg, ImColor header_title_color, float radius) :header_bg(header_bg), header_title_color(header_title_color), radius(radius) {}
@@ -189,13 +180,13 @@ namespace ImFlow
         float border_selected_thickness = 2.f;
     public:
         /// @brief <BR>Default cyan style
-        static std::shared_ptr<NodeStyle> cyan() { return std::make_shared<NodeStyle>(IM_COL32(71,142,173,255), ImColor(233,241,244,255), 6.5f); }
+        static std::shared_ptr<NodeStyle> cyan() { return std::make_shared<NodeStyle>(IM_COL32(71,142,173,255), ImColor(233,241,244,255), 2.5f); }
         /// @brief <BR>Default green style
-        static std::shared_ptr<NodeStyle> green() { return std::make_shared<NodeStyle>(IM_COL32(90,191,93,255), ImColor(233,241,244,255), 3.5f); }
+        static std::shared_ptr<NodeStyle> green() { return std::make_shared<NodeStyle>(IM_COL32(90,191,93,255), ImColor(233,241,244,255), 2.5f); }
         /// @brief <BR>Default red style
-        static std::shared_ptr<NodeStyle> red() { return std::make_shared<NodeStyle>(IM_COL32(191,90,90,255), ImColor(233,241,244,255), 11.f); }
+        static std::shared_ptr<NodeStyle> red() { return std::make_shared<NodeStyle>(IM_COL32(191,90,90,255), ImColor(233,241,244,255), 2.5f); }
         /// @brief <BR>Default brown style
-        static std::shared_ptr<NodeStyle> brown() { return std::make_shared<NodeStyle>(IM_COL32(191,134,90,255), ImColor(233,241,244,255), 6.5f); }
+        static std::shared_ptr<NodeStyle> brown() { return std::make_shared<NodeStyle>(IM_COL32(191,134,90,255), ImColor(233,241,244,255), 2.5f); }
     };
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -204,7 +195,7 @@ namespace ImFlow
     /**
      * @brief Link between two Pins of two different Nodes
      */
-    class IM_NODE_FLOW_API Link
+    class Link
     {
     public:
         /**
@@ -291,7 +282,7 @@ namespace ImFlow
      * @brief Main node editor
      * @details Handles the infinite grid, nodes and links. Also handles all the logic.
      */
-    class IM_NODE_FLOW_API ImNodeFlow
+    class ImNodeFlow
     {
     private:
         static int m_instances;
@@ -319,12 +310,6 @@ namespace ImFlow
          * @details Main update function. Refreshes all the logic and draws everything. Must be called every frame.
          */
         void update();
-
-        /**
-         * @brief node destroying
-         * @details will destroy nodes markes as to delete
-         */
-        void destroyNodesIfNeeded();
 
         /**
          * @brief <BR>Add a node to the grid
@@ -503,12 +488,6 @@ namespace ImFlow
          * @return [TRUE] if the mouse is not hovering a node or a link
          */
         bool on_free_space();
-
-        /**
-         * @brief mark a node to destroy
-         */
-        void needToDestroyNode(std::weak_ptr<BaseNode> vnode);
-
     private:
         std::string m_name;
         ContainedContext m_context;
@@ -516,8 +495,8 @@ namespace ImFlow
         bool m_singleUseClick = false;
 
         std::unordered_map<NodeUID, std::shared_ptr<BaseNode>> m_nodes;
+        std::vector<NodeUID> m_nodes_to_destroy;
         std::vector<std::weak_ptr<Link>> m_links;
-        std::vector<std::weak_ptr<BaseNode>> m_node_to_destroy;
 
         std::function<void(Pin* dragged)> m_droppedLinkPopUp;
         ImGuiKey m_droppedLinkPupUpComboKey = ImGuiKey_None;
@@ -540,7 +519,7 @@ namespace ImFlow
      * @brief Parent class for custom nodes
      * @details Main class from which custom nodes can be created. All interactions with the main grid are handled internally.
      */
-    class IM_NODE_FLOW_API BaseNode
+    class BaseNode
     {
     public:
         BaseNode() = default;
@@ -778,7 +757,12 @@ namespace ImFlow
         /**
          * @brief <BR>Delete itself
          */
-        void destroy() { m_destroyed = true; m_inf->getNodes().erase(m_uid); }
+        void destroy() { m_destroyed = true; }
+
+        /*
+         * @brief <BR>Get if node must be deleted
+         */
+        [[nodiscard]] bool toDestroy() const { return m_destroyed; }
 
         /**
          * @brief <BR>Get hovered status
@@ -908,7 +892,7 @@ namespace ImFlow
     /**
      * @brief Generic base class for pins
      */
-    class IM_NODE_FLOW_API Pin
+    class Pin
     {
     public:
         /**
@@ -1114,7 +1098,7 @@ namespace ImFlow
          * @brief <BR>Get value carried by the connected link
          * @return Reference to the value of the connected OutPin. Or the default value if not connected
          */
-        const T& val();
+        T& val();
     private:
         std::shared_ptr<Link> m_link;
         T m_emptyVal;
@@ -1182,7 +1166,7 @@ namespace ImFlow
          * @brief <BR>Get output value
          * @return Const reference to the internal value of the pin
          */
-        const T& val();
+        T& val();
 
         /**
          * @brief <BR>Set logic to calculate output value
