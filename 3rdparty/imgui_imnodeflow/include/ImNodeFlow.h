@@ -12,7 +12,6 @@
 #include <functional>
 #include <unordered_map>
 #include <imgui.h>
-#include "../src/imgui_bezier_math.h"
 #include "../src/context_wrapper.h"
 
 namespace ImFlow
