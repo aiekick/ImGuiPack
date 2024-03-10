@@ -948,7 +948,8 @@ namespace ImFlow
          * @brief <BR>Set the reference to a link
          * @param link Smart pointer to the link
          */
-        virtual void setLink(std::shared_ptr<Link>& link) {}
+        virtual void setLink(std::shared_ptr<Link>& /*link*/) {
+        }
 
         /**
          * @brief <BR>Delete link reference

@@ -1642,7 +1642,7 @@ bool ContrastedButton(const char* label, const char* help, ImFont* imfont, float
 
     PushID(++CustomStyle::pushId);
 
-    const bool res = ButtonEx(label, ImVec2(ImMax(vWidth, size_arg.x), size_arg.y), flags);
+    const bool res = ButtonEx(label, ImVec2(ImMax(vWidth, size_arg.x), size_arg.y), flags | ImGuiButtonFlags_PressedOnClick);
 
     PopID();
 
