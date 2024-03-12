@@ -22,6 +22,21 @@ limitations under the License.
 
 #include <imgui_internal.h>
 
+class LayoutManagerException : public std::exception {
+private:
+    char const* m_msg{};
+public:
+    LayoutManagerException() : std::exception() {}
+    explicit LayoutManagerException(char const* const vMsg) :
+          std::exception(), // std::exception(msg) is not availaiable on linux it seems... but on windos yes
+          m_msg(vMsg) {
+    }
+    ~LayoutManagerException() override = default;
+    char const* what() const noexcept override {
+        return m_msg;
+    }
+};
+
 LayoutManager::LayoutManager() = default;
 LayoutManager::~LayoutManager() = default;
 
@@ -132,7 +147,7 @@ void LayoutManager::SetPaneDisposalRatio(const PaneDisposal& vPaneDisposal, cons
     if (!vPaneDisposal.empty()) {
         if (vPaneDisposal != "LEFT" && vPaneDisposal != "RIGHT" && vPaneDisposal != "TOP" && vPaneDisposal != "BOTTOM") {
             std::string msg = "bad split name \"" + vPaneDisposal + "\". must be CENTRAL, LEFT, RIGHT, TOP or BOTTOM";
-            throw std::exception(msg.c_str());
+            throw LayoutManagerException(msg.c_str());
         }
         m_PanesDisposalRatios[vPaneDisposal] = vRatio;
     }
@@ -297,7 +312,7 @@ void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize) {
                     } else {
                         if (a != "LEFT" && a != "RIGHT" && a != "TOP" && a != "BOTTOM") {
                             std::string msg = "bad split name \"" + a + "\" for pane \"" + pane.first + "\". must be CENTRAL, LEFT, RIGHT, TOP or BOTTOM";
-                            throw std::exception(msg.c_str());
+                            throw LayoutManagerException(msg.c_str());
                         }
                         if (idx++ > 0) {
                             if (a == "LEFT") {
