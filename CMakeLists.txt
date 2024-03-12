@@ -13,7 +13,7 @@ project(
 option(USE_IMPLOT "Use ImPlot" OFF)
 option(USE_IM_TOOLS "Use ImTools" OFF)
 option(USE_IM_GUIZMO "Use ImGuizmo" OFF)
-option(USE_IMCOOL_BAR "Use ImCoolBar" OFF)
+option(USE_IM_COOL_BAR "Use ImCoolBar" OFF)
 option(USE_IMGUI_MARKDOW "Use ImGuiMarkDown" OFF)
 option(USE_IM_GRADIENT_HDR "Use ImGradientHDR" OFF)
 option(USE_IMGUI_FILE_DIALOG "Use ImGuiFileDialog" OFF)
@@ -55,9 +55,9 @@ set(FREETYPE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/freetype2/include)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/freetype2 EXCLUDE_FROM_ALL)
 
 if(USE_SHARED_LIBS)
-	set_target_properties(freetype PROPERTIES FOLDER libs/Shared)
+	set_target_properties(freetype PROPERTIES FOLDER Libs/Shared)
 else()
-	set_target_properties(freetype PROPERTIES FOLDER libs/Static)
+	set_target_properties(freetype PROPERTIES FOLDER Libs/Static)
 endif()
 
 #####################################################
@@ -123,7 +123,7 @@ endif()
 ##### IMCOOLBAR
 #####################################################
 
-if (USE_IMCOOL_BAR)
+if (USE_IM_COOL_BAR)
 	message("USE IM COOLBAR")
 	file(GLOB IMGUI_IMCOOLBAR_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.h
@@ -293,8 +293,8 @@ endif()
 if (USE_IMPLOT)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IMPLOT)
 endif()
-if (USE_IMCOOL_BAR)
-	target_compile_definitions(${PROJECT} PUBLIC USE_IMCOOL_BAR)
+if (USE_IM_COOL_BAR)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IM_COOL_BAR)
 endif()
 if (USE_IM_GRADIENT_HDR)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IM_GRADIENT_HDR)

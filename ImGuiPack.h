@@ -82,7 +82,7 @@
 #include <3rdparty/imgui_tools/ImGuiThemeHelper.h>
 #endif
 
-#ifdef USE_IMCOOL_BAR
+#ifdef USE_IM_COOL_BAR
 #include <3rdparty/imgui_imcoolbar/ImCoolbar.h>
 #endif
 
