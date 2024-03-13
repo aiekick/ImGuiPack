@@ -555,8 +555,8 @@ static bool DrawNode(ImDrawList* drawList,
 
     // test nested IO
     drawList->ChannelsSetCurrent(1); // Background
-    const size_t InputsCount = nodeTemplate.mInputCount;
-    const size_t OutputsCount = nodeTemplate.mOutputCount;
+    //const size_t InputsCount = nodeTemplate.mInputCount;
+    //const size_t OutputsCount = nodeTemplate.mOutputCount;
 
     /*
     for (int i = 0; i < 2; i++)
@@ -636,9 +636,9 @@ static bool DrawNode(ImDrawList* drawList,
                       ImDrawFlags_RoundCornersAll,
                       currentSelectedNode ? options.mBorderSelectionThickness : options.mBorderThickness);
 
-    ImVec2 imgPos = nodeRectangleMin + ImVec2(14, 25);
-    ImVec2 imgSize = nodeRectangleMax + ImVec2(-5, -5) - imgPos;
-    float imgSizeComp = std::min(imgSize.x, imgSize.y);
+   // ImVec2 imgPos = nodeRectangleMin + ImVec2(14, 25);
+    //ImVec2 imgSize = nodeRectangleMax + ImVec2(-5, -5) - imgPos;
+    //float imgSizeComp = std::min(imgSize.x, imgSize.y);
 
     drawList->AddRectFilled(nodeRectangleMin, nodeRectangleMax, node_bg_color, options.mRounding);
     /*float progress = delegate->NodeProgress(nodeIndex);
@@ -649,7 +649,7 @@ static bool DrawNode(ImDrawList* drawList,
         drawList->AddLine(progressLineA, progressLineB, 0xFF400000, 3.f);
         drawList->AddLine(progressLineA, ImLerp(progressLineA, progressLineB, progress), 0xFFFF0000, 3.f);
     }*/
-    ImVec2 imgPosMax = imgPos + ImVec2(imgSizeComp, imgSizeComp);
+    //ImVec2 imgPosMax = imgPos + ImVec2(imgSizeComp, imgSizeComp);
 
     //ImVec2 imageSize = delegate->GetEvaluationSize(nodeIndex);
     /*float imageRatio = 1.f;
@@ -830,7 +830,7 @@ void Show(Delegate& delegate, const Options& options, ViewState& viewState, bool
 
     const ImVec2 windowPos = ImGui::GetCursorScreenPos();
     const ImVec2 canvasSize = ImGui::GetContentRegionAvail();
-    const ImVec2 scrollRegionLocalPos(0, 0);
+    //const ImVec2 scrollRegionLocalPos(0, 0);
 
     ImRect regionRect(windowPos, windowPos + canvasSize);
 

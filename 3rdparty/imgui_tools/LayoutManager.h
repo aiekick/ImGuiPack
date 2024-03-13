@@ -41,10 +41,6 @@ private:
     bool m_FirstStart = true;
     std::string m_MenuLabel;
     std::string m_DefaultMenuLabel;
-    float m_LeftColumnRatio = 0.5f;
-    float m_RightColumnRatio = 0.5f;
-    float m_TopColumnRatio = 0.5f;
-    float m_BottomColumnRatio = 0.5f;
 
 protected:
     int32_t m_FlagCount = 0U;
