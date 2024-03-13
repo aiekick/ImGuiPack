@@ -152,12 +152,12 @@ std::string ImGuiThemeHelper::getXml(const std::string& vOffset, const std::stri
 		str += vOffset + "<ImGui_Styles>\n";
 		for (auto i = 0; i < ImGuiCol_COUNT; i++)
 		{
-			str += vOffset + "\t<" + GetStyleColorName(i) + " value=\"" + ct::fvec4(colors[i]).string() + "\"/>\n";
+            str += vOffset + "\t<" + GetStyleColorName(i) + " value=\"" + ct::fvec4(colors[i].x, colors[i].y, colors[i].z, colors[i].w).string() + "\"/>\n";
 		}
-		str += vOffset + "\t<WindowPadding value=\"" + ct::fvec2(m_CurrentTheme.style.WindowPadding).string() + "\"/>\n";
-		str += vOffset + "\t<FramePadding value=\"" + ct::fvec2(m_CurrentTheme.style.FramePadding).string() + "\"/>\n";
-		str += vOffset + "\t<ItemSpacing value=\"" + ct::fvec2(m_CurrentTheme.style.ItemSpacing).string() + "\"/>\n";
-		str += vOffset + "\t<ItemInnerSpacing value=\"" + ct::fvec2(m_CurrentTheme.style.ItemInnerSpacing).string() + "\"/>\n";
+        str += vOffset + "\t<WindowPadding value=\"" + ct::fvec2(m_CurrentTheme.style.WindowPadding.x, m_CurrentTheme.style.WindowPadding.y).string() + "\"/>\n";
+        str += vOffset + "\t<FramePadding value=\"" + ct::fvec2(m_CurrentTheme.style.FramePadding.x, m_CurrentTheme.style.FramePadding.y).string() + "\"/>\n";
+        str += vOffset + "\t<ItemSpacing value=\"" + ct::fvec2(m_CurrentTheme.style.ItemSpacing.x, m_CurrentTheme.style.ItemSpacing.y).string() + "\"/>\n";
+        str += vOffset + "\t<ItemInnerSpacing value=\"" + ct::fvec2(m_CurrentTheme.style.ItemInnerSpacing.x, m_CurrentTheme.style.ItemInnerSpacing.y).string() + "\"/>\n";
 		str += vOffset + "\t<IndentSpacing value=\"" + ct::toStr(m_CurrentTheme.style.IndentSpacing) + "\"/>\n";
 		str += vOffset + "\t<ScrollbarSize value=\"" + ct::toStr(m_CurrentTheme.style.ScrollbarSize) + "\"/>\n";
 		str += vOffset + "\t<GrabMinSize value=\"" + ct::toStr(m_CurrentTheme.style.GrabMinSize) + "\"/>\n";
@@ -210,8 +210,8 @@ std::string ImGuiThemeHelper::getXml(const std::string& vOffset, const std::stri
 		str += vOffset + "<FileTypes>\n";
 		for (auto& it : m_CurrentTheme.fileTypeInfos)
 		{
-			str += vOffset + "\t<filetype value=\"" + it.first + "\" color=\"" +
-				ct::fvec4(it.second.color).string() + "\"/>\n";
+            str += vOffset + "\t<filetype value=\"" + it.first + "\" color=\"" +
+                ct::fvec4(it.second.color.x, it.second.color.y, it.second.color.z, it.second.color.w).string() + "\"/>\n";
 		}
 		str += vOffset + "</FileTypes>\n";
 	}
@@ -248,7 +248,8 @@ bool ImGuiThemeHelper::setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElem
 			if (attName == "color") color = attValue;
 		}
 
-		m_CurrentTheme.fileTypeInfos[fileType] = IGFD::FileStyle(ct::toImVec4(ct::fvariant(color).GetV4()));
+		auto v4 = ct::fvariant(color).GetV4();
+        m_CurrentTheme.fileTypeInfos[fileType] = IGFD::FileStyle(ImVec4(v4.x, v4.y, v4.z, v4.w));
 		ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, fileType.c_str(), m_CurrentTheme.fileTypeInfos[fileType]);
 	}
 
@@ -323,15 +324,25 @@ bool ImGuiThemeHelper::setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElem
 				const auto id = GetImGuiColFromName(strName);
 				if (id >= 0)
 				{
-					colors[id] = ct::toImVec4(ct::fvariant(strValue).GetV4());
+                    auto v4 = ct::fvariant(strValue).GetV4();
+                    colors[id] = ImVec4(v4.x, v4.y, v4.z, v4.w);
 					return false;
 				}
-			}
+            }
 
-			if (strName == "WindowPadding") m_CurrentTheme.style.WindowPadding = ct::toImVec2(ct::fvariant(strValue).GetV2());
-			else if (strName == "FramePadding") m_CurrentTheme.style.FramePadding = ct::toImVec2(ct::fvariant(strValue).GetV2());
-			else if (strName == "ItemSpacing") m_CurrentTheme.style.ItemSpacing = ct::toImVec2(ct::fvariant(strValue).GetV2());
-			else if (strName == "ItemInnerSpacing") m_CurrentTheme.style.ItemInnerSpacing = ct::toImVec2(ct::fvariant(strValue).GetV2());
+            if (strName == "WindowPadding") {
+                auto v2 = ct::fvariant(strValue).GetV2();
+                m_CurrentTheme.style.WindowPadding = ImVec2(v2.x, v2.y);
+            } else if (strName == "FramePadding") {
+                auto v2 = ct::fvariant(strValue).GetV2();
+                m_CurrentTheme.style.FramePadding = ImVec2(v2.x, v2.y);
+            } else if (strName == "ItemSpacing") {
+                auto v2 = ct::fvariant(strValue).GetV2();
+                m_CurrentTheme.style.ItemSpacing = ImVec2(v2.x, v2.y);
+            } else if (strName == "ItemInnerSpacing") {
+                auto v2 = ct::fvariant(strValue).GetV2();
+                m_CurrentTheme.style.ItemInnerSpacing = ImVec2(v2.x, v2.y);
+            }
 			else if (strName == "IndentSpacing") m_CurrentTheme.style.IndentSpacing = ct::fvariant(strValue).GetF();
 			else if (strName == "ScrollbarSize") m_CurrentTheme.style.ScrollbarSize = ct::fvariant(strValue).GetF();
 			else if (strName == "GrabMinSize") m_CurrentTheme.style.GrabMinSize = ct::fvariant(strValue).GetF();

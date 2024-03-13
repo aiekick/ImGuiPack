@@ -20,8 +20,8 @@
 #include <ImGuiPack.h>
 
 #ifdef USE_XML_CONFIG
-#    include <ctools/ConfigAbstract.h>
-#    include <ctools/cTools.h>
+#include <ctools/ConfigAbstract.h>
+#include <ctools/cTools.h>
 #endif // USE_XML_CONFIG
 
 #include <string>
