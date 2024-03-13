@@ -1,14 +1,13 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.20)
 
 set(PROJECT ImGuiPack)
-set(PROJECT_VER 1.90.1)
 
 enable_language(C CXX)
 
 project(
 	${PROJECT} 
-	VERSION ${PROJECT_VER} 
-	LANGUAGES CXX)
+	LANGUAGES CXX
+)
 
 option(USE_IMPLOT "Use ImPlot" OFF)
 option(USE_IM_TOOLS "Use ImTools" OFF)
