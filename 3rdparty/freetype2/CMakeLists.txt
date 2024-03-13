@@ -445,11 +445,18 @@ if (BUILD_FRAMEWORK)
   list(APPEND BASE_SRCS builds/mac/freetype-Info.plist)
 endif ()
 
-
-if (NOT DISABLE_FORCE_DEBUG_POSTFIX)
-  set(CMAKE_DEBUG_POSTFIX d)
-endif ()
-
+if(NOT CMAKE_DEBUG_POSTFIX)
+  set(CMAKE_DEBUG_POSTFIX _Debug)
+endif()
+if(NOT CMAKE_RELEASE_POSTFIX)
+  set(CMAKE_RELEASE_POSTFIX _Release)
+endif()
+if(NOT CMAKE_MINSIZEREL_POSTFIX)
+  set(CMAKE_MINSIZEREL_POSTFIX _MinSizeRel)
+endif()
+if(NOT CMAKE_RELWITHDEBINFO_POSTFIX)
+  set(CMAKE_RELWITHDEBINFO_POSTFIX _RelWithDebInfo)
+endif()
 
 add_library(freetype
   ${PUBLIC_HEADERS}
