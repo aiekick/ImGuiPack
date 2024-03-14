@@ -237,7 +237,7 @@ void Messaging::AddMessage(const std::string& vMsg,
     msg_ptr->func = vFunction;
     m_Messages.push_back(msg_ptr);
 
-    if (m_LayoutManagerPtr && m_LayoutManagerPtr->pane_Shown & sMessagePaneId) {
+    if (m_LayoutManagerPtr && (m_LayoutManagerPtr->pane_Shown & sMessagePaneId)) {
         m_AddToFilteredMessages(msg_ptr);
     }
 }

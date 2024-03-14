@@ -77,7 +77,11 @@
 #ifdef USE_IM_TOOLS
 #include <3rdparty/imgui_tools/ImWidgets.h>
 #include <3rdparty/imgui_tools/Messaging.h>
-#include <3rdparty/imgui_tools/AbstractPane.h>
+#ifndef ILAYOUT_PANE_INCLUDE
+#include <3rdparty/imgui_tools/ILayoutPane.h>
+#else
+#include ILAYOUT_PANE_INCLUDE
+#endif
 #include <3rdparty/imgui_tools/LayoutManager.h>
 #include <3rdparty/imgui_tools/ImGuiThemeHelper.h>
 #endif
