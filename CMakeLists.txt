@@ -37,16 +37,16 @@ else()
 endif()
 
 if(NOT CMAKE_DEBUG_POSTFIX)
-  set(CMAKE_DEBUG_POSTFIX _Debug)
+  set(CMAKE_DEBUG_POSTFIX _debug)
 endif()
 if(NOT CMAKE_RELEASE_POSTFIX)
   set(CMAKE_RELEASE_POSTFIX)
 endif()
 if(NOT CMAKE_MINSIZEREL_POSTFIX)
-  set(CMAKE_MINSIZEREL_POSTFIX _MinSizeRel)
+  set(CMAKE_MINSIZEREL_POSTFIX _minsizerel)
 endif()
 if(NOT CMAKE_RELWITHDEBINFO_POSTFIX)
-  set(CMAKE_RELWITHDEBINFO_POSTFIX _RelWithDebInfo)
+  set(CMAKE_RELWITHDEBINFO_POSTFIX _reldeb)
 endif()
 
 #####################################################
@@ -343,6 +343,8 @@ target_link_libraries(${PROJECT}
 	${FREETYPE_LIBRARIES}
 	${CTOOLS_LIBRARIES}
 )
+
+set_target_properties(${PROJECT} PROPERTIES OUTPUT_NAME "imguipack")
 
 set(IMGUIPACK_INCLUDE_DIRS ${IMGUIPACK_INCLUDE_DIRS} PARENT_SCOPE)
 set(IMGUIPACK_LIBRARIES ${PROJECT} PARENT_SCOPE)
