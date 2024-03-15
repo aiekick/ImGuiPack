@@ -58,7 +58,7 @@ public:
     virtual void Unit() = 0;
 
     // the return, is a user side use case here
-    virtual bool DrawPanes(const uint32_t& vCurrentFrame, bool* vOpened, ImGuiContext* vContextPt, void* vUserDatas) = 0;
+    virtual bool DrawPanes(const uint32_t& vCurrentFrame, bool* vOpened, ImGuiContext* vContextPtr, void* vUserDatas) = 0;
     virtual bool DrawWidgets(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr, void* vUserDatas) override {
         return false;
     }
