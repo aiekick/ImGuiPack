@@ -67,6 +67,7 @@
 
 #ifdef USE_IMPLOT
 #include <3rdparty/imgui_implot/implot.h>
+#include <3rdparty/imgui_implot/implot_internal.h>
 #endif
 
 #ifdef USE_IM_GUIZMO
