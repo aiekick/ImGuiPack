@@ -11,12 +11,14 @@ project(
 
 option(USE_IMPLOT "Use ImPlot" OFF)
 option(USE_IM_TOOLS "Use ImTools" OFF)
+option(USE_IM_NODES "Use ImNodes" OFF)
 option(USE_IM_GUIZMO "Use ImGuizmo" OFF)
 option(USE_IM_COOL_BAR "Use ImCoolBar" OFF)
 option(USE_IMGUI_MARKDOW "Use ImGuiMarkDown" OFF)
 option(USE_IM_GRADIENT_HDR "Use ImGradientHDR" OFF)
-option(USE_IMGUI_FILE_DIALOG "Use ImGuiFileDialog" OFF)
 option(USE_IMGUI_NODE_FLOW "Use ImGuiNodeFlow" OFF)
+option(USE_IMGUI_NODE_EDITOR "ImGuiNodeEditor" OFF)
+option(USE_IMGUI_FILE_DIALOG "Use ImGuiFileDialog" OFF)
 option(USE_IMGUI_COLOR_TEXT_EDIT "Use ImGuiColorTextEdit" OFF)
 option(IMGUIPACK_USE_STD_FILESYSTEM "Enable the use of std::filesystem in ImGuiFileDialog" OFF)
 
@@ -203,6 +205,32 @@ if (USE_IMGUI_NODE_FLOW)
 endif()
 
 #####################################################
+##### IMGUINODEEDITOR
+#####################################################
+
+if (USE_IMGUI_NODE_EDITOR)
+	message("USE IMGUI NODE EDITOR")
+	file(GLOB IMGUI_IMGUINODEEDITOR_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.inl
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.cpp)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUINODEEDITOR_SOURCES})
+endif()
+
+#####################################################
+##### IMNODES
+#####################################################
+
+if (USE_IM_NODES)
+	message("USE IM NODES")
+	file(GLOB IMGUI_IMNODES_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/*.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/*.md)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMNODES_SOURCES})
+endif()
+
+#####################################################
 ##### IMGUIMARKDONW
 #####################################################
 
@@ -242,6 +270,7 @@ if (BUILD_SHARED_LIBS)
 	add_library(${PROJECT} 
 		${IMGUI_SOURCES} 
 		${IMGUI_IMPLOT_SOURCES}
+		${IMGUI_IMNODES_SOURCES}
 		${IMGUI_IMTOOLS_SOURCES}
 		${IMGUI_IMGUIZMO_SOURCES}
 		${IMGUI_IMCOOLBAR_SOURCES}
@@ -250,6 +279,7 @@ if (BUILD_SHARED_LIBS)
 		${IMGUI_IMGRADIENTHDR_SOURCES}
 		${IMGUI_IMGUINODEFLOW_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
+		${IMGUI_IMGUINODEEDITOR_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
 	)
 	target_compile_definitions(${PROJECT} INTERFACE BUILD_IMGUI_PACK_SHARED_LIBS)
@@ -259,6 +289,7 @@ else()
 	add_library(${PROJECT} STATIC 
 		${IMGUI_SOURCES} 
 		${IMGUI_IMPLOT_SOURCES}
+		${IMGUI_IMNODES_SOURCES}
 		${IMGUI_IMTOOLS_SOURCES}
 		${IMGUI_IMGUIZMO_SOURCES}
 		${IMGUI_IMCOOLBAR_SOURCES}
@@ -267,6 +298,7 @@ else()
 		${IMGUI_IMGRADIENTHDR_SOURCES}
 		${IMGUI_IMGUINODEFLOW_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
+		${IMGUI_IMGUINODEEDITOR_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
 	)
 endif()
@@ -278,16 +310,18 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${BOOST_REGEX_INCLUDE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/include/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolortextedit/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/include/
 )
 
 message("IMGUIPACK CTOOLS_INCLUDE_DIR : ${CTOOLS_INCLUDE_DIR}")
@@ -321,8 +355,14 @@ endif()
 if (USE_IM_TOOLS)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IM_TOOLS)
 endif()
+if (USE_IM_NODES)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IM_NODES)
+endif()
 if (USE_IMGUI_NODE_FLOW)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_NODE_FLOW)
+endif()
+if (USE_IMGUI_NODE_EDITOR)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_NODE_EDITOR)
 endif()
 if (USE_IMGUI_MARKDOW)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_MARKDOW)

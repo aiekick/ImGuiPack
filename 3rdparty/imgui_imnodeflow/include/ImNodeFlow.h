@@ -76,7 +76,7 @@ namespace ImFlow
     /**
      * @brief Extra pin's style setting
      */
-    struct PinStyleExtras
+    struct IM_NODE_FLOW_API PinStyleExtras
     {
         /// @brief Top and bottom spacing
         ImVec2 padding = ImVec2(3.f, 1.f);
@@ -110,7 +110,7 @@ namespace ImFlow
     /**
      * @brief Defines the visual appearance of a pin
      */
-    class PinStyle
+    class IM_NODE_FLOW_API PinStyle
     {
     public:
         PinStyle(ImU32 color, int socket_shape, float socket_radius, float socket_hovered_radius, float socket_connected_radius, float socket_thickness)
@@ -153,7 +153,7 @@ namespace ImFlow
     /**
      * @brief Defines the visual appearance of a node
      */
-    class NodeStyle
+    class IM_NODE_FLOW_API NodeStyle
     {
     public:
         NodeStyle(ImU32 header_bg, ImColor header_title_color, float radius) :header_bg(header_bg), header_title_color(header_title_color), radius(radius) {}
@@ -255,7 +255,7 @@ namespace ImFlow
     /**
      * @brief Grid's the color parameters
      */
-    struct InfColors
+    struct IM_NODE_FLOW_API InfColors
     {
         /// @brief Background of the grid
         ImU32 background = IM_COL32(33,41,45,255);
@@ -268,7 +268,7 @@ namespace ImFlow
     /**
      * @brief ALl the grid's appearance parameters. Sizes + Colors
      */
-    struct InfStyler
+    struct IM_NODE_FLOW_API InfStyler
     {
         /// @brief Size of main grid
         float grid_size = 50.f;
@@ -282,7 +282,7 @@ namespace ImFlow
      * @brief Main node editor
      * @details Handles the infinite grid, nodes and links. Also handles all the logic.
      */
-    class ImNodeFlow
+    class IM_NODE_FLOW_API ImNodeFlow
     {
     private:
         static int m_instances;
