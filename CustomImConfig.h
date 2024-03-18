@@ -31,18 +31,21 @@
 #define IMPLOT_API __declspec(dllexport)
 #define IMGUI_IMPL_API __declspec(dllexport)
 #define IM_NODE_FLOW_API __declspec(dllexport)
+#define IMGUI_NODE_EDITOR_API __declspec(dllexport)
 #elif defined(BUILD_IMGUI_PACK_SHARED_LIBS)
 #define IGFD_API __declspec(dllimport)
 #define IMGUI_API __declspec(dllimport)
 #define IMPLOT_API __declspec(dllimport)
 #define IMGUI_IMPL_API __declspec(dllimport)
 #define IM_NODE_FLOW_API __declspec(dllimport)
+#define IMGUI_NODE_EDITOR_API __declspec(dllimport)
 #else
 #define IGFD_API
 #define IMGUI_API
 #define IMPLOT_API
 #define IMGUI_IMPL_API
 #define IM_NODE_FLOW_API
+#define IMGUI_NODE_EDITOR_API
 #endif
 #else
 #define IGFD_API
@@ -50,6 +53,7 @@
 #define IMPLOT_API
 #define IMGUI_IMPL_API
 #define IM_NODE_FLOW_API
+#define IMGUI_NODE_EDITOR_API
 #endif
 
 //---- Don't define obsolete functions/enums/behaviors. Consider enabling from time to time after updating to avoid using soon-to-be obsolete function/names.

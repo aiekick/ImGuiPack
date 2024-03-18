@@ -19,7 +19,7 @@ void TextEditor::ImGuiDebugPanel(const std::string& panelName)
 	{
 		for (int i = 0; i < mLines.size(); i++)
 		{
-			ImGui::Text("%d", mLines[i].size());
+			ImGui::Text("%u", (uint32_t)mLines[i].size());
 		}
 	}
 	if (ImGui::CollapsingHeader("Undo"))

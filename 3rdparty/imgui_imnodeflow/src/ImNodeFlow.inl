@@ -338,7 +338,7 @@ namespace ImFlow
         }
 
         ImGui::SetCursorPos(m_pos);
-        ImGui::Text(m_name.c_str());
+        ImGui::Text("%s", m_name.c_str());
         m_size = ImGui::GetItemRectSize();
 
         drawDecoration();

@@ -76,7 +76,7 @@ namespace ImFlow
     /**
      * @brief Extra pin's style setting
      */
-    struct PinStyleExtras
+    struct IM_NODE_FLOW_API PinStyleExtras
     {
         /// @brief Top and bottom spacing
         ImVec2 padding = ImVec2(3.f, 1.f);
@@ -110,7 +110,7 @@ namespace ImFlow
     /**
      * @brief Defines the visual appearance of a pin
      */
-    class PinStyle
+    class IM_NODE_FLOW_API PinStyle
     {
     public:
         PinStyle(ImU32 color, int socket_shape, float socket_radius, float socket_hovered_radius, float socket_connected_radius, float socket_thickness)
@@ -153,7 +153,7 @@ namespace ImFlow
     /**
      * @brief Defines the visual appearance of a node
      */
-    class NodeStyle
+    class IM_NODE_FLOW_API NodeStyle
     {
     public:
         NodeStyle(ImU32 header_bg, ImColor header_title_color, float radius) :header_bg(header_bg), header_title_color(header_title_color), radius(radius) {}
@@ -203,7 +203,8 @@ namespace ImFlow
          * @param right Pointer to the input Pin of the Link
          * @param inf Pointer to the Handler that contains the Link
          */
-        explicit Link(Pin* left, Pin* right, ImNodeFlow* inf) :m_left(left), m_right(right), m_inf(inf) {}
+        explicit Link(Pin* left, Pin* right, ImNodeFlow* inf) : m_left(left), m_right(right), m_inf(inf) {
+        }
 
         /**
          * @brief <BR>Destruction of a link
@@ -241,9 +242,9 @@ namespace ImFlow
          */
         [[nodiscard]] bool isSelected() const { return m_selected; }
     private:
-        ImNodeFlow* m_inf;
         Pin* m_left;
         Pin* m_right;
+        ImNodeFlow* m_inf;
         bool m_hovered = false;
         bool m_selected = false;
     };
@@ -254,7 +255,7 @@ namespace ImFlow
     /**
      * @brief Grid's the color parameters
      */
-    struct InfColors
+    struct IM_NODE_FLOW_API InfColors
     {
         /// @brief Background of the grid
         ImU32 background = IM_COL32(33,41,45,255);
@@ -267,7 +268,7 @@ namespace ImFlow
     /**
      * @brief ALl the grid's appearance parameters. Sizes + Colors
      */
-    struct InfStyler
+    struct IM_NODE_FLOW_API InfStyler
     {
         /// @brief Size of main grid
         float grid_size = 50.f;
@@ -281,7 +282,7 @@ namespace ImFlow
      * @brief Main node editor
      * @details Handles the infinite grid, nodes and links. Also handles all the logic.
      */
-    class ImNodeFlow
+    class IM_NODE_FLOW_API ImNodeFlow
     {
     private:
         static int m_instances;
@@ -903,8 +904,8 @@ namespace ImFlow
          * @param inf Pointer to the Grid Handler the pin is in (same as parent)
          * @param style Style of the pin
          */
-        explicit Pin(PinUID uid, std::string name, ConnectionFilter filter, PinType kind, BaseNode* parent, ImNodeFlow** inf, std::shared_ptr<PinStyle> style)
-            :m_uid(uid), m_name(std::move(name)), m_filter(filter), m_type(kind), m_parent(parent), m_inf(inf), m_style(std::move(style))
+        explicit Pin(PinUID uid, std::string name, ConnectionFilter filter, PinType type, BaseNode* parent, ImNodeFlow** inf, std::shared_ptr<PinStyle> style)
+            : m_uid(uid), m_name(std::move(name)), m_filter(filter), m_type(type), m_parent(parent), m_inf(inf), m_style(std::move(style))
             {
                 if(!m_style)
                     m_style = PinStyle::cyan();
@@ -1035,13 +1036,13 @@ namespace ImFlow
     protected:
         PinUID m_uid;
         std::string m_name;
-        ImVec2 m_pos = ImVec2(0.f, 0.f);
-        ImVec2 m_size = ImVec2(0.f, 0.f);
-        PinType m_type;
         ConnectionFilter m_filter;
-        std::shared_ptr<PinStyle> m_style;
+        PinType m_type;
         BaseNode* m_parent = nullptr;
         ImNodeFlow** m_inf;
+        std::shared_ptr<PinStyle> m_style;
+        ImVec2 m_pos = ImVec2(0.f, 0.f);
+        ImVec2 m_size = ImVec2(0.f, 0.f);
         std::function<void(Pin* p)> m_renderer;
     };
 

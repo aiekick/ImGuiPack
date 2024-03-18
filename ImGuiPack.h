@@ -41,18 +41,21 @@
 #define IMPLOT_API __declspec(dllexport)
 #define IMGUI_IMPL_API __declspec(dllexport)
 #define IM_NODE_FLOW_API __declspec(dllexport)
+#define IMGUI_NODE_EDITOR_API __declspec(dllexport)
 #elif defined(BUILD_IMGUI_PACK_SHARED_LIBS)
 #define IGFD_API __declspec(dllimport)
 #define IMGUI_API __declspec(dllimport)
 #define IMPLOT_API __declspec(dllimport)
 #define IMGUI_IMPL_API __declspec(dllimport)
 #define IM_NODE_FLOW_API __declspec(dllimport)
+#define IMGUI_NODE_EDITOR_API __declspec(dllimport)
 #else
 #define IGFD_API
 #define IMGUI_API
 #define IMPLOT_API
 #define IMGUI_IMPL_API
 #define IM_NODE_FLOW_API
+#define IMGUI_NODE_EDITOR_API
 #endif
 #else
 #define IGFD_API
@@ -60,6 +63,7 @@
 #define IMPLOT_API
 #define IMGUI_IMPL_API
 #define IM_NODE_FLOW_API
+#define IMGUI_NODE_EDITOR_API
 #endif
 
 #include <3rdparty/imgui_docking/imgui.h>
@@ -67,6 +71,7 @@
 
 #ifdef USE_IMPLOT
 #include <3rdparty/imgui_implot/implot.h>
+#include <3rdparty/imgui_implot/implot_internal.h>
 #endif
 
 #ifdef USE_IM_GUIZMO
@@ -77,7 +82,11 @@
 #ifdef USE_IM_TOOLS
 #include <3rdparty/imgui_tools/ImWidgets.h>
 #include <3rdparty/imgui_tools/Messaging.h>
-#include <3rdparty/imgui_tools/AbstractPane.h>
+#ifndef ILAYOUT_PANE_INCLUDE
+#include <3rdparty/imgui_tools/ILayoutPane.h>
+#else
+#include ILAYOUT_PANE_INCLUDE
+#endif
 #include <3rdparty/imgui_tools/LayoutManager.h>
 #include <3rdparty/imgui_tools/ImGuiThemeHelper.h>
 #endif
@@ -92,6 +101,15 @@
 
 #ifdef USE_IMGUI_NODE_FLOW
 #include <3rdparty/imgui_imnodeflow/include/ImNodeFlow.h>
+#endif
+
+#ifdef USE_IMGUI_NODE_EDITOR
+#include <3rdparty/imgui_node_editor/imgui_node_editor.h>
+#endif
+
+#ifdef USE_IM_NODES
+#include <3rdparty/imgui_imnodes/imnodes.h>
+#include <3rdparty/imgui_imnodes/imnodes_internal.h>
 #endif
 
 #ifdef USE_IMGUI_COLOR_TEXT_EDIT

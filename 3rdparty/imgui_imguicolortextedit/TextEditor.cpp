@@ -7,7 +7,11 @@
 
 #define IMGUI_SCROLLBAR_WIDTH 14.0f
 #define POS_TO_COORDS_COLUMN_OFFSET 0.33f
+
+#ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
+#endif // IMGUI_DEFINE_MATH_OPERATORS
+
 #include "imgui.h" // for imGui::GetCurrentWindow()
 
 // --------------------------------------- //
@@ -450,11 +454,11 @@ static inline int ImTextCharToUtf8(char* buf, int buf_size, unsigned int c)
 static inline bool CharIsWordChar(char ch)
 {
 	int sizeInBytes = UTF8CharLength(ch);
-	return sizeInBytes > 1 ||
-		ch >= 'a' && ch <= 'z' ||
-		ch >= 'A' && ch <= 'Z' ||
-		ch >= '0' && ch <= '9' ||
-		ch == '_';
+	return (sizeInBytes > 1) ||
+		((ch >= 'a') && (ch <= 'z')) ||
+		((ch >= 'A') && (ch <= 'Z')) ||
+		((ch >= '0') && (ch <= '9')) ||
+		(ch == '_');
 }
 
 // ------------------------------------ //
@@ -627,7 +631,7 @@ int TextEditor::InsertTextAt(Coordinates& /* inout */ aWhere, const char* aValue
 		{
 			if (cindex < (int)mLines[aWhere.mLine].size())
 			{
-				auto& newLine = InsertLine(aWhere.mLine + 1);
+				//auto& newLine = InsertLine(aWhere.mLine + 1);
 				auto& line = mLines[aWhere.mLine];
 				AddGlyphsToLine(aWhere.mLine + 1, 0, line.begin() + cindex, line.end());
 				RemoveGlyphsFromLine(aWhere.mLine, cindex);
@@ -644,7 +648,7 @@ int TextEditor::InsertTextAt(Coordinates& /* inout */ aWhere, const char* aValue
 		}
 		else
 		{
-			auto& line = mLines[aWhere.mLine];
+			//auto& line = mLines[aWhere.mLine];
 			auto d = UTF8CharLength(*aValue);
 			while (d-- > 0 && *aValue != '\0')
 				AddGlyphToLine(aWhere.mLine, cindex++, Glyph(*aValue++, PaletteIndex::Default));
@@ -1132,7 +1136,7 @@ void TextEditor::AddCursorForNextOccurrence(bool aCaseSensitive)
 bool TextEditor::FindNextOccurrence(const char* aText, int aTextSize, const Coordinates& aFrom, Coordinates& outStart, Coordinates& outEnd, bool aCaseSensitive)
 {
 	assert(aTextSize > 0);
-	bool fmatches = false;
+	//bool fmatches = false;
 	int fline, ifline;
 	int findex, ifindex;
 
@@ -1621,9 +1625,9 @@ TextEditor::Coordinates TextEditor::FindWordStart(const Coordinates& aFrom) cons
 	{
 		bool isWordChar = CharIsWordChar(line[charIndex].mChar);
 		bool isSpace = isspace(line[charIndex].mChar);
-		if (initialIsSpace && !isSpace ||
-			initialIsWordChar && !isWordChar ||
-			!initialIsWordChar && !initialIsSpace && initialChar != line[charIndex].mChar)
+		if ((initialIsSpace && !isSpace) ||
+			(initialIsWordChar && !isWordChar) ||
+			(!initialIsWordChar && !initialIsSpace && initialChar != line[charIndex].mChar))
 		{
 			Move(lineIndex, charIndex, false, true); // one step to the right
 			break;
@@ -1653,9 +1657,9 @@ TextEditor::Coordinates TextEditor::FindWordEnd(const Coordinates& aFrom) const
 			break;
 		bool isWordChar = CharIsWordChar(line[charIndex].mChar);
 		bool isSpace = isspace(line[charIndex].mChar);
-		if (initialIsSpace && !isSpace ||
-			initialIsWordChar && !isWordChar ||
-			!initialIsWordChar && !initialIsSpace && initialChar != line[charIndex].mChar)
+		if ((initialIsSpace && !isSpace) ||
+			(initialIsWordChar && !isWordChar) ||
+			(!initialIsWordChar && !initialIsSpace && initialChar != line[charIndex].mChar))
 			break;
 	}
 	return { lineIndex, GetCharacterColumn(aFrom.mLine, charIndex) };

@@ -110,7 +110,7 @@
 
 # To minimize the number of cmake_policy() workarounds,
 # CMake >= 3 is requested.
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.20)
 
 if (NOT CMAKE_VERSION VERSION_LESS 3.3)
   # Allow symbol visibility settings also on static libraries. CMake < 3.3
@@ -445,11 +445,18 @@ if (BUILD_FRAMEWORK)
   list(APPEND BASE_SRCS builds/mac/freetype-Info.plist)
 endif ()
 
-
-if (NOT DISABLE_FORCE_DEBUG_POSTFIX)
-  set(CMAKE_DEBUG_POSTFIX d)
-endif ()
-
+if(NOT CMAKE_DEBUG_POSTFIX)
+  set(CMAKE_DEBUG_POSTFIX _debug)
+endif()
+if(NOT CMAKE_RELEASE_POSTFIX)
+  set(CMAKE_RELEASE_POSTFIX)
+endif()
+if(NOT CMAKE_MINSIZEREL_POSTFIX)
+  set(CMAKE_MINSIZEREL_POSTFIX _minsizerel)
+endif()
+if(NOT CMAKE_RELWITHDEBINFO_POSTFIX)
+  set(CMAKE_RELWITHDEBINFO_POSTFIX _reldeb)
+endif()
 
 add_library(freetype
   ${PUBLIC_HEADERS}
