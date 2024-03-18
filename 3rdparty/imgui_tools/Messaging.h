@@ -81,7 +81,7 @@ public:
 
 class IMGUI_API Messaging {
 public:
-    static int sMessagePaneId;
+    static int64_t sMessagePaneId;
     enum class SortingFieldEnum { FIELD_NONE = 0, FIELD_ID, FIELD_TYPE, FIELD_MSG };
 
 private:
