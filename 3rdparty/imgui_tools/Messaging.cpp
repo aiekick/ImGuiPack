@@ -33,7 +33,7 @@
 ///// STATIC //////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-int Messaging::sMessagePaneId = 0;
+int64_t Messaging::sMessagePaneId = 0;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///// CONSTRUCTORS ////////////////////////////////////////////////////////////////////////
@@ -316,7 +316,7 @@ bool Messaging::m_DrawMessage(const size_t& vMsgIdx) {
     return res;
 }
 
-bool Messaging::m_DrawMessage(const MessageBlockWeak& vMsg, const size_t& vMsgIdx) {
+bool Messaging::m_DrawMessage(const MessageBlockWeak& vMsg, const size_t& /*vMsgIdx*/) {
     auto ptr = vMsg.lock();
     if (ptr != nullptr) {
         auto ci_ptr = m_GetCategoryInfos(ptr->type);

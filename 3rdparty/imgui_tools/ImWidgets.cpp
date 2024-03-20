@@ -209,9 +209,9 @@ ImVec4 GetGoodOrBadColorForUse(bool vUsed) {
 // no issue withotu viewport
 ImVec2 GetLocalMousePos(GLFWWindow* vWin) {
 #if defined(IMGUI_HAS_VIEWPORT) && defined(GLFW3)
-    if (vWin) {
+    if (vWin != nullptr) {
         double mouse_x, mouse_y;
-        glfwGetCursorPos(vWin, &mouse_x, &mouse_y);
+        glfwGetCursorPos((GLFWwindow*)vWin, &mouse_x, &mouse_y);
         return ImVec2((float)mouse_x, (float)mouse_y);
     } else {
         ImGuiContext& g = *GImGui;
@@ -224,7 +224,9 @@ ImVec2 GetLocalMousePos(GLFWWindow* vWin) {
             return ImVec2((float)mouse_x, (float)mouse_y);
         }
     }
+    return GetMousePos();
 #else
+    (void)vWin;
     return GetMousePos();
 #endif
 }
@@ -411,7 +413,7 @@ bool ImageCheckButton(ImTextureID user_texture_id, bool* v, const ImVec2& size, 
     return pressed;
 }
 
-bool BeginFramedGroup(const char* vLabel, ImVec2 vSize, ImVec4 /*vCol*/, ImVec4 /*vHoveredCol*/) {
+bool BeginFramedGroup(const char* vLabel, ImVec2 /*vSize*/, ImVec4 /*vCol*/, ImVec4 /*vHoveredCol*/) {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;
@@ -1018,7 +1020,7 @@ bool CollapsingHeader_CheckBox(const char* vName, float vWidth, bool vDefaulExpa
     return is_open;
 }
 
-bool CollapsingHeader_Button(const char* vName, float vWidth, bool vDefaulExpanded, const char* vLabelButton, bool vShowButton, bool* vButtonPressed, ImFont* vButtonFont) {
+bool CollapsingHeader_Button(const char* vName, float vWidth, bool vDefaulExpanded, const char* /*vLabelButton*/, bool vShowButton, bool* vButtonPressed, ImFont* /*vButtonFont*/) {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;
@@ -2737,7 +2739,10 @@ bool SliderScalar(float width, const char* label, ImGuiDataType data_type, void*
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
-    const float w = CalcItemWidth();
+    float w = width;
+    if (w <= 0.0f) {
+        w = CalcItemWidth();
+    }
 
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
     const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));

@@ -54,23 +54,23 @@ typedef std::string PaneCategoryName;
 
 class AbstractPane : public ILayoutPane {
 public:
-    virtual bool Init() = 0;  // return false if the init was failed
-    virtual void Unit() = 0;
+    bool Init() override = 0;  // return false if the init was failed
+    void Unit() override = 0;
 
     // the return, is a user side use case here
-    virtual bool DrawPanes(const uint32_t& vCurrentFrame, bool* vOpened, ImGuiContext* vContextPtr, void* vUserDatas) = 0;
-    virtual bool DrawWidgets(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr, void* vUserDatas) override {
+    bool DrawPanes(const uint32_t& vCurrentFrame, bool* vOpened, ImGuiContext* vContextPtr, void* vUserDatas) override = 0;
+    bool DrawWidgets(const uint32_t& /*vCurrentFrame*/, ImGuiContext* /*vContextPtr*/, void* /*vUserDatas*/) override {
         return false;
     }
-    virtual bool DrawOverlays(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr, void* vUserDatas) override {
+    bool DrawOverlays(const uint32_t& /*vCurrentFrame*/, const ImRect& /*vRect*/, ImGuiContext* /*vContextPtr*/, void* /*vUserDatas*/) override {
         return false;
     }
-    virtual bool DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const ImVec2& vMaxSize, ImGuiContext* vContextPtr, void* vUserDatas) override {
+    bool DrawDialogsAndPopups(const uint32_t& /*vCurrentFrame*/, const ImVec2& /*vMaxSize*/, ImGuiContext* /*vContextPtr*/, void* /*vUserDatas*/) override {
         return false;
     }
 
     // if for any reason the pane must be hidden temporary, the user can control this here
-    virtual bool CanBeDisplayed() {
+    bool CanBeDisplayed() override {
         return true;
     }
 };
