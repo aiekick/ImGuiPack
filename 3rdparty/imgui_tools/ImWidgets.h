@@ -399,6 +399,7 @@ IMGUI_API bool SliderScalarDefaultCompact(float width, const char* label, ImGuiD
 IMGUI_API bool SliderIntDefaultCompact(float width, const char* label, int* v, int v_min, int v_max, int v_default, int v_step = 0, const char* format = "%d");
 IMGUI_API bool SliderUIntDefaultCompact(float width, const char* label, uint32_t* v, uint32_t v_min, uint32_t v_max, uint32_t v_default, uint32_t v_step = 0, const char* format = "%d");
 IMGUI_API bool SliderSizeTDefaultCompact(float width, const char* label, size_t* v, size_t v_min, size_t v_max, size_t v_default, size_t v_step = 0, const char* format = "%d");
+IMGUI_API bool SliderI64DefaultCompact(float width, const char* label, int64_t* v, int64_t v_min, int64_t v_max, int64_t v_default, int64_t v_step = 0, const char* format = "%d");
 IMGUI_API bool SliderFloatDefaultCompact(float width, const char* label, float* v, float v_min, float v_max, float v_default, float v_step = 0.0f, const char* format = "%.3f");
 
 IMGUI_API bool SliderScalar(float width, const char* label, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const void* p_step = nullptr, const char* format = nullptr, ImGuiSliderFlags flags = 0);

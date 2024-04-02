@@ -2727,6 +2727,10 @@ bool SliderSizeTDefaultCompact(float width, const char* label, size_t* v, size_t
     return SliderScalarDefaultCompact(width, label, ImGuiDataType_U32, v, &v_min, &v_max, &v_default, &v_step, format);
 }
 
+bool SliderI64DefaultCompact(float width, const char* label, int64_t* v, int64_t v_min, int64_t v_max, int64_t v_default, int64_t v_step, const char* format) {
+    return SliderScalarDefaultCompact(width, label, ImGuiDataType_S64, v, &v_min, &v_max, &v_default, &v_step, format);
+}
+
 bool SliderFloatDefaultCompact(float width, const char* label, float* v, float v_min, float v_max, float v_default, float v_step, const char* format) {
     return SliderScalarDefaultCompact(width, label, ImGuiDataType_Float, v, &v_min, &v_max, &v_default, &v_step, format);
 }
