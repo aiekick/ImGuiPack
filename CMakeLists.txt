@@ -100,7 +100,7 @@ add_definitions(-DFT_DEBUG_LEVEL_TRACE)
 add_definitions(-DIMGUI_ENABLE_FREETYPE)
 add_definitions(-DIMGUI_DEFINE_MATH_OPERATORS)
 #add_definitions(-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS)
-add_definitions(-DIMGUI_USER_CONFIG="${CMAKE_CURRENT_SOURCE_DIR}/CustomImConfig.h")
+#add_definitions(-DIMGUI_USER_CONFIG="${CMAKE_CURRENT_SOURCE_DIR}/CustomImConfig.h")
 
 #####################################################
 ##### IMGUI
