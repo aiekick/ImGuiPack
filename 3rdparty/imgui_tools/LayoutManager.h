@@ -145,7 +145,7 @@ public:
     void UnitPanes();
 
     void InitAfterFirstDisplay(const ImVec2& vSize);
-    bool BeginDockSpace(const ImGuiDockNodeFlags& vFlags);
+    bool BeginDockSpace(const ImGuiDockNodeFlags& vFlags, const ImVec2& voffset = ImVec2());
     void EndDockSpace();
     bool IsDockSpaceHoleHovered();
 

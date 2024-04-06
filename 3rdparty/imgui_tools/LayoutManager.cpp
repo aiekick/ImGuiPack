@@ -221,13 +221,13 @@ void LayoutManager::InitAfterFirstDisplay(const ImVec2& vSize) {
     }
 }
 
-bool LayoutManager::BeginDockSpace(const ImGuiDockNodeFlags& vFlags) {
+bool LayoutManager::BeginDockSpace(const ImGuiDockNodeFlags& vFlags, const ImVec2& voffset) {
     const auto viewport = ImGui::GetMainViewport();
 
     m_LastSize = viewport->Size;
 
-    ImGui::SetNextWindowPos(viewport->WorkPos);
-    ImGui::SetNextWindowSize(viewport->WorkSize);
+    ImGui::SetNextWindowPos(viewport->WorkPos + voffset);
+    ImGui::SetNextWindowSize(viewport->WorkSize - voffset);
     ImGui::SetNextWindowViewport(viewport->ID);
 
     auto host_window_flags = 0;
