@@ -249,7 +249,7 @@ float CalcContrastRatio(const ImU32& backgroundColor, const ImU32& foreGroundCol
     return contrastRatio;
 }
 
-bool PushStyleColorWithContrast(const ImGuiCol& backGroundColor, const ImGuiCol& foreGroundColor, const ImU32& invertedColor, const float& maxContrastRatio) {
+bool PushStyleColorWithContrast1(const ImGuiCol& backGroundColor, const ImGuiCol& foreGroundColor, const ImU32& invertedColor, const float& maxContrastRatio) {
     const float contrastRatio = CalcContrastRatio(GetColorU32(backGroundColor), GetColorU32(foreGroundColor));
     if (contrastRatio < maxContrastRatio) {
         PushStyleColor(foreGroundColor, invertedColor);
@@ -258,7 +258,7 @@ bool PushStyleColorWithContrast(const ImGuiCol& backGroundColor, const ImGuiCol&
     return false;
 }
 
-bool PushStyleColorWithContrast(const ImGuiCol& backGroundColor, const ImGuiCol& foreGroundColor, const ImVec4& invertedColor, const float& maxContrastRatio) {
+bool PushStyleColorWithContrast2(const ImGuiCol& backGroundColor, const ImGuiCol& foreGroundColor, const ImVec4& invertedColor, const float& maxContrastRatio) {
     const float contrastRatio = CalcContrastRatio(GetColorU32(backGroundColor), GetColorU32(foreGroundColor));
     if (contrastRatio < maxContrastRatio) {
         PushStyleColor(foreGroundColor, invertedColor);
@@ -268,7 +268,16 @@ bool PushStyleColorWithContrast(const ImGuiCol& backGroundColor, const ImGuiCol&
     return false;
 }
 
-bool PushStyleColorWithContrast(const ImU32& backGroundColor, const ImGuiCol& foreGroundColor, const ImVec4& invertedColor, const float& maxContrastRatio) {
+bool PushStyleColorWithContrast3(const ImU32& backGroundColor, const ImGuiCol& foreGroundColor, const ImVec4& invertedColor, const float& maxContrastRatio) {
+    const float contrastRatio = CalcContrastRatio(backGroundColor, GetColorU32(foreGroundColor));
+    if (contrastRatio < maxContrastRatio) {
+        PushStyleColor(foreGroundColor, invertedColor);
+        return true;
+    }
+    return false;
+}
+
+bool PushStyleColorWithContrast4(const ImU32& backGroundColor, const ImGuiCol& foreGroundColor, const ImU32& invertedColor, const float& maxContrastRatio) {
     const float contrastRatio = CalcContrastRatio(backGroundColor, GetColorU32(foreGroundColor));
     if (contrastRatio < maxContrastRatio) {
         PushStyleColor(foreGroundColor, invertedColor);
@@ -784,7 +793,7 @@ bool RadioButtonLabeled(float vWidth, const char* label, bool active, bool disab
     }
 
     if (label_size.x > 0.0f) {
-        const bool pushed = PushStyleColorWithContrast(colUnderText, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
+        const bool pushed = PushStyleColorWithContrast1(colUnderText, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
         RenderTextClipped(total_bb.Min, total_bb.Max, label, nullptr, &label_size, ImVec2(0.5f, 0.5f));
         if (pushed)
             PopStyleColor();
@@ -866,7 +875,7 @@ bool RadioButtonLabeled(ImVec2 vSize, const char* label, bool active, bool disab
     }
 
     if (label_size.x > 0.0f) {
-        const bool pushed = PushStyleColorWithContrast(colUnderText, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
+        const bool pushed = PushStyleColorWithContrast1(colUnderText, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
         RenderTextClipped(total_bb.Min, total_bb.Max, label, nullptr, &label_size, ImVec2(0.5f, 0.5f));
         if (pushed)
             PopStyleColor();
@@ -1119,7 +1128,7 @@ bool SmallContrastedButton(const char* label) {
     ImGuiContext& g        = *GImGui;
     float backup_padding_y = g.Style.FramePadding.y;
     g.Style.FramePadding.y = 0.0f;
-    const bool pushed      = PushStyleColorWithContrast(ImGuiCol_Button, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
+    const bool pushed      = PushStyleColorWithContrast1(ImGuiCol_Button, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
     PushID(++CustomStyle::pushId);
     bool pressed = ButtonEx(label, ImVec2(0, 0), ImGuiButtonFlags_AlignTextBaseLine);
     PopID();
@@ -1637,7 +1646,7 @@ bool ContrastedButton_For_Dialogs(const char* label, const ImVec2& size_arg) {
 }
 
 bool ContrastedButton(const char* label, const char* help, ImFont* imfont, float vWidth, const ImVec2& size_arg, ImGuiButtonFlags flags) {
-    const bool pushed = PushStyleColorWithContrast(ImGuiCol_Button, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
+    const bool pushed = PushStyleColorWithContrast1(ImGuiCol_Button, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
 
     if (imfont)
         PushFont(imfont);
@@ -1666,7 +1675,7 @@ bool ToggleContrastedButton(const char* vLabelTrue, const char* vLabelFalse, boo
 
     assert(vValue);
 
-    const auto pushed = PushStyleColorWithContrast(ImGuiCol_Button, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
+    const auto pushed = PushStyleColorWithContrast1(ImGuiCol_Button, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
 
     if (vImfont)
         PushFont(vImfont);
@@ -2968,7 +2977,7 @@ bool BeginContrastedCombo(const char* label, const char* preview_value, ImGuiCom
                                         style.FrameRounding,
                                         (flags & ImGuiComboFlags_NoArrowButton) ? ImDrawFlags_RoundCornersAll : ImDrawFlags_RoundCornersLeft);
     if (!(flags & ImGuiComboFlags_NoArrowButton)) {
-        const bool pushed = PushStyleColorWithContrast(ImGuiCol_Button, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
+        const bool pushed = PushStyleColorWithContrast1(ImGuiCol_Button, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
         ImU32 bg_col = GetColorU32((popup_open || hovered) ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
         ImU32 text_col = GetColorU32(ImGuiCol_Text);
         window->DrawList->AddRectFilled(
