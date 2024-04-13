@@ -3314,6 +3314,11 @@ bool InputUIntDefault(float vWidth, const char* vName, uint32_t* vVar, uint32_t 
 
 }  // namespace ImGui
 
+void ImWidgets::InputText::Clear() {
+    m_Buffer[0] = '\0';
+    SetText(m_DefaultString);
+}
+
 bool ImWidgets::InputText::DisplayInputText(
     const float& vWidth, const std::string& vLabel, const std::string& vDefaultText) {
     bool res = false;
@@ -3323,12 +3328,12 @@ bool ImWidgets::InputText::DisplayInputText(
     const float w = vWidth - (ImGui::GetCursorPosX() - px);
     ImGui::PushID(++ImGui::CustomStyle::pushId);
     ImGui::PushItemWidth(w);
-    if (buffer[0] == '\0')  // default text
-    {
-        SetText(vDefaultText);
+    if (m_Buffer[0] == '\0') {  // default text
+        m_DefaultString = vDefaultText;
+        SetText(m_DefaultString);
     }
-    if (ImGui::InputText("##ImWidgets_InputText_DisplayInputText", buffer, 512)) {
-        m_Text = std::string(buffer, strlen(buffer));
+    if (ImGui::InputText("##ImWidgets_InputText_DisplayInputText", m_Buffer, m_Len)) {
+        m_Text = std::string(m_Buffer, strlen(m_Buffer));
         res = true;
     }
     ImGui::PopItemWidth();
@@ -3342,9 +3347,9 @@ void ImWidgets::InputText::SetText(const std::string& vText) {
     if (vText.size() < len)
         len = vText.size();
 #ifdef _MSC_VER
-    strncpy_s(buffer, vText.c_str(), len);
+    strncpy_s(m_Buffer, vText.c_str(), len);
 #else
-    strncpy(buffer, vText.c_str(), len);
+    strncpy(m_Buffer, vText.c_str(), len);
 #endif
 }
 

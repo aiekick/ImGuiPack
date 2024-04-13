@@ -473,13 +473,15 @@ namespace ImWidgets {
 class IMGUI_API InputText {
 private:
     static constexpr size_t m_Len = 512U;
-    char buffer[m_Len + 1] = "";
+    char m_Buffer[m_Len + 1] = "";
+    std::string m_DefaultString;
     std::string m_Text;
 
 public:
     InputText() = default;
     InputText(const std::string& vText) { SetText(vText); }
 
+    void Clear();
     bool DisplayInputText(const float& vWidth, const std::string& vLabel, const std::string& vDefaultText);
     void SetText(const std::string& vText);
     std::string GetText(const std::string& vNumericType = "") const;
