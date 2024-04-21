@@ -60,18 +60,22 @@ bool LayoutManager::AddPane(ILayoutPaneWeak vPane,
     static auto sMaxPanes = sizeof(LayoutPaneFlag) * 8U;
     if (m_FlagCount < sMaxPanes) {
         LayoutPaneFlag flag = (static_cast<LayoutPaneFlag>(1) << (++m_FlagCount));
-        if (vPane.expired())
+        if (vPane.expired()) {
             return false;
-        if (vName.empty())
+        }
+        if (vName.empty()) {
             return false;
-        if (m_PanesByName.find(vName) != m_PanesByName.end())
+        }
+        if (m_PanesByName.find(vName) != m_PanesByName.end()) {
             return false;  // pane name not already exist
-        if (m_PanesByFlag.find(flag) != m_PanesByFlag.end())
+        }
+        if (m_PanesByFlag.find(flag) != m_PanesByFlag.end()) {
             return false;  // pane flag not already exist
+        }
         auto panePtr = vPane.lock();
         if (panePtr != nullptr) {
             panePtr->SetName(vName);
-            panePtr->SetFlag(flag); // this can be done only this time.
+            panePtr->SetFlag(flag);  // this can be done only this time.
             auto internalPanePtr = std::make_shared<InternalPane>();
             internalPanePtr->ilayoutPane = vPane;
             internalPanePtr->paneName = vName;
@@ -159,12 +163,9 @@ void LayoutManager::SetPaneDisposalRatio(const PaneDisposal& vPaneDisposal, cons
 void LayoutManager::Init(const std::string& vMenuLabel, const std::string& vDefaultMenuLabel, const bool& vForceDefaultLayout) {
     assert(!vMenuLabel.empty());
     assert(!vDefaultMenuLabel.empty());
-
     m_MenuLabel = vMenuLabel;
     m_DefaultMenuLabel = vDefaultMenuLabel;
-
     ImGuiContext& g = *GImGui;
-
     if (vForceDefaultLayout) {
         m_FirstLayout = true;
     } else {
@@ -223,31 +224,25 @@ void LayoutManager::InitAfterFirstDisplay(const ImVec2& vSize) {
 
 bool LayoutManager::BeginDockSpace(const ImGuiDockNodeFlags& vFlags, const ImVec2& voffset) {
     const auto viewport = ImGui::GetMainViewport();
-
     m_LastSize = viewport->Size;
-
     ImGui::SetNextWindowPos(viewport->WorkPos + voffset);
     ImGui::SetNextWindowSize(viewport->WorkSize - voffset);
     ImGui::SetNextWindowViewport(viewport->ID);
-
     auto host_window_flags = 0;
     host_window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
     host_window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-    if (vFlags & ImGuiDockNodeFlags_PassthruCentralNode)
+    if (vFlags & ImGuiDockNodeFlags_PassthruCentralNode) {
         host_window_flags |= ImGuiWindowFlags_NoBackground;
-
+    }
     char label[100 + 1];
     ImFormatString(label, 100, "DockSpaceViewport_%08X", viewport->ID);
-
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     const auto res = ImGui::Begin(label, nullptr, host_window_flags);
     ImGui::PopStyleVar(3);
-
     m_DockSpaceID = ImGui::GetID("MyDockSpace");
     ImGui::DockSpace(m_DockSpaceID, ImVec2(0.0f, 0.0f), vFlags);
-
     return res;
 }
 
@@ -265,19 +260,15 @@ bool LayoutManager::IsDockSpaceHoleHovered() {
 
 void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize) {
     ImVec2 _size = vSize;
-
     if (IS_FLOAT_EQUAL(_size.x, 0.0f) || IS_FLOAT_EQUAL(_size.y, 0.0f)) {
         if (IS_FLOAT_EQUAL(m_LastSize.x, 0.0f) || IS_FLOAT_EQUAL(m_LastSize.y, 0.0f)) {
             return;
         }
-
         _size = m_LastSize;
     }
-
     ImGui::DockBuilderRemoveNode(m_DockSpaceID);                             // Clear out existing layout
     ImGui::DockBuilderAddNode(m_DockSpaceID, ImGuiDockNodeFlags_DockSpace);  // Add empty node
     ImGui::DockBuilderSetNodeSize(m_DockSpaceID, _size);
-
     float leftColumnRatio = 0.3f;
     if (m_PanesDisposalRatios.find("LEFT") != m_PanesDisposalRatios.end()) {
         leftColumnRatio = m_PanesDisposalRatios.at("LEFT");
@@ -294,18 +285,14 @@ void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize) {
     if (m_PanesDisposalRatios.find("TOP") != m_PanesDisposalRatios.end()) {
         topColumnRatio = m_PanesDisposalRatios.at("TOP");
     }
-
     std::unordered_map<PaneDisposal, ImGuiID> guiids;
-
     // This variable will track the document node, however we are not using it here as we aren't docking anything into it.
     auto dockMainID = m_DockSpaceID;
-
     // a first split is needed
     guiids["LEFT"] = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Left, leftColumnRatio, nullptr, &dockMainID);
     guiids["RIGHT"] = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Right, rightColumnRatio, nullptr, &dockMainID);
     guiids["TOP"] = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Up, topColumnRatio, nullptr, &dockMainID);
     guiids["BOTTOM"] = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Down, bottomColumnRatio, nullptr, &dockMainID);
-
     for (const auto& pane : m_PanesByName) {
         auto panePtr = pane.second;
         if (panePtr != nullptr) {
@@ -343,12 +330,9 @@ void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize) {
             }
         }
     }
-
     ImGui::DockBuilderFinish(m_DockSpaceID);
-
     pane_Shown = m_Pane_Opened_Default;  // will show when pane will be passed
     m_Pane_Focused = m_Pane_Focused_Default;
-
     m_SetFocusedPanes(m_Pane_Focused);
 }
 
@@ -373,17 +357,13 @@ void LayoutManager::DisplayMenu(const ImVec2& vSize) {
         if (ImGui::MenuItem(m_DefaultMenuLabel.c_str())) {
             ApplyInitialDockingLayout(vSize);
         }
-
         ImGui::Separator();
-
         bool _menuOpened = false;
         for (const auto& paneCategory : m_PanesInDisplayOrder) {
             _menuOpened = false;
-
             if (!paneCategory.first.empty()) {
                 _menuOpened = ImGui::BeginMenu(paneCategory.first.c_str());
             }
-
             if (paneCategory.first.empty() || _menuOpened) {
                 for (auto pane : paneCategory.second) {
                     auto panePtr = pane.lock();
@@ -395,12 +375,10 @@ void LayoutManager::DisplayMenu(const ImVec2& vSize) {
                     }
                 }
             }
-
             if (_menuOpened) {
                 ImGui::EndMenu();
             }
         }
-
         ImGui::EndMenu();
     }
 }
