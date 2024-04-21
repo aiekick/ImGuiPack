@@ -482,7 +482,8 @@ public:
     InputText(const std::string& vText) { SetText(vText); }
 
     void Clear();
-    bool DisplayInputText(const float& vWidth, const std::string& vLabel, const std::string& vDefaultText);
+    bool DisplayInputText(const float& vWidth, const std::string& vLabel, const std::string& vDefaultText, const bool& vMultiline = false);
+    void AddText(const std::string& vText);
     void SetText(const std::string& vText);
     std::string GetText(const std::string& vNumericType = "") const;
     const char* GetConstCharPtrText() const;

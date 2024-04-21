@@ -17,7 +17,7 @@ void TextEditor::ImGuiDebugPanel(const std::string& panelName)
 	}
 	if (ImGui::CollapsingHeader("Lines"))
 	{
-		for (int i = 0; i < mLines.size(); i++)
+        for (int i = 0; i < (int)mLines.size(); i++)
 		{
 			ImGui::Text("%u", (uint32_t)mLines[i].size());
 		}
@@ -28,13 +28,13 @@ void TextEditor::ImGuiDebugPanel(const std::string& panelName)
 		numberOfRecordsText = "Number of records: " + std::to_string(mUndoBuffer.size());
 		ImGui::Text("%s", numberOfRecordsText.c_str());
 		ImGui::DragInt("Undo index", &mState.mCurrentCursor);
-		for (int i = 0; i < mUndoBuffer.size(); i++)
+        for (int i = 0; i < (int)mUndoBuffer.size(); i++)
 		{
 			if (ImGui::CollapsingHeader(std::to_string(i).c_str()))
 			{
 
 				ImGui::Text("Operations");
-				for (int j = 0; j < mUndoBuffer[i].mOperations.size(); j++)
+                for (int j = 0; j < (int)mUndoBuffer[i].mOperations.size(); j++)
 				{
 					ImGui::Text("%s", mUndoBuffer[i].mOperations[j].mText.c_str());
 					ImGui::Text(mUndoBuffer[i].mOperations[j].mType == UndoOperationType::Add ? "Add" : "Delete");

@@ -194,7 +194,7 @@ void TextEditor::Paste()
 	if (mState.mCurrentCursor > 0)
 	{
 		clipTextLines.push_back({ 0,0 });
-		for (int i = 0; i < clipText.length(); i++)
+        for (int i = 0; i < (int)clipText.length(); ++i)
 		{
 			if (clipText[i] == '\n')
 			{
@@ -202,8 +202,8 @@ void TextEditor::Paste()
 				clipTextLines.push_back({ i + 1, 0 });
 			}
 		}
-		clipTextLines.back().second = clipText.length();
-		canPasteToMultipleCursors = clipTextLines.size() == mState.mCurrentCursor + 1;
+        clipTextLines.back().second = (int)clipText.length();
+        canPasteToMultipleCursors = (int)clipTextLines.size() == mState.mCurrentCursor + 1;
 	}
 
 	if (clipText.length() > 0)
@@ -289,7 +289,7 @@ std::string TextEditor::GetText(const Coordinates& aStart, const Coordinates& aE
 	auto iend = GetCharacterIndexR(aEnd);
 	size_t s = 0;
 
-	for (size_t i = lstart; i < lend; i++)
+	for (size_t i = lstart; i < (size_t)lend; ++i)
 		s += mLines[i].size();
 
 	result.reserve(s + s / 8);
@@ -537,7 +537,7 @@ void TextEditor::UndoRecord::Undo(TextEditor* aEditor)
 
 void TextEditor::UndoRecord::Redo(TextEditor* aEditor)
 {
-	for (int i = 0; i < mOperations.size(); i++)
+    for (int i = 0; i < (int)mOperations.size(); ++i)
 	{
 		const UndoOperation& operation = mOperations[i];
 		if (!operation.mText.empty())
@@ -687,7 +687,7 @@ bool TextEditor::Move(int& aLine, int& aCharIndex, bool aLeft, bool aLockLine) c
 	// char index can be line.length()
 
 	// invalid line
-	if (aLine >= mLines.size())
+    if (aLine >= (int)mLines.size())
 		return false;
 
 	if (aLeft)
@@ -697,7 +697,7 @@ bool TextEditor::Move(int& aLine, int& aCharIndex, bool aLeft, bool aLockLine) c
 			if (aLockLine || aLine == 0)
 				return false;
 			aLine--;
-			aCharIndex = mLines[aLine].size();
+            aCharIndex = (int)mLines[aLine].size();
 		}
 		else
 		{
@@ -708,9 +708,9 @@ bool TextEditor::Move(int& aLine, int& aCharIndex, bool aLeft, bool aLockLine) c
 	}
 	else // right
 	{
-		if (aCharIndex == mLines[aLine].size())
+        if (aCharIndex == (int)mLines[aLine].size())
 		{
-			if (aLockLine || aLine == mLines.size() - 1)
+            if (aLockLine || aLine == (int)mLines.size() - 1)
 				return false;
 			aLine++;
 			aCharIndex = 0;
@@ -726,8 +726,8 @@ bool TextEditor::Move(int& aLine, int& aCharIndex, bool aLeft, bool aLockLine) c
 
 void TextEditor::MoveCharIndexAndColumn(int aLine, int& aCharIndex, int& aColumn) const
 {
-	assert(aLine < mLines.size());
-	assert(aCharIndex < mLines[aLine].size());
+    assert(aLine < (int)mLines.size());
+    assert(aCharIndex < (int)mLines[aLine].size());
 	char c = mLines[aLine][aCharIndex].mChar;
 	aCharIndex += UTF8CharLength(c);
 	if (c == '\t')
@@ -743,9 +743,9 @@ void TextEditor::MoveCoords(Coordinates& aCoords, MoveDirection aDirection, bool
 	switch (aDirection)
 	{
 	case MoveDirection::Right:
-		if (charIndex >= mLines[lineIndex].size())
+            if (charIndex >= (int)mLines[lineIndex].size())
 		{
-			if (lineIndex < mLines.size() - 1)
+            if (lineIndex < (int)mLines.size() - 1)
 			{
 				aCoords.mLine = std::max(0, std::min((int)mLines.size() - 1, lineIndex + 1));
 				aCoords.mColumn = 0;
@@ -935,7 +935,7 @@ void TextEditor::EnterCharacter(ImWchar aChar, bool aShift)
 			added.mText = "";
 			added.mText += (char)aChar;
 			if (mAutoIndent)
-				for (int i = 0; i < line.size() && isascii(line[i].mChar) && isblank(line[i].mChar); ++i)
+                for (int i = 0; i < (int)line.size() && isascii(line[i].mChar) && isblank(line[i].mChar); ++i)
 				{
 					newLine.push_back(line[i]);
 					added.mText += line[i].mChar;
@@ -1150,11 +1150,11 @@ bool TextEditor::FindNextOccurrence(const char* aText, int aTextSize, const Coor
 			int lineOffset = 0;
 			int currentCharIndex = findex;
 			int i = 0;
-			for (; i < aTextSize; i++)
+			for (; i < aTextSize; ++i)
 			{
-				if (currentCharIndex == mLines[fline + lineOffset].size())
+                if (currentCharIndex == (int)mLines[fline + lineOffset].size())
 				{
-					if (aText[i] == '\n' && fline + lineOffset + 1 < mLines.size())
+                    if (aText[i] == '\n' && fline + lineOffset + 1 < (int)mLines.size())
 					{
 						currentCharIndex = 0;
 						lineOffset++;
@@ -1184,9 +1184,9 @@ bool TextEditor::FindNextOccurrence(const char* aText, int aTextSize, const Coor
 		}
 
 		// move forward
-		if (findex == mLines[fline].size()) // need to consider line breaks
+        if (findex == (int)mLines[fline].size())  // need to consider line breaks
 		{
-			if (fline == mLines.size() - 1)
+            if (fline == (int)mLines.size() - 1)
 			{
 				fline = 0;
 				findex = 0;
@@ -1210,9 +1210,9 @@ bool TextEditor::FindNextOccurrence(const char* aText, int aTextSize, const Coor
 
 bool TextEditor::FindMatchingBracket(int aLine, int aCharIndex, Coordinates& out)
 {
-	if (aLine > mLines.size() - 1)
+    if (aLine > (int)mLines.size() - 1)
 		return false;
-	int maxCharIndex = mLines[aLine].size() - 1;
+    int maxCharIndex = (int)mLines[aLine].size() - 1;
 	if (aCharIndex > maxCharIndex)
 		return false;
 
@@ -1225,7 +1225,7 @@ bool TextEditor::FindMatchingBracket(int aLine, int aCharIndex, Coordinates& out
 		char openChar = CLOSE_TO_OPEN_CHAR.at(closeChar);
 		while (Move(currentLine, currentCharIndex, true))
 		{
-			if (currentCharIndex < mLines[currentLine].size())
+            if (currentCharIndex < (int)mLines[currentLine].size())
 			{
 				char currentChar = mLines[currentLine][currentCharIndex].mChar;
 				if (currentChar == openChar)
@@ -1248,7 +1248,7 @@ bool TextEditor::FindMatchingBracket(int aLine, int aCharIndex, Coordinates& out
 		char closeChar = OPEN_TO_CLOSE_CHAR.at(openChar);
 		while (Move(currentLine, currentCharIndex))
 		{
-			if (currentCharIndex < mLines[currentLine].size())
+            if (currentCharIndex < (int)mLines[currentLine].size())
 			{
 				char currentChar = mLines[currentLine][currentCharIndex].mChar;
 				if (currentChar == closeChar)
@@ -1284,7 +1284,7 @@ void TextEditor::ChangeCurrentLinesIndentation(bool aIncrease)
 
 			if (aIncrease)
 			{
-				if (mLines[currentLine].size() > 0)
+                if ((int)mLines[currentLine].size() > 0)
 				{
 					Coordinates lineStart = { currentLine, 0 };
 					Coordinates insertionEnd = lineStart;
@@ -1379,7 +1379,7 @@ void TextEditor::MoveDownCurrentLines()
 			maxLine = maxLine == -1 ? currentLine : (currentLine > maxLine ? currentLine : maxLine);
 		}
 	}
-	if (maxLine == mLines.size() - 1) // can't move down anymore
+    if (maxLine == (int)mLines.size() - 1)  // can't move down anymore
 		return;
 
 	Coordinates start = { minLine, 0 };
@@ -1422,12 +1422,15 @@ void TextEditor::ToggleLineComment()
 				continue;
 			affectedLines.insert(currentLine);
 			int currentIndex = 0;
-			while (currentIndex < mLines[currentLine].size() && (mLines[currentLine][currentIndex].mChar == ' ' || mLines[currentLine][currentIndex].mChar == '\t')) currentIndex++;
-			if (currentIndex == mLines[currentLine].size())
+            while (currentIndex < (int)mLines[currentLine].size() && (mLines[currentLine][currentIndex].mChar == ' ' || mLines[currentLine][currentIndex].mChar == '\t'))
+                currentIndex++;
+            if (currentIndex == (int)mLines[currentLine].size())
 				continue;
 			int i = 0;
-			while (i < commentString.length() && currentIndex + i < mLines[currentLine].size() && mLines[currentLine][currentIndex + i].mChar == commentString[i]) i++;
-			bool matched = i == commentString.length();
+            while (i < (int)commentString.length() && currentIndex + i < (int)mLines[currentLine].size() &&
+                   mLines[currentLine][currentIndex + i].mChar == commentString[i])
+                i++;
+            bool matched = i == (int)commentString.length();
 			shouldAddComment |= !matched;
 		}
 	}
@@ -1448,14 +1451,17 @@ void TextEditor::ToggleLineComment()
 		for (int currentLine : affectedLines) // order doesn't matter as changes are not multiline
 		{
 			int currentIndex = 0;
-			while (currentIndex < mLines[currentLine].size() && (mLines[currentLine][currentIndex].mChar == ' ' || mLines[currentLine][currentIndex].mChar == '\t')) currentIndex++;
-			if (currentIndex == mLines[currentLine].size())
+            while (currentIndex < (int)mLines[currentLine].size() && (mLines[currentLine][currentIndex].mChar == ' ' || mLines[currentLine][currentIndex].mChar == '\t'))
+                currentIndex++;
+            if (currentIndex == (int)mLines[currentLine].size())
 				continue;
 			int i = 0;
-			while (i < commentString.length() && currentIndex + i < mLines[currentLine].size() && mLines[currentLine][currentIndex + i].mChar == commentString[i]) i++;
-			bool matched = i == commentString.length();
+            while (i < (int)commentString.length() && currentIndex + i < (int)mLines[currentLine].size() &&
+                   mLines[currentLine][currentIndex + i].mChar == commentString[i])
+                i++;
+            bool matched = i == (int)commentString.length();
 			assert(matched);
-			if (currentIndex + i < mLines[currentLine].size() && mLines[currentLine][currentIndex + i].mChar == ' ')
+            if (currentIndex + i < (int)mLines[currentLine].size() && mLines[currentLine][currentIndex + i].mChar == ' ')
 				i++;
 
 			Coordinates start = { currentLine, GetCharacterColumn(currentLine, currentIndex) };
@@ -1495,7 +1501,7 @@ void TextEditor::RemoveCurrentLines()
 		int prevLine = currentLine - 1;
 
 		Coordinates toDeleteStart, toDeleteEnd;
-		if (mLines.size() > nextLine) // next line exists
+        if ((int)mLines.size() > nextLine)  // next line exists
 		{
 			toDeleteStart = Coordinates(currentLine, 0);
 			toDeleteEnd = Coordinates(nextLine, 0);
@@ -1577,8 +1583,7 @@ TextEditor::Coordinates TextEditor::GetActualCursorCoordinates(int aCursor) cons
 		return SanitizeCoordinates(mState.mCursors[aCursor].mInteractiveEnd);
 }
 
-TextEditor::Coordinates TextEditor::ScreenPosToCoordinates(const ImVec2& aPosition, bool aInsertionMode, bool* isOverLineNumber) const
-{
+TextEditor::Coordinates TextEditor::ScreenPosToCoordinates(const ImVec2& aPosition, bool /*aInsertionMode*/, bool* isOverLineNumber) const {
 	ImVec2 origin = ImGui::GetCursorScreenPos();
 	ImVec2 local(aPosition.x - origin.x + 3.0f, aPosition.y - origin.y);
 
@@ -1590,7 +1595,7 @@ TextEditor::Coordinates TextEditor::ScreenPosToCoordinates(const ImVec2& aPositi
 		Max(0, (int)floor((local.x - mTextStart) / mCharAdvance.x))
 	};
 	int charIndex = GetCharacterIndexL(out);
-	if (charIndex > -1 && charIndex < mLines[out.mLine].size() && mLines[out.mLine][charIndex].mChar == '\t')
+	if (charIndex > -1 && charIndex < (int)mLines[out.mLine].size() && mLines[out.mLine][charIndex].mChar == '\t')
 	{
 		int columnToLeft = GetCharacterColumn(out.mLine, charIndex);
 		int columnToRight = GetCharacterColumn(out.mLine, GetCharacterIndexR(out));
@@ -1613,7 +1618,7 @@ TextEditor::Coordinates TextEditor::FindWordStart(const Coordinates& aFrom) cons
 	auto& line = mLines[lineIndex];
 	int charIndex = GetCharacterIndexL(aFrom);
 
-	if (charIndex > (int)line.size() || line.size() == 0)
+	if (charIndex > (int)line.size() || (int)line.size() == 0)
 		return aFrom;
 	if (charIndex == (int)line.size())
 		charIndex--;
@@ -1653,7 +1658,7 @@ TextEditor::Coordinates TextEditor::FindWordEnd(const Coordinates& aFrom) const
 	char initialChar = line[charIndex].mChar;
 	while (Move(lineIndex, charIndex, false, true))
 	{
-		if (charIndex == line.size())
+        if (charIndex == (int)line.size())
 			break;
 		bool isWordChar = CharIsWordChar(line[charIndex].mChar);
 		bool isSpace = isspace(line[charIndex].mChar);
@@ -1667,7 +1672,7 @@ TextEditor::Coordinates TextEditor::FindWordEnd(const Coordinates& aFrom) const
 
 int TextEditor::GetCharacterIndexL(const Coordinates& aCoords) const
 {
-	if (aCoords.mLine >= mLines.size())
+    if (aCoords.mLine >= (int)mLines.size())
 		return -1;
 
 	auto& line = mLines[aCoords.mLine];
@@ -1675,7 +1680,7 @@ int TextEditor::GetCharacterIndexL(const Coordinates& aCoords) const
 	int i = 0;
 	int tabCoordsLeft = 0;
 
-	for (; i < line.size() && c < aCoords.mColumn;)
+	for (; i < (int)line.size() && c < aCoords.mColumn;)
 	{
 		if (line[i].mChar == '\t')
 		{
@@ -1695,33 +1700,33 @@ int TextEditor::GetCharacterIndexL(const Coordinates& aCoords) const
 
 int TextEditor::GetCharacterIndexR(const Coordinates& aCoords) const
 {
-	if (aCoords.mLine >= mLines.size())
+    if (aCoords.mLine >= (int)mLines.size())
 		return -1;
 	int c = 0;
 	int i = 0;
-	for (; i < mLines[aCoords.mLine].size() && c < aCoords.mColumn;)
+    for (; i < (int)mLines[aCoords.mLine].size() && c < aCoords.mColumn;)
 		MoveCharIndexAndColumn(aCoords.mLine, i, c);
 	return i;
 }
 
 int TextEditor::GetCharacterColumn(int aLine, int aIndex) const
 {
-	if (aLine >= mLines.size())
+    if (aLine >= (int)mLines.size())
 		return 0;
 	int c = 0;
 	int i = 0;
-	while (i < aIndex && i < mLines[aLine].size())
+    while (i < aIndex && i < (int)mLines[aLine].size())
 		MoveCharIndexAndColumn(aLine, i, c);
 	return c;
 }
 
 int TextEditor::GetFirstVisibleCharacterIndex(int aLine) const
 {
-	if (aLine >= mLines.size())
+    if (aLine >= (int)mLines.size())
 		return 0;
 	int c = 0;
 	int i = 0;
-	while (c < mFirstVisibleColumn && i < mLines[aLine].size())
+    while (c < mFirstVisibleColumn && i < (int)mLines[aLine].size())
 		MoveCharIndexAndColumn(aLine, i, c);
 	if (c > mFirstVisibleColumn)
 		i--;
@@ -1730,17 +1735,17 @@ int TextEditor::GetFirstVisibleCharacterIndex(int aLine) const
 
 int TextEditor::GetLineMaxColumn(int aLine, int aLimit) const
 {
-	if (aLine >= mLines.size())
+    if (aLine >= (int)mLines.size())
 		return 0;
 	int c = 0;
 	if (aLimit == -1)
 	{
-		for (int i = 0; i < mLines[aLine].size(); )
+        for (int i = 0; i < (int)mLines[aLine].size();)
 			MoveCharIndexAndColumn(aLine, i, c);
 	}
 	else
 	{
-		for (int i = 0; i < mLines[aLine].size(); )
+        for (int i = 0; i < (int)mLines[aLine].size();)
 		{
 			MoveCharIndexAndColumn(aLine, i, c);
 			if (c > aLimit)
@@ -1773,7 +1778,7 @@ TextEditor::Line& TextEditor::InsertLine(int aIndex)
 void TextEditor::RemoveLine(int aIndex, const std::unordered_set<int>* aHandledCursors)
 {
 	assert(!mReadOnly);
-	assert(mLines.size() > 1);
+    assert((int)mLines.size() > 1);
 
 	mLines.erase(mLines.begin() + aIndex);
 	assert(!mLines.empty());
@@ -2028,7 +2033,7 @@ void TextEditor::HandleKeyboardInputs(bool aParentIsFocused)
 			EnterCharacter('\t', shift);
 		if (!mReadOnly && !io.InputQueueCharacters.empty() && ctrl == alt && !super)
 		{
-			for (int i = 0; i < io.InputQueueCharacters.Size; i++)
+			for (int i = 0; i < io.InputQueueCharacters.Size; ++i)
 			{
 				auto c = io.InputQueueCharacters[i];
 				if (c != 0 && (c == '\n' || c >= 32))
@@ -2108,7 +2113,7 @@ void TextEditor::HandleMouseInputs()
 					mState.mCurrentCursor = 0;
 
 				Coordinates cursorCoords = ScreenPosToCoordinates(ImGui::GetMousePos());
-				Coordinates targetCursorPos = cursorCoords.mLine < mLines.size() - 1 ?
+                Coordinates targetCursorPos = cursorCoords.mLine < (int)mLines.size() - 1 ?
 					Coordinates{ cursorCoords.mLine + 1, 0 } :
 					Coordinates{ cursorCoords.mLine, GetLineMaxColumn(cursorCoords.mLine) };
 				SetSelection({ cursorCoords.mLine, 0 }, targetCursorPos, mState.mCurrentCursor);
@@ -2148,7 +2153,7 @@ void TextEditor::HandleMouseInputs()
 				Coordinates cursorCoords = ScreenPosToCoordinates(ImGui::GetMousePos(), !mOverwrite, &isOverLineNumber);
 				if (isOverLineNumber)
 				{
-					Coordinates targetCursorPos = cursorCoords.mLine < mLines.size() - 1 ?
+                    Coordinates targetCursorPos = cursorCoords.mLine < (int)mLines.size() - 1 ?
 						Coordinates{ cursorCoords.mLine + 1, 0 } :
 						Coordinates{ cursorCoords.mLine, GetLineMaxColumn(cursorCoords.mLine) };
 					SetSelection({ cursorCoords.mLine, 0 }, targetCursorPos, mState.mCurrentCursor);
@@ -2214,7 +2219,7 @@ void TextEditor::Render(bool aParentIsFocused)
 	{
 		float spaceSize = ImGui::GetFont()->CalcTextSizeA(ImGui::GetFontSize(), FLT_MAX, -1.0f, " ", nullptr, nullptr).x;
 
-		for (int lineNo = mFirstVisibleLine; lineNo <= mLastVisibleLine && lineNo < mLines.size(); lineNo++)
+		for (int lineNo = mFirstVisibleLine; lineNo <= mLastVisibleLine && lineNo < (int)mLines.size(); lineNo++)
 		{
 			ImVec2 lineStartScreenPos = ImVec2(cursorScreenPos.x, cursorScreenPos.y + lineNo * mCharAdvance.y);
 			ImVec2 textScreenPos = ImVec2(lineStartScreenPos.x + mTextStart, lineStartScreenPos.y);
@@ -2330,7 +2335,7 @@ void TextEditor::Render(bool aParentIsFocused)
 			static std::string glyphBuffer;
 			int charIndex = GetFirstVisibleCharacterIndex(lineNo);
 			int column = mFirstVisibleColumn; // can be in the middle of tab character
-			while (charIndex < mLines[lineNo].size() && column <= mLastVisibleColumn)
+            while (charIndex < (int)mLines[lineNo].size() && column <= mLastVisibleColumn)
 			{
 				auto& glyph = line[charIndex];
 				auto color = GetGlyphColor(glyph);
@@ -2388,7 +2393,7 @@ void TextEditor::Render(bool aParentIsFocused)
 						drawList->AddRectFilled(topLeft, bottomRight, mPalette[(int)PaletteIndex::Cursor]);
 					}
 					glyphBuffer.clear();
-					for (int i = 0; i < seqLength; i++)
+					for (int i = 0; i < seqLength; ++i)
 						glyphBuffer.push_back(line[charIndex + i].mChar);
 					drawList->AddText(targetGlyphPos, color, glyphBuffer.c_str());
 				}
@@ -2670,7 +2675,7 @@ void TextEditor::ColorizeInternal()
 
 	if (mCheckComments)
 	{
-		auto endLine = mLines.size();
+        auto endLine = (int)mLines.size();
 		auto endIndex = 0;
 		auto commentStartLine = endLine;
 		auto commentStartIndex = endIndex;

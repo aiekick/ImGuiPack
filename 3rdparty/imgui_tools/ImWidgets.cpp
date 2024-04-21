@@ -3319,8 +3319,7 @@ void ImWidgets::InputText::Clear() {
     SetText(m_DefaultString);
 }
 
-bool ImWidgets::InputText::DisplayInputText(
-    const float& vWidth, const std::string& vLabel, const std::string& vDefaultText) {
+bool ImWidgets::InputText::DisplayInputText(const float& vWidth, const std::string& vLabel, const std::string& vDefaultText, const bool& vMultiline) {
     bool res = false;
     float px = ImGui::GetCursorPosX();
     ImGui::Text("%s", vLabel.c_str());
@@ -3332,13 +3331,24 @@ bool ImWidgets::InputText::DisplayInputText(
         m_DefaultString = vDefaultText;
         SetText(m_DefaultString);
     }
-    if (ImGui::InputText("##ImWidgets_InputText_DisplayInputText", m_Buffer, m_Len)) {
-        m_Text = std::string(m_Buffer, strlen(m_Buffer));
-        res = true;
+    if (vMultiline) {
+        if (ImGui::InputTextMultiline("##ImWidgets_InputText_DisplayInputText", m_Buffer, m_Len, ImVec2(-1.0f, ImGui::GetTextLineHeight() * 8), ImGuiInputTextFlags_AllowTabInput)) {
+            m_Text = std::string(m_Buffer, strlen(m_Buffer));
+            res = true;
+        }
+    } else {
+        if (ImGui::InputText("##ImWidgets_InputText_DisplayInputText", m_Buffer, m_Len)) {
+            m_Text = std::string(m_Buffer, strlen(m_Buffer));
+            res = true;
+        }
     }
     ImGui::PopItemWidth();
     ImGui::PopID();
     return res;
+}
+
+void ImWidgets::InputText::AddText(const std::string& vText) {
+    SetText(GetText() + vText);
 }
 
 void ImWidgets::InputText::SetText(const std::string& vText) {
