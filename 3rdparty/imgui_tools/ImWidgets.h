@@ -482,11 +482,18 @@ public:
     InputText(const std::string& vText) { SetText(vText); }
 
     void Clear();
-    bool DisplayInputText(const float& vWidth, const std::string& vLabel, const std::string& vDefaultText, const bool& vMultiline = false);
+
+    // vInputOffsetFromStart set the offset from start for the alignement of the inputTexts
+    bool DisplayInputText(const float& vWidth,
+                          const std::string& vLabel,
+                          const std::string& vDefaultText,
+                          const bool& vMultiline = false,
+                          const float& vInputOffsetFromStart = 0.0f);
     void AddText(const std::string& vText);
     void SetText(const std::string& vText);
     std::string GetText(const std::string& vNumericType = "") const;
     const char* GetConstCharPtrText() const;
+    bool empty() const;
 };
 
 class IMGUI_API QuickStringCombo {
@@ -497,8 +504,9 @@ public:
     int32_t index = 0;
 
 public:
-    QuickStringCombo() = default;
-    QuickStringCombo(const int32_t& vDefaultIndex, const std::vector<std::string>& vArray);
-    bool DisplayCombo(const float& vWidth, const char* vLabel);
+    explicit QuickStringCombo() = default;
+    explicit QuickStringCombo(const int32_t& vDefaultIndex, const std::vector<std::string>& vArray);
+    bool DisplayCombo(const float& vWidth, const std::string& vLabel, const float& vInputOffsetFromStart = 0.0f);
+    std::string GetText() const;
 };
 }  // namespace ImWidgets
