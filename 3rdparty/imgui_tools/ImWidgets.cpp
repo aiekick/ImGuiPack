@@ -3322,8 +3322,10 @@ void ImWidgets::InputText::Clear() {
 bool ImWidgets::InputText::DisplayInputText(const float& vWidth, const std::string& vLabel, const std::string& vDefaultText, const bool& vMultiline, const float& vInputOffsetFromStart) {
     bool res = false;
     float px = ImGui::GetCursorPosX();
-    ImGui::Text("%s", vLabel.c_str());
-    ImGui::SameLine(vInputOffsetFromStart);
+    if (!vLabel.empty()) {
+        ImGui::Text("%s", vLabel.c_str());
+        ImGui::SameLine(vInputOffsetFromStart);
+    }
     const float w = vWidth - (ImGui::GetCursorPosX() - px);
     ImGui::PushID(++ImGui::CustomStyle::pushId);
     ImGui::PushItemWidth(w);
