@@ -508,5 +508,6 @@ public:
     explicit QuickStringCombo(const int32_t& vDefaultIndex, const std::vector<std::string>& vArray);
     bool DisplayCombo(const float& vWidth, const std::string& vLabel, const float& vInputOffsetFromStart = 0.0f);
     std::string GetText() const;
+    bool Select(const std::string& vToken);
 };
 }  // namespace ImWidgets

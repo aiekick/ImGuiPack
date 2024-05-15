@@ -3433,3 +3433,17 @@ std::string ImWidgets::QuickStringCombo::GetText() const {
     }
     return ret;
 }
+
+bool ImWidgets::QuickStringCombo::Select(const std::string& vToken) {
+    bool found = false;
+    size_t idx = 0U;
+    for (const auto& it : m_Array) {
+        if (it == vToken) {
+            index = idx;
+            found = true;
+            break;
+        }
+        ++idx;
+    }
+    return found;
+}
