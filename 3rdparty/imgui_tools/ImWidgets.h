@@ -488,7 +488,8 @@ public:
                           const std::string& vLabel,
                           const std::string& vDefaultText,
                           const bool& vMultiline = false,
-                          const float& vInputOffsetFromStart = 0.0f);
+                          const float& vInputOffsetFromStart = 0.0f,
+                          const bool& vNeedChange = false);
     void AddText(const std::string& vText);
     void SetText(const std::string& vText);
     std::string GetText(const std::string& vNumericType = "") const;
@@ -499,15 +500,16 @@ public:
 class IMGUI_API QuickStringCombo {
 private:
     std::vector<std::string> m_Array;
-
-public:
-    int32_t index = 0;
+    int32_t m_Index = 0;
 
 public:
     explicit QuickStringCombo() = default;
     explicit QuickStringCombo(const int32_t& vDefaultIndex, const std::vector<std::string>& vArray);
+    void Clear();
     bool DisplayCombo(const float& vWidth, const std::string& vLabel, const float& vInputOffsetFromStart = 0.0f);
     std::string GetText() const;
     bool Select(const std::string& vToken);
+    std::vector<std::string>& GetArrayRef();
+    int32_t& GetIndexRef();
 };
 }  // namespace ImWidgets

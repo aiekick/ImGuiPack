@@ -3319,7 +3319,12 @@ void ImWidgets::InputText::Clear() {
     SetText(m_DefaultString);
 }
 
-bool ImWidgets::InputText::DisplayInputText(const float& vWidth, const std::string& vLabel, const std::string& vDefaultText, const bool& vMultiline, const float& vInputOffsetFromStart) {
+bool ImWidgets::InputText::DisplayInputText(const float& vWidth,
+                                            const std::string& vLabel,
+                                            const std::string& vDefaultText,
+                                            const bool& vMultiline,
+                                            const float& vInputOffsetFromStart,
+                                            const bool& vNeedChange) {
     bool res = false;
     float px = ImGui::GetCursorPosX();
     if (!vLabel.empty()) {
@@ -3333,6 +3338,11 @@ bool ImWidgets::InputText::DisplayInputText(const float& vWidth, const std::stri
         m_DefaultString = vDefaultText;
         SetText(m_DefaultString);
     }
+    bool is_bad = false;
+    if (vNeedChange && m_DefaultString == m_Text) {
+        is_bad = true;
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::CustomStyle::BadColor);
+    }
     if (vMultiline) {
         if (ImGui::InputTextMultiline("##ImWidgets_InputText_DisplayInputText", m_Buffer, m_Len, ImVec2(-1.0f, ImGui::GetTextLineHeight() * 8), ImGuiInputTextFlags_AllowTabInput)) {
             m_Text = std::string(m_Buffer, strlen(m_Buffer));
@@ -3343,6 +3353,9 @@ bool ImWidgets::InputText::DisplayInputText(const float& vWidth, const std::stri
             m_Text = std::string(m_Buffer, strlen(m_Buffer));
             res = true;
         }
+    }
+    if (is_bad) {
+        ImGui::PopStyleColor();
     }
     ImGui::PopItemWidth();
     ImGui::PopID();
@@ -3392,9 +3405,14 @@ bool ImWidgets::InputText::empty() const {
 }
 
 ImWidgets::QuickStringCombo::QuickStringCombo(const int32_t& vDefaultIndex, const std::vector<std::string>& vArray) : m_Array(vArray) {
-    if (vDefaultIndex < m_Array.size()) {
-        index = vDefaultIndex;
+    if (vDefaultIndex != 0 && vDefaultIndex < m_Array.size()) {
+        m_Index = vDefaultIndex;
     }
+}
+
+void ImWidgets::QuickStringCombo::Clear() {
+    m_Index = 0;
+    m_Array.clear();
 }
 
 bool ImWidgets::QuickStringCombo::DisplayCombo(const float& vWidth, const std::string& vLabel, const float& vInputOffsetFromStart) {
@@ -3406,14 +3424,14 @@ bool ImWidgets::QuickStringCombo::DisplayCombo(const float& vWidth, const std::s
         ImGui::PushID(++ImGui::CustomStyle::pushId);
         change = ImGui::ContrastedButton(BUTTON_LABEL_RESET, "Reset");
         if (change) {
-            index = 0;
+            m_Index = 0;
         }
         ImGui::SameLine();
         const float w = vWidth - (ImGui::GetCursorPosX() - px);
         change |= ImGui::ContrastedCombo(
             w,
             "##combo",
-            &index,
+            &m_Index,
             [](void* data, int idx, const char** out_text) {
                 *out_text = ((const std::vector<std::string>*)data)->at(idx).c_str();
                 return true;
@@ -3428,8 +3446,8 @@ bool ImWidgets::QuickStringCombo::DisplayCombo(const float& vWidth, const std::s
 
 std::string ImWidgets::QuickStringCombo::GetText() const {
     std::string ret;
-    if (index < m_Array.size()) {
-        ret = m_Array.at(index);
+    if (m_Index!=0 && m_Index < m_Array.size()) {
+        ret = m_Array.at(m_Index);
     }
     return ret;
 }
@@ -3438,12 +3456,20 @@ bool ImWidgets::QuickStringCombo::Select(const std::string& vToken) {
     bool found = false;
     size_t idx = 0U;
     for (const auto& it : m_Array) {
-        if (it == vToken) {
-            index = idx;
+        if (it.compare(vToken)) {
+            m_Index = static_cast<int32_t>(idx);
             found = true;
             break;
         }
         ++idx;
     }
     return found;
+}
+
+std::vector<std::string>& ImWidgets::QuickStringCombo::GetArrayRef() {
+    return m_Array;
+}
+
+int32_t& ImWidgets::QuickStringCombo::GetIndexRef() {
+    return m_Index;
 }
