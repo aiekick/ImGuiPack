@@ -686,7 +686,7 @@ public:
     virtual void clear();
     virtual bool displayCombo(const float& vWidth, const std::string& vLabel, const float& vInputOffsetFromStart = 0.0f);
     virtual std::string getText() const;
-    bool select(const std::string& vToken);
+    virtual bool select(const std::string& vToken);
     std::vector<std::string>& getArrayRef();
     int32_t& getIndexRef();
 };
@@ -700,8 +700,10 @@ private:
 public:
     void init(const int32_t& vDefaultIndex, const std::vector<std::string>& vArray) override;
     void clear() override;
+    void finalize();
     bool displayCombo(const float& vWidth, const std::string& vLabel, const float& vInputOffsetFromStart = 0.0f) override;
     std::string getText() const override;
+    bool select(const std::string& vToken) override;
     void setText(const std::string& vText);
 };
 

@@ -3793,7 +3793,7 @@ bool ImWidgets::QuickStringCombo::select(const std::string& vToken) {
     bool found = false;
     size_t idx = 0U;
     for (const auto& it : m_Array) {
-        if (it.compare(vToken)) {
+        if (it == vToken) {
             m_Index = static_cast<int32_t>(idx);
             found = true;
             break;
@@ -3822,41 +3822,50 @@ void ImWidgets::QuickStringEditCombo::clear() {
     m_Text.clear();
 }
 
+void ImWidgets::QuickStringEditCombo::finalize() {
+    setText(ImWidgets::QuickStringCombo::getText());
+}
+
 bool ImWidgets::QuickStringEditCombo::displayCombo(const float& vWidth, const std::string& vLabel, const float& vInputOffsetFromStart) {
     bool change = false;
-    if (!m_Array.empty()) {
-        float px = ImGui::GetCursorPosX();
-        ImGui::Text("%s", vLabel.c_str());
-        ImGui::SameLine(vInputOffsetFromStart);
-        ImGui::PushID(++ImGui::CustomStyle::pushId);
-        change = ImGui::ContrastedButton(BUTTON_LABEL_RESET, "Reset");
-        if (change) {
-            m_Index = 0;
-            setText(ImWidgets::QuickStringCombo::getText());
-        }
-        ImGui::SameLine();
-        const float w = vWidth - (ImGui::GetCursorPosX() - px);
-        if (ImGui::ContrastedEditCombo(
-                w,
-                "##combo",
-                &m_Buffer[0],
-                m_Len,
-                &m_Index,
-                [](void* data, int idx, const char** out_text) {
-                    *out_text = ((const std::vector<std::string>*)data)->at(idx).c_str();
-                    return true;
-                },
-                (void*)&m_Array,
-                (int32_t)m_Array.size(),
-                -1)) {
-            setText(ImWidgets::QuickStringCombo::getText());
-        }
-        ImGui::PopID();
+    float px = ImGui::GetCursorPosX();
+    ImGui::Text("%s", vLabel.c_str());
+    ImGui::SameLine(vInputOffsetFromStart);
+    ImGui::PushID(++ImGui::CustomStyle::pushId);
+    change = ImGui::ContrastedButton(BUTTON_LABEL_RESET, "Reset");
+    if (change) {
+        m_Index = 0;
+        setText(ImWidgets::QuickStringCombo::getText());
     }
+    ImGui::SameLine();
+    const float w = vWidth - (ImGui::GetCursorPosX() - px);
+    if (ImGui::ContrastedEditCombo(
+            w,
+            "##combo",
+            &m_Buffer[0],
+            m_Len,
+            &m_Index,
+            [](void* data, int idx, const char** out_text) {
+                *out_text = ((const std::vector<std::string>*)data)->at(idx).c_str();
+                return true;
+            },
+            (void*)&m_Array,
+            (int32_t)m_Array.size(),
+            -1)) {
+        setText(ImWidgets::QuickStringCombo::getText());
+    }
+    ImGui::PopID();
     return change;
 }
+
 std::string ImWidgets::QuickStringEditCombo::getText() const {
     return m_Buffer;
+}
+
+bool ImWidgets::QuickStringEditCombo::select(const std::string& vToken) {
+    const auto res = ImWidgets::QuickStringCombo::select(vToken);
+    setText(ImWidgets::QuickStringCombo::getText());
+    return res;
 }
 
 void ImWidgets::QuickStringEditCombo::setText(const std::string& vText) {
