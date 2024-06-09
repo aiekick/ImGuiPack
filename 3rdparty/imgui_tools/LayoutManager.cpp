@@ -28,9 +28,11 @@ private:
     std::string m_msg;
 
 public:
-    LayoutManagerException() : std::exception() {}
+    LayoutManagerException() : std::exception() {
+    }
     // std::exception(msg) is not availaiable on linux it seems... but on windows yes
-    explicit LayoutManagerException(const std::string& vMsg) : std::exception(), m_msg(vMsg) {}
+    explicit LayoutManagerException(const std::string& vMsg) : std::exception(), m_msg(vMsg) {
+    }
     explicit LayoutManagerException(char const* const fmt, ...) : std::exception() {
         va_list args;
         va_start(args, fmt);
@@ -295,7 +297,7 @@ void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize) {
     for (const auto& pane : m_PanesByName) {
         auto pane_ptr = pane.second;
         if (pane_ptr != nullptr) {
-                auto arr = m_ParsePaneDisposal(pane_ptr->paneDisposal);
+            auto arr = m_ParsePaneDisposal(pane_ptr->paneDisposal);
             if (!arr.empty()) {
                 ImGuiDir dir = ImGuiDir_None;
                 size_t idx = 0U;
@@ -410,14 +412,14 @@ bool LayoutManager::DrawPanes(const uint32_t& vCurrentFrame, ImGuiContext* vCont
     return change;
 }
 
-bool LayoutManager::DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const ImVec2& vMaxSize, ImGuiContext* vContextPtr, void* vUserDatas) {
+bool LayoutManager::DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr, void* vUserDatas) {
     bool change = false;
     for (const auto& pane : m_PanesByFlag) {
         auto pane_ptr = pane.second.lock();
         if (pane_ptr != nullptr) {
             auto layoutPanePtr = pane_ptr->ilayoutPane.lock();
             if (layoutPanePtr != nullptr && layoutPanePtr->CanBeDisplayed()) {
-                change |= layoutPanePtr->DrawDialogsAndPopups(vCurrentFrame, vMaxSize, vContextPtr, vUserDatas);
+                change |= layoutPanePtr->DrawDialogsAndPopups(vCurrentFrame, vRect, vContextPtr, vUserDatas);
             }
         }
     }
