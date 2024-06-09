@@ -484,6 +484,8 @@ IMGUI_API bool
 SliderI64DefaultCompact(float width, const char* label, int64_t* v, int64_t v_min, int64_t v_max, int64_t v_default, int64_t v_step = 0, const char* format = "%d");
 IMGUI_API bool
 SliderFloatDefaultCompact(float width, const char* label, float* v, float v_min, float v_max, float v_default, float v_step = 0.0f, const char* format = "%.3f");
+IMGUI_API bool
+SliderDoubleDefaultCompact(float width, const char* label, double* v, double v_min, double v_max, double v_default, double v_step = 0.0, const char* format = "%.3f");
 
 IMGUI_API bool SliderScalar(float width,
                             const char* label,
@@ -577,6 +579,12 @@ bool SliderDefaultCompact(float vWidth, const char* vName, T* vVar, T vInf, T vS
 
     return change;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///// SPLITTER /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+IMGUI_API bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///// ALIGNEMENTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -701,7 +709,10 @@ public:
     virtual bool displayCombo(const float& vWidth, const std::string& vLabel, const float& vInputOffsetFromStart = 0.0f);
     virtual std::string getText() const;
     virtual bool select(const std::string& vToken);
+    size_t size() const;
+    const std::vector<std::string>& getArray() const;
     std::vector<std::string>& getArrayRef();
+    const int32_t& getIndex() const;
     int32_t& getIndexRef();
 };
 

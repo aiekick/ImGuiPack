@@ -2857,6 +2857,10 @@ bool SliderFloatDefaultCompact(float width, const char* label, float* v, float v
     return SliderScalarDefaultCompact(width, label, ImGuiDataType_Float, v, &v_min, &v_max, &v_default, &v_step, format);
 }
 
+bool SliderDoubleDefaultCompact(float width, const char* label, double* v, double v_min, double v_max, double v_default, double v_step, const char* format) {
+    return SliderScalarDefaultCompact(width, label, ImGuiDataType_Double, v, &v_min, &v_max, &v_default, &v_step, format);
+}
+
 bool SliderScalar(float width,
                   const char* label,
                   ImGuiDataType data_type,
@@ -3040,6 +3044,21 @@ bool SliderSizeTDefault(float width,
 
 bool SliderFloatDefault(float width, const char* label, float* v, float v_min, float v_max, float v_default, float v_step, const char* format, ImGuiSliderFlags flags) {
     return SliderScalarDefault(width, label, ImGuiDataType_Float, v, &v_min, &v_max, &v_default, &v_step, format, flags);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///// SPLITTER /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// https://github.com/ocornut/imgui/issues/1720
+bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size) {
+    auto* window = ImGui::GetCurrentWindow();
+    ImGuiID id = window->GetID("##Splitter");
+    ImRect bb;
+    bb.Min = window->DC.CursorPos + (split_vertically ? ImVec2(*size1, 0.0f) : ImVec2(0.0f, *size1));
+    bb.Max = bb.Min + ImGui::CalcItemSize(split_vertically ? ImVec2(thickness, splitter_long_axis_size) : ImVec2(splitter_long_axis_size, thickness), 0.0f, 0.0f);
+    return ImGui::SplitterBehavior(
+        bb, id, split_vertically ? ImGuiAxis_X : ImGuiAxis_Y, size1, size2, min_size1, min_size2, 1.0f, 0.0, ImGui::GetColorU32(ImGuiCol_FrameBg));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3842,8 +3861,20 @@ bool ImWidgets::QuickStringCombo::select(const std::string& vToken) {
     return found;
 }
 
+size_t ImWidgets::QuickStringCombo::size() const {
+    return m_Array.size();
+}
+
+const std::vector<std::string>& ImWidgets::QuickStringCombo::getArray() const {
+    return m_Array;
+}
+
 std::vector<std::string>& ImWidgets::QuickStringCombo::getArrayRef() {
     return m_Array;
+}
+
+const int32_t& ImWidgets::QuickStringCombo::getIndex() const {
+    return m_Index;
 }
 
 int32_t& ImWidgets::QuickStringCombo::getIndexRef() {
