@@ -92,7 +92,7 @@
 #endif
 
 #ifdef USE_IM_COOL_BAR
-#include <3rdparty/imgui_imcoolbar/ImCoolbar.h>
+#include <3rdparty/imgui_imcoolbar/ImCoolBar.h>
 #endif
 
 #ifdef USE_IMGUI_MARKDOW
