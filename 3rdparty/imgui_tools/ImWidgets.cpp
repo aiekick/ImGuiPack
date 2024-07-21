@@ -2538,30 +2538,30 @@ inline bool inSliderBehaviorStepper(const ImRect& bb,
                                     ImGuiSliderFlags flags,
                                     ImRect* out_grab_bb) {
     // Those MIN/MAX values are not define because we need to point to them
-    //static const signed char IM_S8_MIN     = -128;
-    //static const signed char IM_S8_MAX     = 127;
-    //static const unsigned char IM_U8_MIN   = 0;
-    //static const unsigned char IM_U8_MAX   = 0xFF;
-    //static const signed short IM_S16_MIN   = -32768;
-    //static const signed short IM_S16_MAX   = 32767;
-    //static const unsigned short IM_U16_MIN = 0;
-    //static const unsigned short IM_U16_MAX = 0xFFFF;
-    //static const ImS32 IM_S32_MIN          = INT_MIN;  // (-2147483647 - 1), (0x80000000);
-    //static const ImS32 IM_S32_MAX          = INT_MAX;  // (2147483647), (0x7FFFFFFF)
-    //static const ImU32 IM_U32_MIN          = 0;
-    //static const ImU32 IM_U32_MAX          = UINT_MAX;  // (0xFFFFFFFF)
+    // static const signed char IM_S8_MIN     = -128;
+    // static const signed char IM_S8_MAX     = 127;
+    // static const unsigned char IM_U8_MIN   = 0;
+    // static const unsigned char IM_U8_MAX   = 0xFF;
+    // static const signed short IM_S16_MIN   = -32768;
+    // static const signed short IM_S16_MAX   = 32767;
+    // static const unsigned short IM_U16_MIN = 0;
+    // static const unsigned short IM_U16_MAX = 0xFFFF;
+    static const ImS32 IM_S32_MIN = INT_MIN;  // (-2147483647 - 1), (0x80000000);
+    static const ImS32 IM_S32_MAX = INT_MAX;  // (2147483647), (0x7FFFFFFF)
+    static const ImU32 IM_U32_MIN = 0;
+    static const ImU32 IM_U32_MAX = UINT_MAX;  // (0xFFFFFFFF)
 #ifdef LLONG_MIN
-    //static const ImS64 IM_S64_MIN = LLONG_MIN;  // (-9223372036854775807ll - 1ll);
-    //static const ImS64 IM_S64_MAX = LLONG_MAX;  // (9223372036854775807ll);
+    static const ImS64 IM_S64_MIN = LLONG_MIN;  // (-9223372036854775807ll - 1ll);
+    static const ImS64 IM_S64_MAX = LLONG_MAX;  // (9223372036854775807ll);
 #else
-    //static const ImS64 IM_S64_MIN = -9223372036854775807LL - 1;
-    //static const ImS64 IM_S64_MAX = 9223372036854775807LL;
+    static const ImS64 IM_S64_MIN = -9223372036854775807LL - 1;
+    static const ImS64 IM_S64_MAX = 9223372036854775807LL;
 #endif
-    // static const ImU64 IM_U64_MIN = 0;
+    static const ImU64 IM_U64_MIN = 0;
 #ifdef ULLONG_MAX
-    //static const ImU64 IM_U64_MAX = ULLONG_MAX;  // (0xFFFFFFFFFFFFFFFFull);
+    static const ImU64 IM_U64_MAX = ULLONG_MAX;  // (0xFFFFFFFFFFFFFFFFull);
 #else
-    //static const ImU64 IM_U64_MAX = (2ULL * 9223372036854775807LL + 1);
+    static const ImU64 IM_U64_MAX = (2ULL * 9223372036854775807LL + 1);
 #endif
 
     // Read imgui.cpp "API BREAKING CHANGES" section for 1.78 if you hit this assert.
@@ -3445,14 +3445,14 @@ bool ContrastedComboVectorDefault(float vWidth, const char* label, int* current_
 }
 
 bool ContrastedEditCombo(float vWidth,
-                                   const char* label,
-                                   char* buffer,
-                                   size_t buffer_size,
-                                   int* current_item,
-                                   bool (*items_getter)(void* data, int idx, const char** out_text),
-                                   void* data,
-                                   int items_count,
-                                   int popup_max_height_in_items) {
+                         const char* label,
+                         char* buffer,
+                         size_t buffer_size,
+                         int* current_item,
+                         bool (*items_getter)(void* data, int idx, const char** out_text),
+                         void* data,
+                         int items_count,
+                         int popup_max_height_in_items) {
     ImGuiContext& g = *GImGui;
 
     if (vWidth > -1) {
@@ -3794,12 +3794,12 @@ bool ImWidgets::InputText::empty() const {
     return m_Text.empty() || (m_Text == m_DefaultString);
 }
 
-ImWidgets::QuickStringCombo::QuickStringCombo(const int32_t& vDefaultIndex, const std::vector<std::string>& vArray){
+ImWidgets::QuickStringCombo::QuickStringCombo(const int32_t& vDefaultIndex, const std::vector<std::string>& vArray) {
     init(vDefaultIndex, vArray);
 }
 
-void ImWidgets::QuickStringCombo::init(const int32_t& vDefaultIndex, const std::vector<std::string>& vArray) { 
-    m_Array = vArray; 
+void ImWidgets::QuickStringCombo::init(const int32_t& vDefaultIndex, const std::vector<std::string>& vArray) {
+    m_Array = vArray;
     if (vDefaultIndex != 0 && vDefaultIndex < m_Array.size()) {
         m_Index = vDefaultIndex;
     }
