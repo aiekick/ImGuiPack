@@ -63,8 +63,8 @@
 #ifdef _WIN32
 #include <allegro5/allegro_windows.h>
 #endif
-#define ALLEGRO_HAS_CLIPBOARD           (ALLEGRO_VERSION_INT >= ((5 << 24) | (1 << 16) | (12 << 8))) // Clipboard only supported from Allegro 5.1.12
-#define ALLEGRO_HAS_DRAW_INDEXED_PRIM   (ALLEGRO_VERSION_INT >= ((5 << 24) | (2 << 16) | ( 5 << 8))) // DX9 implementation of al_draw_indexed_prim() got fixed in Allegro 5.2.5
+#define ALLEGRO_HAS_CLIPBOARD           ((ALLEGRO_VERSION_INT & ~ALLEGRO_UNSTABLE_BIT) >= ((5 << 24) | (1 << 16) | (12 << 8))) // Clipboard only supported from Allegro 5.1.12
+#define ALLEGRO_HAS_DRAW_INDEXED_PRIM   ((ALLEGRO_VERSION_INT & ~ALLEGRO_UNSTABLE_BIT) >= ((5 << 24) | (2 << 16) | ( 5 << 8))) // DX9 implementation of al_draw_indexed_prim() got fixed in Allegro 5.2.5
 
 // Visual Studio warnings
 #ifdef _MSC_VER
@@ -424,6 +424,7 @@ static ImGuiKey ImGui_ImplAllegro5_KeyCodeToImGuiKey(int key_code)
 bool ImGui_ImplAllegro5_Init(ALLEGRO_DISPLAY* display)
 {
     ImGuiIO& io = ImGui::GetIO();
+    IMGUI_CHECKVERSION();
     IM_ASSERT(io.BackendPlatformUserData == nullptr && "Already initialized a platform backend!");
 
     // Setup backend capabilities flags
@@ -491,8 +492,9 @@ static void ImGui_ImplAllegro5_UpdateKeyModifiers()
 // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 bool ImGui_ImplAllegro5_ProcessEvent(ALLEGRO_EVENT* ev)
 {
-    ImGuiIO& io = ImGui::GetIO();
     ImGui_ImplAllegro5_Data* bd = ImGui_ImplAllegro5_GetBackendData();
+    IM_ASSERT(bd != nullptr && "Context or backend not initialized! Did you call ImGui_ImplAllegro5_Init()?");
+    ImGuiIO& io = ImGui::GetIO();
 
     switch (ev->type)
     {
@@ -587,7 +589,7 @@ static void ImGui_ImplAllegro5_UpdateMouseCursor()
 void ImGui_ImplAllegro5_NewFrame()
 {
     ImGui_ImplAllegro5_Data* bd = ImGui_ImplAllegro5_GetBackendData();
-    IM_ASSERT(bd != nullptr && "Did you call ImGui_ImplAllegro5_Init()?");
+    IM_ASSERT(bd != nullptr && "Context or backend not initialized! Did you call ImGui_ImplAllegro5_Init()?");
 
     if (!bd->Texture)
         ImGui_ImplAllegro5_CreateDeviceObjects();

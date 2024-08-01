@@ -35,35 +35,35 @@
 #endif
 
 #if defined(__WIN32__) || defined(WIN32) || defined(_WIN32) || defined(__WIN64__) || defined(WIN64) || defined(_WIN64) || defined(_MSC_VER)
-#if defined(ImGuiPack_EXPORTS)
-#define IGFD_API __declspec(dllexport)
-#define IMGUI_API __declspec(dllexport)
-#define IMPLOT_API __declspec(dllexport)
-#define IMGUI_IMPL_API __declspec(dllexport)
-#define IM_NODE_FLOW_API __declspec(dllexport)
-#define IMGUI_NODE_EDITOR_API __declspec(dllexport)
-#elif defined(BUILD_IMGUI_PACK_SHARED_LIBS)
-#define IGFD_API __declspec(dllimport)
-#define IMGUI_API __declspec(dllimport)
-#define IMPLOT_API __declspec(dllimport)
-#define IMGUI_IMPL_API __declspec(dllimport)
-#define IM_NODE_FLOW_API __declspec(dllimport)
-#define IMGUI_NODE_EDITOR_API __declspec(dllimport)
+    #if defined(ImGuiPack_EXPORTS)
+        #define IGFD_API __declspec(dllexport)
+        #define IMGUI_API __declspec(dllexport)
+        #define IMPLOT_API __declspec(dllexport)
+        #define IMGUI_IMPL_API __declspec(dllexport)
+        #define IM_NODE_FLOW_API __declspec(dllexport)
+        #define IMGUI_NODE_EDITOR_API __declspec(dllexport)
+    #elif defined(BUILD_IMGUI_PACK_SHARED_LIBS)
+        #define IGFD_API __declspec(dllimport)
+        #define IMGUI_API __declspec(dllimport)
+        #define IMPLOT_API __declspec(dllimport)
+        #define IMGUI_IMPL_API __declspec(dllimport)
+        #define IM_NODE_FLOW_API __declspec(dllimport)
+        #define IMGUI_NODE_EDITOR_API __declspec(dllimport)
+    #else
+        #define IGFD_API
+        #define IMGUI_API
+        #define IMPLOT_API
+        #define IMGUI_IMPL_API
+        #define IM_NODE_FLOW_API
+        #define IMGUI_NODE_EDITOR_API
+    #endif
 #else
-#define IGFD_API
-#define IMGUI_API
-#define IMPLOT_API
-#define IMGUI_IMPL_API
-#define IM_NODE_FLOW_API
-#define IMGUI_NODE_EDITOR_API
-#endif
-#else
-#define IGFD_API
-#define IMGUI_API
-#define IMPLOT_API
-#define IMGUI_IMPL_API
-#define IM_NODE_FLOW_API
-#define IMGUI_NODE_EDITOR_API
+    #define IGFD_API
+    #define IMGUI_API
+    #define IMPLOT_API
+    #define IMGUI_IMPL_API
+    #define IM_NODE_FLOW_API
+    #define IMGUI_NODE_EDITOR_API
 #endif
 
 #include <3rdparty/imgui_docking/imgui.h>
@@ -123,3 +123,11 @@
 #ifdef USE_IMGUI_FILE_DIALOG
 #include <3rdparty/imgui_imguifiledialog/ImGuiFileDialog.h>
 #endif
+
+// others missing math function from imgui
+static inline ImVec4 operator*(const float& lhs, const ImVec4 rhs) {
+    return ImVec4(lhs * rhs.x, lhs * rhs.y, lhs * rhs.y, lhs * rhs.w);
+}
+static inline ImVec4 operator*(const ImVec4& lhs, const float rhs) {
+    return ImVec4(lhs.x * rhs, lhs.y * rhs, lhs.y * rhs, lhs.w * rhs);
+}
