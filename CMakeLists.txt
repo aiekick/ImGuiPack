@@ -22,6 +22,8 @@ option(USE_IMGUI_FILE_DIALOG "Use ImGuiFileDialog" OFF)
 option(USE_IMGUI_COLOR_TEXT_EDIT "Use ImGuiColorTextEdit" OFF)
 option(IMGUIPACK_USE_STD_FILESYSTEM "Enable the use of std::filesystem in ImGuiFileDialog" OFF)
 
+option(USE_CUSTOM_IMGUI_CONFIG "Use Custom ImGui Config (User Side)" OFF)
+
 if(USE_SHARED_LIBS)
 	set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
 	set(LLVM_USE_CRT_DEBUG MDd CACHE STRING "" FORCE)
@@ -101,7 +103,7 @@ add_definitions(-DIMGUI_ENABLE_FREETYPE)
 add_definitions(-DIMGUI_DEFINE_MATH_OPERATORS)
 #add_definitions(-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS)
 
-if(USE_SHARED_LIBS)
+if(NOT USE_CUSTOM_IMGUI_CONFIG)
 	add_definitions(-DIMGUI_USER_CONFIG="${CMAKE_CURRENT_SOURCE_DIR}/CustomImConfig.h")
 endif()
 
