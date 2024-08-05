@@ -965,6 +965,7 @@ bool CollapsingHeader_SmallHeight(const char* vName, float vHeightRatio, float v
     if (window->SkipItems)
         return false;
 
+    PushID(++CustomStyle::pushId);
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(vName);
@@ -1007,7 +1008,7 @@ bool CollapsingHeader_SmallHeight(const char* vName, float vHeightRatio, float v
     RenderTextClipped(bb.Min, bb.Max - padding, vName, nullptr, &label_size, style.ButtonTextAlign, &bb);
     padding.y *= vHeightRatio;
     RenderArrow(window->DrawList, bb.Min + padding, GetColorU32(ImGuiCol_Text), (is_open ? ImGuiDir_::ImGuiDir_Down : ImGuiDir_::ImGuiDir_Right), 1.0f);
-
+    PopID();
     return is_open;
 }
 
@@ -1016,6 +1017,7 @@ bool CollapsingHeader_CheckBox(const char* vName, float vWidth, bool vDefaulExpa
     if (window->SkipItems)
         return false;
 
+    PushID(++CustomStyle::pushId);
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(vName);
@@ -1081,6 +1083,7 @@ bool CollapsingHeader_CheckBox(const char* vName, float vWidth, bool vDefaulExpa
         }
     }
 
+    PopID();
     return is_open;
 }
 
@@ -1095,6 +1098,7 @@ bool CollapsingHeader_Button(const char* vName,
     if (window->SkipItems)
         return false;
 
+    PushID(++CustomStyle::pushId);
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(vName);
@@ -1155,6 +1159,7 @@ bool CollapsingHeader_Button(const char* vName,
             iconPos + ImVec2(+cross_extent * 0.4f, -cross_extent * 0.4f), iconPos + ImVec2(+cross_extent, -cross_extent), GetColorU32(ImGuiCol_Text), 4.0f);
     }
 
+    PopID();
     return is_open;
 }
 
@@ -3420,14 +3425,17 @@ bool ContrastedComboVectorDefault(float vWidth, const char* label, int* current_
     if (!items.empty()) {
         PushID(++CustomStyle::pushId);
 
+        float w = vWidth;
+
         change = ContrastedButton(BUTTON_LABEL_RESET, "Reset");
         if (change)
             *current_item = vDefault;
 
+        w -= GetItemRectSize().x;
         SameLine();
 
         change |= ContrastedCombo(
-            vWidth,
+            w,
             label,
             current_item,
             [](void* data, int idx, const char** out_text) {
