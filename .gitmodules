@@ -14,3 +14,6 @@
 	path = 3rdparty/imgui_imcoolbar
 	url = https://github.com/aiekick/ImCoolBar.git
 	branch = master
+[submodule "3rdparty/imgui_imnodes"]
+	path = 3rdparty/imgui_imnodes
+	url = https://github.com/aiekick/ImNodes.git

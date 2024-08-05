@@ -1,7 +1,8 @@
 // dear imgui: Platform Backend for SDL3 (*EXPERIMENTAL*)
 // This needs to be used along with a Renderer (e.g. DirectX11, OpenGL3, Vulkan..)
 // (Info: SDL3 is a cross-platform general purpose library for handling windows, inputs, graphics context creation, etc.)
-// (IMPORTANT: SDL 3.0.0 is NOT YET RELEASED. IT IS POSSIBLE THAT ITS SPECS/API WILL CHANGE BEFORE RELEASE)
+
+// (**IMPORTANT: SDL 3.0.0 is NOT YET RELEASED AND CURRENTLY HAS A FAST CHANGING API. THIS CODE BREAKS OFTEN**)
 
 // Implemented features:
 //  [X] Platform: Clipboard support.

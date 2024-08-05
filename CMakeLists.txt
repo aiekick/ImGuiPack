@@ -22,6 +22,8 @@ option(USE_IMGUI_FILE_DIALOG "Use ImGuiFileDialog" OFF)
 option(USE_IMGUI_COLOR_TEXT_EDIT "Use ImGuiColorTextEdit" OFF)
 option(IMGUIPACK_USE_STD_FILESYSTEM "Enable the use of std::filesystem in ImGuiFileDialog" OFF)
 
+option(USE_CUSTOM_IMGUI_CONFIG "Use Custom ImGui Config (User Side)" OFF)
+
 if(USE_SHARED_LIBS)
 	set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
 	set(LLVM_USE_CRT_DEBUG MDd CACHE STRING "" FORCE)
@@ -65,9 +67,9 @@ set(FREETYPE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/freetype2/include)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/freetype2 EXCLUDE_FROM_ALL)
 
 if(USE_SHARED_LIBS)
-	set_target_properties(freetype PROPERTIES FOLDER Libs/Shared)
+	set_target_properties(freetype PROPERTIES FOLDER 3rdparty/Shared)
 else()
-	set_target_properties(freetype PROPERTIES FOLDER Libs/Static)
+	set_target_properties(freetype PROPERTIES FOLDER 3rdparty/Static)
 endif()
 
 #####################################################
@@ -81,9 +83,9 @@ if (USE_IMGUI_COLOR_TEXT_EDIT)
 	set(BOOST_REGEX_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/regex/include)
 	add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/regex EXCLUDE_FROM_ALL)
 	if(USE_SHARED_LIBS)
-		set_target_properties(boost_regex PROPERTIES FOLDER libs/Shared)
+		set_target_properties(boost_regex PROPERTIES FOLDER 3rdparty/Shared)
 	else()
-		set_target_properties(boost_regex PROPERTIES FOLDER libs/Static)
+		set_target_properties(boost_regex PROPERTIES FOLDER 3rdparty/Static)
 	endif()
 endif()
 
@@ -100,7 +102,10 @@ add_definitions(-DFT_DEBUG_LEVEL_TRACE)
 add_definitions(-DIMGUI_ENABLE_FREETYPE)
 add_definitions(-DIMGUI_DEFINE_MATH_OPERATORS)
 #add_definitions(-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS)
-#add_definitions(-DIMGUI_USER_CONFIG="${CMAKE_CURRENT_SOURCE_DIR}/CustomImConfig.h")
+
+if(NOT USE_CUSTOM_IMGUI_CONFIG)
+	add_definitions(-DIMGUI_USER_CONFIG="${CMAKE_CURRENT_SOURCE_DIR}/CustomImConfig.h")
+endif()
 
 #####################################################
 ##### IMGUI

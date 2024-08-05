@@ -697,8 +697,8 @@ public:
 
 class IMGUI_API QuickStringCombo {
 protected:
-    std::vector<std::string> m_Array;
     int32_t m_Index = 0;
+    std::vector<std::string> m_Array;
 
 public:
     explicit QuickStringCombo() = default;

@@ -1007,7 +1007,7 @@ bool CollapsingHeader_SmallHeight(const char* vName, float vHeightRatio, float v
     RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
     RenderTextClipped(bb.Min, bb.Max - padding, vName, nullptr, &label_size, style.ButtonTextAlign, &bb);
     padding.y *= vHeightRatio;
-    RenderArrow(window->DrawList, bb.Min + padding, GetColorU32(ImGuiCol_Text), (is_open ? ImGuiDir_::ImGuiDir_Down : ImGuiDir_::ImGuiDir_Right), 1.0f);
+    RenderArrow(window->DrawList, bb.Min + padding, GetColorU32(ImGuiCol_Text), (is_open ? ImGuiDir::ImGuiDir_Down : ImGuiDir::ImGuiDir_Right), 1.0f);
     PopID();
     return is_open;
 }
@@ -1053,7 +1053,7 @@ bool CollapsingHeader_CheckBox(const char* vName, float vWidth, bool vDefaulExpa
     RenderArrow(window->DrawList,
                 bb.Min + padding + ImVec2(0.0f, text_base_offset_y),
                 GetColorU32(ImGuiCol_Text),
-                (is_open ? ImGuiDir_::ImGuiDir_Down : ImGuiDir_::ImGuiDir_Right),
+                (is_open ? ImGuiDir::ImGuiDir_Down : ImGuiDir::ImGuiDir_Right),
                 1.0f);
 
     // menu
@@ -1134,7 +1134,7 @@ bool CollapsingHeader_Button(const char* vName,
     RenderArrow(window->DrawList,
                 bb.Min + padding + ImVec2(0.0f, text_base_offset_y),
                 GetColorU32(ImGuiCol_Text),
-                (is_open ? ImGuiDir_::ImGuiDir_Down : ImGuiDir_::ImGuiDir_Right),
+                (is_open ? ImGuiDir::ImGuiDir_Down : ImGuiDir::ImGuiDir_Right),
                 1.0f);
 
     // menu
@@ -2707,7 +2707,7 @@ bool SliderScalarCompact(float width,
     bool temp_input_is_active = temp_input_allowed && TempInputIsActive(id);
     if (!temp_input_is_active) {
         // Tabbing or CTRL-clicking on Slider turns it into an input box
-        const bool clicked = hovered && IsMouseClicked(0, id);
+        const bool clicked = hovered && IsMouseClicked(ImGuiMouseButton_Left, ImGuiInputFlags_None, id);
         const bool make_active = (clicked || g.NavActivateId == id);
         if (make_active && clicked)
             SetKeyOwner(ImGuiKey_MouseLeft, id);
@@ -2904,7 +2904,7 @@ bool SliderScalar(float width,
     bool temp_input_is_active = temp_input_allowed && TempInputIsActive(id);
     if (!temp_input_is_active) {
         // Tabbing or CTRL-clicking on Slider turns it into an input box
-        const bool clicked = hovered && IsMouseClicked(0, id);
+        const bool clicked = hovered && IsMouseClicked(ImGuiMouseButton_Left, ImGuiInputFlags_None, id);
         const bool make_active = (clicked || g.NavActivateId == id);
         if (make_active && clicked)
             SetKeyOwner(ImGuiKey_MouseLeft, id);
