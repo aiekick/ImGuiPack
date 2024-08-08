@@ -20,6 +20,7 @@ limitations under the License.
 #include "LayoutManager.h"
 #include <ImGuiPack.h>
 #include <cstdarg>  // For va_start, etc.
+#include <set>
 
 #include <imgui_internal.h>
 

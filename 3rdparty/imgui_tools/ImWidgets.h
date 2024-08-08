@@ -95,7 +95,7 @@ IMGUI_API bool BeginFramedGroup(const char* vLabel,
                                 ImVec2 vSize = ImVec2(0, 0),
                                 ImVec4 vCol = ImVec4(0.0f, 0.0f, 0.0f, 0.5f),
                                 ImVec4 vHoveredCol = ImVec4(0.15f, 0.15f, 0.15f, 0.5f));
-IMGUI_API void EndFramedGroup(ImGuiCol vHoveredIdx = ImGuiCol_TabUnfocusedActive, ImGuiCol NormalIdx = ImGuiCol_TabUnfocused);
+IMGUI_API void EndFramedGroup(ImGuiCol vHoveredIdx = ImGuiCol_TabDimmedSelected, ImGuiCol NormalIdx = ImGuiCol_TabDimmed);
 IMGUI_API void FramedGroupSeparator();
 IMGUI_API void FramedGroupText(ImVec4* vTextColor, const char* vHelp, const char* vFmt, va_list vArgs);
 IMGUI_API void FramedGroupText(const char* vFmt, ...);
