@@ -130,6 +130,43 @@ if (USE_IMPLOT)
 endif()
 
 #####################################################
+##### IMTOOLS
+#####################################################
+
+if (USE_IM_TOOLS)
+	message("USE IN TOOLS")
+	file(GLOB IMGUI_IMTOOLS_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.cpp)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMTOOLS_SOURCES})
+endif()
+
+#####################################################
+##### IMNODES
+#####################################################
+
+if (USE_IM_NODES)
+	message("USE IM NODES")
+	file(GLOB IMGUI_IMNODES_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/*.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/*.md)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMNODES_SOURCES})
+endif()
+
+#####################################################
+##### IMGUIZMO
+#####################################################
+
+if (USE_IM_GUIZMO)
+	message("USE IM GUIZMO")
+	file(GLOB IMGUI_IMGUIZMO_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.cpp)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIZMO_SOURCES})
+endif()
+
+#####################################################
 ##### IMCOOLBAR
 #####################################################
 
@@ -139,6 +176,21 @@ if (USE_IM_COOL_BAR)
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.cpp)
 	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMCOOLBAR_SOURCES})
+endif()
+
+#####################################################
+##### IMGUINODEFLOW
+#####################################################
+
+if (USE_IMGUI_NODE_FLOW)
+	message("USE IMGUI NODE FLOW")
+	file(GLOB IMGUI_IMGUINODEFLOW_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/include/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/src/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/src/*.inl
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/src/*.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/*.md)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUINODEFLOW_SOURCES})
 endif()
 
 #####################################################
@@ -166,45 +218,6 @@ if (USE_IMGUI_FILE_DIALOG)
 endif()
 
 #####################################################
-##### IMGUIZMO
-#####################################################
-
-if (USE_IM_GUIZMO)
-	message("USE IM GUIZMO")
-	file(GLOB IMGUI_IMGUIZMO_SOURCES
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.h
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.cpp)
-	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIZMO_SOURCES})
-endif()
-
-#####################################################
-##### IMTOOLS
-#####################################################
-
-if (USE_IM_TOOLS)
-	message("USE IN TOOLS")
-	file(GLOB IMGUI_IMTOOLS_SOURCES
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.h
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.cpp)
-	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMTOOLS_SOURCES})
-endif()
-
-#####################################################
-##### IMGUINODEFLOW
-#####################################################
-
-if (USE_IMGUI_NODE_FLOW)
-	message("USE IMGUI NODE FLOW")
-	file(GLOB IMGUI_IMGUINODEFLOW_SOURCES
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/include/*.h
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/src/*.h
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/src/*.inl
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/src/*.cpp
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/*.md)
-	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUINODEFLOW_SOURCES})
-endif()
-
-#####################################################
 ##### IMGUINODEEDITOR
 #####################################################
 
@@ -215,19 +228,6 @@ if (USE_IMGUI_NODE_EDITOR)
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.inl
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.cpp)
 	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUINODEEDITOR_SOURCES})
-endif()
-
-#####################################################
-##### IMNODES
-#####################################################
-
-if (USE_IM_NODES)
-	message("USE IM NODES")
-	file(GLOB IMGUI_IMNODES_SOURCES
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/*.h
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/*.cpp
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/*.md)
-	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMNODES_SOURCES})
 endif()
 
 #####################################################
@@ -340,23 +340,23 @@ endif()
 if (USE_IMPLOT)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IMPLOT)
 endif()
-if (USE_IM_COOL_BAR)
-	target_compile_definitions(${PROJECT} PUBLIC USE_IM_COOL_BAR)
-endif()
-if (USE_IM_GRADIENT_HDR)
-	target_compile_definitions(${PROJECT} PUBLIC USE_IM_GRADIENT_HDR)
-endif()
-if (USE_IMGUI_FILE_DIALOG)
-	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_FILE_DIALOG)
-endif()
-if (USE_IM_GUIZMO)
-	target_compile_definitions(${PROJECT} PUBLIC USE_IM_GUIZMO)
-endif()
 if (USE_IM_TOOLS)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IM_TOOLS)
 endif()
 if (USE_IM_NODES)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IM_NODES)
+endif()
+if (USE_IM_GUIZMO)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IM_GUIZMO)
+endif()
+if (USE_IM_COOL_BAR)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IM_COOL_BAR)
+endif()
+if (USE_IMGUI_MARKDOW)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_MARKDOW)
+endif()
+if (USE_IM_GRADIENT_HDR)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IM_GRADIENT_HDR)
 endif()
 if (USE_IMGUI_NODE_FLOW)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_NODE_FLOW)
@@ -364,8 +364,8 @@ endif()
 if (USE_IMGUI_NODE_EDITOR)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_NODE_EDITOR)
 endif()
-if (USE_IMGUI_MARKDOW)
-	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_MARKDOW)
+if (USE_IMGUI_FILE_DIALOG)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_FILE_DIALOG)
 endif()
 if (USE_IMGUI_COLOR_TEXT_EDIT)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_COLOR_TEXT_EDIT)
