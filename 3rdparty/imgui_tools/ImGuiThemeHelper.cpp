@@ -593,11 +593,14 @@ inline void ExportSizes(ImGuiStyle& style_to_export, ImGuiStyle& ref_style, bool
 		if (!export_only_modified || memcmp(&style_to_export.WindowMenuButtonPosition, &ref_style.WindowMenuButtonPosition, sizeof(ImGuiDir)) != 0)
 		{
 			const char* dirName = 0;
-			switch (style_to_export.WindowMenuButtonPosition)
-			{
-			case ImGuiDir_None: dirName = "ImGuiDir_None"; break;
-			case ImGuiDir_Left: dirName = "ImGuiDir_Left"; break;
-			case ImGuiDir_Right: dirName = "ImGuiDir_Right"; break;
+			switch (style_to_export.WindowMenuButtonPosition) {
+                case ImGuiDir_None: dirName = "ImGuiDir_None"; break;
+                case ImGuiDir_Left: dirName = "ImGuiDir_Left"; break;
+                case ImGuiDir_Right: dirName = "ImGuiDir_Right"; break;
+                case ImGuiDir_Up:
+                case ImGuiDir_Down:
+                case ImGuiDir_COUNT:
+                default: break;
 			};
 
 			ImGui::LogText("style.%s%*s= %s;" IM_NEWLINE, "WindowMenuButtonPosition", 25 - (int)strlen("WindowMenuButtonPosition"), "", dirName);
@@ -607,11 +610,15 @@ inline void ExportSizes(ImGuiStyle& style_to_export, ImGuiStyle& ref_style, bool
 		if (!export_only_modified || memcmp(&style_to_export.ColorButtonPosition, &ref_style.ColorButtonPosition, sizeof(ImGuiDir)) != 0)
 		{
 			const char* dirName = 0;
-			switch (style_to_export.ColorButtonPosition)
-			{
-			case ImGuiDir_Left: dirName = "ImGuiDir_Left"; break;
-			case ImGuiDir_Right: dirName = "ImGuiDir_Right"; break;
-			};
+            switch (style_to_export.ColorButtonPosition) {
+                case ImGuiDir_Left: dirName = "ImGuiDir_Left"; break;
+                case ImGuiDir_Right: dirName = "ImGuiDir_Right"; break;
+                case ImGuiDir_None:
+                case ImGuiDir_Up:
+                case ImGuiDir_Down:
+                case ImGuiDir_COUNT:
+                default: break;
+            };
 
 			ImGui::LogText("style.%s%*s= %s;" IM_NEWLINE, "ColorButtonPosition", 25 - (int)strlen("ColorButtonPosition"), "", dirName);
 		}

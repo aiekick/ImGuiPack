@@ -60,7 +60,7 @@ bool LayoutManager::AddPane(ILayoutPaneWeak vPane,
                             const float& vPaneDisposalRatio,
                             const bool& vIsOpenedDefault,
                             const bool& vIsFocusedDefault) {
-    static auto sMaxPanes = sizeof(LayoutPaneFlag) * 8U;
+    static int32_t sMaxPanes = static_cast<int32_t>(sizeof(LayoutPaneFlag) * 8U);
     if (m_FlagCount < sMaxPanes) {
         LayoutPaneFlag flag = (static_cast<LayoutPaneFlag>(1) << (++m_FlagCount));
         if (vPane.expired()) {

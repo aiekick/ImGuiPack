@@ -36,7 +36,16 @@
 #include <GLFW/glfw3.h>
 #endif  // GLFW3
 
-#ifdef WIN32
+#if defined(__WIN32__) || defined(WIN32) || defined(_WIN32) || defined(__WIN64__) || defined(WIN64) || defined(_WIN64) || defined(_MSC_VER)
+#define IM_OS_WIN32
+#elif defined(__APPLE__)
+#define IM_OS_APPLE
+#define IM_OS_UNIX
+#elif defined(__linux__) || defined(__FreeBSD__) || defined(__DragonFly__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__EMSCRIPTEN__)
+#define IM_OS_UNIX
+#endif
+
+#ifdef IM_OS_WIN32
 #include <Windows.h>
 #include <shellapi.h>
 #pragma comment(lib, "shlwapi.lib")
@@ -53,7 +62,7 @@
 #ifndef SetCurrentDir
 #define SetCurrentDir _chdir
 #endif  // GetCurrentDir
-#elif defined(UNIX)
+#elif defined(IM_OS_UNIX)
 #include <cstdlib>
 #include <ctype.h>
 #include <dirent.h>
@@ -67,7 +76,7 @@
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
-#ifdef APPLE
+#ifdef IM_OS_APPLE
 #include <dlfcn.h>
 #include <sys/syslimits.h>  // PATH_MAX
 #endif                      // APPLE
@@ -100,21 +109,23 @@
 #endif  // UNIX
 
 static void OpenUrl(const std::string& vUrl) {
-#ifdef WIN32
+#ifdef IM_OS_WIN32
     ShellExecute(nullptr, nullptr, vUrl.c_str(), nullptr, nullptr, SW_SHOW);
-#elif defined(LINUX)
-    char buffer[MAX_PATH] = {};
-    snprintf(buffer, MAX_PATH, "<mybrowser> %s", vUrl.c_str());
-    std::system(buffer);
-#elif defined(APPLE)
+#elif defined(IM_OS_APPLE)
     // std::string sCmdOpenWith = "open -a Firefox " + vUrl;
     std::string sCmdOpenWith = "open " + vUrl;
     std::system(sCmdOpenWith.c_str());
+#elif defined(IM_OS_UNIX)
+    char buffer[MAX_PATH] = {};
+    snprintf(buffer, MAX_PATH, "<mybrowser> %s", vUrl.c_str());
+    std::system(buffer);
+#else
+
 #endif
 }
 
 static void OpenFile(const std::string& vFile) {
-#if defined(WIN32)
+#if defined(IM_OS_WIN32)
     auto* result = ShellExecute(nullptr, "", vFile.c_str(), nullptr, nullptr, SW_SHOW);
     if (result < (HINSTANCE)32)  //-V112
     {
@@ -132,15 +143,15 @@ static void OpenFile(const std::string& vFile) {
                          SW_NORMAL);  // ce serait peut etre mieu d'utilsier la commande system comme dans SelectFile
         }
     }
-#elif defined(LINUX)
+#elif defined(IM_OS_APPLE)
+    // std::string command = "open -a Tincta " + vFile;
+    std::string command = "open " + vFile;
+    std::system(command.c_str());
+#elif defined(IM_OS_UNIX)
     int pid = fork();
     if (pid == 0) {
         execl("/usr/bin/xdg-open", "xdg-open", vFile.c_str(), (char*)0);
     }
-#elif defined(APPLE)
-    // std::string command = "open -a Tincta " + vFile;
-    std::string command = "open " + vFile;
-    std::system(command.c_str());
 #endif
 }
 
