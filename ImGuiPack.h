@@ -66,6 +66,10 @@
     #define IMGUI_NODE_EDITOR_API
 #endif
 
+#ifdef IMGUI_USER_CONFIG
+#include IMGUI_USER_CONFIG
+#endif
+
 #include <3rdparty/imgui_docking/imgui.h>
 #include <3rdparty/imgui_docking/imgui_internal.h>
 

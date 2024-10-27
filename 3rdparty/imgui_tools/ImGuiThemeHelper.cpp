@@ -27,8 +27,8 @@
 
 #include <imgui_internal.h>
 
-#ifdef THEME_HELPER_CONFIG_HEADER
-#    include THEME_HELPER_CONFIG_HEADER
+#ifdef CUSTOM_THEME_HELPER_CONFIG_HEADER
+#    include CUSTOM_THEME_HELPER_CONFIG_HEADER
 #else
 #    include "ImGuiThemeHelperConfigHeader.h"
 #endif // THEME_HELPER_CONFIG_HEADER
@@ -157,21 +157,21 @@ std::string ImGuiThemeHelper::getXml(const std::string& vOffset, const std::stri
         str += vOffset + "\t<FramePadding value=\"" + ez::fvec2(m_CurrentTheme.style.FramePadding.x, m_CurrentTheme.style.FramePadding.y).string() + "\"/>\n";
         str += vOffset + "\t<ItemSpacing value=\"" + ez::fvec2(m_CurrentTheme.style.ItemSpacing.x, m_CurrentTheme.style.ItemSpacing.y).string() + "\"/>\n";
         str += vOffset + "\t<ItemInnerSpacing value=\"" + ez::fvec2(m_CurrentTheme.style.ItemInnerSpacing.x, m_CurrentTheme.style.ItemInnerSpacing.y).string() + "\"/>\n";
-        str += vOffset + "\t<IndentSpacing value=\"" + ez::toStr(m_CurrentTheme.style.IndentSpacing) + "\"/>\n";
-        str += vOffset + "\t<ScrollbarSize value=\"" + ez::toStr(m_CurrentTheme.style.ScrollbarSize) + "\"/>\n";
-        str += vOffset + "\t<GrabMinSize value=\"" + ez::toStr(m_CurrentTheme.style.GrabMinSize) + "\"/>\n";
-        str += vOffset + "\t<WindowRounding value=\"" + ez::toStr(m_CurrentTheme.style.WindowRounding) + "\"/>\n";
-        str += vOffset + "\t<ChildRounding value=\"" + ez::toStr(m_CurrentTheme.style.ChildRounding) + "\"/>\n";
-        str += vOffset + "\t<FrameRounding value=\"" + ez::toStr(m_CurrentTheme.style.FrameRounding) + "\"/>\n";
-        str += vOffset + "\t<PopupRounding value=\"" + ez::toStr(m_CurrentTheme.style.PopupRounding) + "\"/>\n";
-        str += vOffset + "\t<ScrollbarRounding value=\"" + ez::toStr(m_CurrentTheme.style.ScrollbarRounding) + "\"/>\n";
-        str += vOffset + "\t<GrabRounding value=\"" + ez::toStr(m_CurrentTheme.style.GrabRounding) + "\"/>\n";
-        str += vOffset + "\t<TabRounding value=\"" + ez::toStr(m_CurrentTheme.style.TabRounding) + "\"/>\n";
-        str += vOffset + "\t<WindowBorderSize value=\"" + ez::toStr(m_CurrentTheme.style.WindowBorderSize) + "\"/>\n";
-        str += vOffset + "\t<ChildBorderSize value=\"" + ez::toStr(m_CurrentTheme.style.ChildBorderSize) + "\"/>\n";
-        str += vOffset + "\t<PopupBorderSize value=\"" + ez::toStr(m_CurrentTheme.style.PopupBorderSize) + "\"/>\n";
-        str += vOffset + "\t<FrameBorderSize value=\"" + ez::toStr(m_CurrentTheme.style.FrameBorderSize) + "\"/>\n";
-        str += vOffset + "\t<TabBorderSize value=\"" + ez::toStr(m_CurrentTheme.style.TabBorderSize) + "\"/>\n";
+        str += vOffset + "\t<IndentSpacing value=\"" + ez::str::toStr(m_CurrentTheme.style.IndentSpacing) + "\"/>\n";
+        str += vOffset + "\t<ScrollbarSize value=\"" + ez::str::toStr(m_CurrentTheme.style.ScrollbarSize) + "\"/>\n";
+        str += vOffset + "\t<GrabMinSize value=\"" + ez::str::toStr(m_CurrentTheme.style.GrabMinSize) + "\"/>\n";
+        str += vOffset + "\t<WindowRounding value=\"" + ez::str::toStr(m_CurrentTheme.style.WindowRounding) + "\"/>\n";
+        str += vOffset + "\t<ChildRounding value=\"" + ez::str::toStr(m_CurrentTheme.style.ChildRounding) + "\"/>\n";
+        str += vOffset + "\t<FrameRounding value=\"" + ez::str::toStr(m_CurrentTheme.style.FrameRounding) + "\"/>\n";
+        str += vOffset + "\t<PopupRounding value=\"" + ez::str::toStr(m_CurrentTheme.style.PopupRounding) + "\"/>\n";
+        str += vOffset + "\t<ScrollbarRounding value=\"" + ez::str::toStr(m_CurrentTheme.style.ScrollbarRounding) + "\"/>\n";
+        str += vOffset + "\t<GrabRounding value=\"" + ez::str::toStr(m_CurrentTheme.style.GrabRounding) + "\"/>\n";
+        str += vOffset + "\t<TabRounding value=\"" + ez::str::toStr(m_CurrentTheme.style.TabRounding) + "\"/>\n";
+        str += vOffset + "\t<WindowBorderSize value=\"" + ez::str::toStr(m_CurrentTheme.style.WindowBorderSize) + "\"/>\n";
+        str += vOffset + "\t<ChildBorderSize value=\"" + ez::str::toStr(m_CurrentTheme.style.ChildBorderSize) + "\"/>\n";
+        str += vOffset + "\t<PopupBorderSize value=\"" + ez::str::toStr(m_CurrentTheme.style.PopupBorderSize) + "\"/>\n";
+        str += vOffset + "\t<FrameBorderSize value=\"" + ez::str::toStr(m_CurrentTheme.style.FrameBorderSize) + "\"/>\n";
+        str += vOffset + "\t<TabBorderSize value=\"" + ez::str::toStr(m_CurrentTheme.style.TabBorderSize) + "\"/>\n";
 #endif  // EZ_TOOLS_VEC2 && EZ_TOOLS_VEC4
         str += vOffset + "</ImGui_Styles>\n";
     }
@@ -180,28 +180,28 @@ std::string ImGuiThemeHelper::getXml(const std::string& vOffset, const std::stri
 #ifdef USE_NODEGRAPH
         str += vOffset + "<Graph_Styles>\n";
         str += vOffset + "\t<NodePadding value=\"" + ez::toStrFromImVec4(prNodeGraphStyle.NodePadding) + "\"/>\n";
-        str += vOffset + "\t<NodeRounding value=\"" + ez::toStr(prNodeGraphStyle.NodeRounding) + "\"/>\n";
-        str += vOffset + "\t<NodeBorderWidth value=\"" + ez::toStr(prNodeGraphStyle.NodeBorderWidth) + "\"/>\n";
-        str += vOffset + "\t<HoveredNodeBorderWidth value=\"" + ez::toStr(prNodeGraphStyle.HoveredNodeBorderWidth) + "\"/>\n";
-        str += vOffset + "\t<SelectedNodeBorderWidth value=\"" + ez::toStr(prNodeGraphStyle.SelectedNodeBorderWidth) + "\"/>\n";
-        str += vOffset + "\t<PinRounding value=\"" + ez::toStr(prNodeGraphStyle.PinRounding) + "\"/>\n";
-        str += vOffset + "\t<PinBorderWidth value=\"" + ez::toStr(prNodeGraphStyle.PinBorderWidth) + "\"/>\n";
-        str += vOffset + "\t<LinkStrength value=\"" + ez::toStr(prNodeGraphStyle.LinkStrength) + "\"/>\n";
+        str += vOffset + "\t<NodeRounding value=\"" + ez::str::toStr(prNodeGraphStyle.NodeRounding) + "\"/>\n";
+        str += vOffset + "\t<NodeBorderWidth value=\"" + ez::str::toStr(prNodeGraphStyle.NodeBorderWidth) + "\"/>\n";
+        str += vOffset + "\t<HoveredNodeBorderWidth value=\"" + ez::str::toStr(prNodeGraphStyle.HoveredNodeBorderWidth) + "\"/>\n";
+        str += vOffset + "\t<SelectedNodeBorderWidth value=\"" + ez::str::toStr(prNodeGraphStyle.SelectedNodeBorderWidth) + "\"/>\n";
+        str += vOffset + "\t<PinRounding value=\"" + ez::str::toStr(prNodeGraphStyle.PinRounding) + "\"/>\n";
+        str += vOffset + "\t<PinBorderWidth value=\"" + ez::str::toStr(prNodeGraphStyle.PinBorderWidth) + "\"/>\n";
+        str += vOffset + "\t<LinkStrength value=\"" + ez::str::toStr(prNodeGraphStyle.LinkStrength) + "\"/>\n";
         str += vOffset + "\t<SourceDirection value=\"" + ez::toStrFromImVec2(prNodeGraphStyle.SourceDirection) + "\"/>\n";
         str += vOffset + "\t<TargetDirection value=\"" + ez::toStrFromImVec2(prNodeGraphStyle.TargetDirection) + "\"/>\n";
-        str += vOffset + "\t<ScrollDuration value=\"" + ez::toStr(prNodeGraphStyle.ScrollDuration) + "\"/>\n";
-        str += vOffset + "\t<FlowMarkerDistance value=\"" + ez::toStr(prNodeGraphStyle.FlowMarkerDistance) + "\"/>\n";
-        str += vOffset + "\t<FlowSpeed value=\"" + ez::toStr(prNodeGraphStyle.FlowSpeed) + "\"/>\n";
-        str += vOffset + "\t<FlowDuration value=\"" + ez::toStr(prNodeGraphStyle.FlowDuration) + "\"/>\n";
+        str += vOffset + "\t<ScrollDuration value=\"" + ez::str::toStr(prNodeGraphStyle.ScrollDuration) + "\"/>\n";
+        str += vOffset + "\t<FlowMarkerDistance value=\"" + ez::str::toStr(prNodeGraphStyle.FlowMarkerDistance) + "\"/>\n";
+        str += vOffset + "\t<FlowSpeed value=\"" + ez::str::toStr(prNodeGraphStyle.FlowSpeed) + "\"/>\n";
+        str += vOffset + "\t<FlowDuration value=\"" + ez::str::toStr(prNodeGraphStyle.FlowDuration) + "\"/>\n";
         str += vOffset + "\t<PivotAlignment value=\"" + ez::toStrFromImVec2(prNodeGraphStyle.PivotAlignment) + "\"/>\n";
         str += vOffset + "\t<PivotSize value=\"" + ez::toStrFromImVec2(prNodeGraphStyle.PivotSize) + "\"/>\n";
         str += vOffset + "\t<PivotScale value=\"" + ez::toStrFromImVec2(prNodeGraphStyle.PivotScale) + "\"/>\n";
-        str += vOffset + "\t<PinCorners value=\"" + ez::toStr(prNodeGraphStyle.PinCorners) + "\"/>\n";
-        str += vOffset + "\t<PinRadius value=\"" + ez::toStr(prNodeGraphStyle.PinRadius) + "\"/>\n";
-        str += vOffset + "\t<PinArrowSize value=\"" + ez::toStr(prNodeGraphStyle.PinArrowSize) + "\"/>\n";
-        str += vOffset + "\t<PinArrowWidth value=\"" + ez::toStr(prNodeGraphStyle.PinArrowWidth) + "\"/>\n";
-        str += vOffset + "\t<GroupRounding value=\"" + ez::toStr(prNodeGraphStyle.GroupRounding) + "\"/>\n";
-        str += vOffset + "\t<GroupBorderWidth value=\"" + ez::toStr(prNodeGraphStyle.GroupBorderWidth) + "\"/>\n";
+        str += vOffset + "\t<PinCorners value=\"" + ez::str::toStr(prNodeGraphStyle.PinCorners) + "\"/>\n";
+        str += vOffset + "\t<PinRadius value=\"" + ez::str::toStr(prNodeGraphStyle.PinRadius) + "\"/>\n";
+        str += vOffset + "\t<PinArrowSize value=\"" + ez::str::toStr(prNodeGraphStyle.PinArrowSize) + "\"/>\n";
+        str += vOffset + "\t<PinArrowWidth value=\"" + ez::str::toStr(prNodeGraphStyle.PinArrowWidth) + "\"/>\n";
+        str += vOffset + "\t<GroupRounding value=\"" + ez::str::toStr(prNodeGraphStyle.GroupRounding) + "\"/>\n";
+        str += vOffset + "\t<GroupBorderWidth value=\"" + ez::str::toStr(prNodeGraphStyle.GroupBorderWidth) + "\"/>\n";
         str += vOffset + "</Graph_Styles>\n";
 #endif
     }
