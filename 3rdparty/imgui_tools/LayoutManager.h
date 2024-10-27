@@ -15,12 +15,9 @@ limitations under the License.
 */
 
 #pragma once
+#pragma warning(disable : 4275)
 
 #include <ImGuiPack.h>
-
-#ifdef USE_XML_CONFIG
-#include <ctools/ConfigAbstract.h>
-#endif  // USE_XML_CONFIG
 
 #ifndef ILAYOUT_PANE_INCLUDE
 #include <ILayoutPane.h>
@@ -80,9 +77,9 @@ typedef std::weak_ptr<AbstractPane> AbstractPaneWeak;
 
 class ProjectFile;
 class IMGUI_API LayoutManager
-#ifdef USE_XML_CONFIG
-    : public conf::ConfigAbstract
-#endif  // USE_XML_CONFIG
+#ifdef EZ_TOOLS_XML_CONFIG
+    : public ez::xml::Config
+#endif  // EZ_TOOLS_XML_CONFIG
 {
 private:
     class InternalPane {
@@ -172,10 +169,10 @@ private:  // configuration
     void m_SetFocusedPanes(const LayoutPaneFlag& vActivePanes);
     std::vector<std::string> m_ParsePaneDisposal(const PaneDisposal& vPaneDisposal);
 
-#ifdef USE_XML_CONFIG
+#ifdef EZ_TOOLS_XML_CONFIG
 public:  // configuration
     std::string getXml(const std::string& vOffset, const std::string& vUserDatas = "") override;
-    bool setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement* vParent, const std::string& vUserDatas = "") override;
+    bool setFromXml(const ez::xml::Node& vNode, const ez::xml::Node& vParent, const std::string& vUserDatas) override;
 #endif  // USE_XML_CONFIG
 
 public:  // singleton

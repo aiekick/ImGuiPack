@@ -570,7 +570,7 @@ std::vector<std::string> LayoutManager::m_ParsePaneDisposal(const PaneDisposal& 
 //// CONFIGURATION PUBLIC /////////////////////////////
 ///////////////////////////////////////////////////////
 
-#ifdef USE_XML_CONFIG
+#ifdef EZ_TOOLS_XML_CONFIG
 
 std::string LayoutManager::getXml(const std::string& vOffset, const std::string& vUserDatas) {
     std::string str;
@@ -584,7 +584,7 @@ std::string LayoutManager::getXml(const std::string& vOffset, const std::string&
     } else if (vUserDatas == "project") {
         /*str += vOffset + "<layout>\n";
         for (auto pane : m_PanesByName) {
-            auto ptr = std::dynamic_pointer_cast<conf::ConfigAbstract>(pane.second.lock());
+            auto ptr = std::dynamic_pointer_cast<ez::xml::Config>(pane.second.lock());
             if (ptr) {
                 str += ptr->getXml(vOffset + "\t", "project");
             }
@@ -594,38 +594,30 @@ std::string LayoutManager::getXml(const std::string& vOffset, const std::string&
     return str;
 }
 
-bool LayoutManager::setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement* vParent, const std::string& vUserDatas) {
+bool LayoutManager::setFromXml(const ez::xml::Node& vNode, const ez::xml::Node& vParent, const std::string& vUserDatas) {
     // The value of this child identifies the name of this element
-    std::string strValue = "";
-    std::string strParentName = "";
-    std::string strName = vElem->Value();
-    if (vElem->GetText() != nullptr) {
-        strValue = vElem->GetText();
-    }
-    if (vParent != 0) {
-        strParentName = vParent->Value();
-    }
+    const auto& strName = vNode.getName();
+    const auto& strValue = vNode.getContent();
+    const auto& strParentName = vParent.getName();
+
     if (vUserDatas == "app") {
         if (strParentName == "layout") {
-            for (const tinyxml2::XMLAttribute* attr = vElem->FirstAttribute(); attr != nullptr; attr = attr->Next()) {
-                std::string attName = attr->Name();
-                std::string attValue = attr->Value();
 #ifdef EZ_TOOLS_VARIANT
-                if (attName == "opened") {
-                    pane_Shown = (LayoutPaneFlag)ez::ivariant(attValue).GetI();
-                } else if (attName == "active") {
-                    m_Pane_Focused = (LayoutPaneFlag)ez::ivariant(attValue).GetI();
-                }
-#endif  // EZ_TOOLS_VARIANT
+            if (vNode.isAttributeExist("opened")) {
+                pane_Shown = (LayoutPaneFlag)ez::ivariant(vNode.getAttribute("opened")).GetI();
             }
+            if (vNode.isAttributeExist("active")) {
+                m_Pane_Focused = (LayoutPaneFlag)ez::ivariant(vNode.getAttribute("active")).GetI();
+            }
+#endif  // EZ_TOOLS_VARIANT
         }
         return true;
     } else if (vUserDatas == "project") {
         if (strParentName == "layout") {
             /*for (auto pane : m_PanesByName) {
-                auto ptr = std::dynamic_pointer_cast<conf::ConfigAbstract>(pane.second.lock());
+                auto ptr = std::dynamic_pointer_cast<ez::xml::Config>(pane.second.lock());
                 if (ptr) {
-                    ptr->RecursParsingConfig(vElem, vParent , "project");
+                    ptr->RecursParsingConfig(vNode, vParent , "project");
                 }
             }*/
         }
@@ -633,4 +625,4 @@ bool LayoutManager::setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement
     return false;
 }
 
-#endif  // USE_XML_CONFIG
+#endif  // EZ_TOOLS_XML_CONFIG

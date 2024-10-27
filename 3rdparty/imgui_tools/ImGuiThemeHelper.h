@@ -19,11 +19,6 @@
 
 #include <ImGuiPack.h>
 
-#ifdef USE_XML_CONFIG
-#include <ctools/ConfigAbstract.h>
-#include <ctools/cTools.h>
-#endif // USE_XML_CONFIG
-
 #include <string>
 #include <map>
 
@@ -45,8 +40,8 @@ public:
 };
 
 class IMGUI_API ImGuiThemeHelper
-#ifdef USE_XML_CONFIG 
-	: public conf::ConfigAbstract
+#ifdef EZ_TOOLS_XML_CONFIG 
+	: public ez::xml::Config
 #endif // USE_XML_CONFIG
 {
 public:
@@ -77,9 +72,9 @@ public:
 #endif  // USE_IMGUI_FILE_DIALOG
 
 public:  // configuration
-#ifdef USE_XML_CONFIG
+#ifdef EZ_TOOLS_XML_CONFIG
 	std::string getXml(const std::string& vOffset, const std::string& vUserDatas = "") override;
-    bool setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement* vParent, const std::string& vUserDatas = "") override;
+    bool setFromXml(const ez::xml::Node& vNode, const ez::xml::Node& vParent, const std::string& vUserDatas) override;
 #endif // USE_XML_CONFIG
 
 	ImGuiStyle GetImGuiStyle() { return m_CurrentTheme.style; }
