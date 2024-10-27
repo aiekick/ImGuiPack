@@ -1991,8 +1991,8 @@ bool GradButton(const char* label, const ImVec2& size_arg, ImGuiButtonFlags flag
 
     ImVec2 pos = window->DC.CursorPos;
     if ((flags & ImGuiButtonFlags_AlignTextBaseLine) &&
-        style.FramePadding.y < window->DC.CurrLineTextBaseOffset)  // Try to vertically align buttons that are smaller/have no padding so
-                                                                   // that text baseline matches (bit hacky, since it shouldn't be a flag)
+        style.FramePadding.y < window->DC.CurrLineTextBaseOffset)  // Try to vertically align buttons that are smaller/have no padding so that text baseline matches (bit
+                                                                   // hacky, since it shouldn't be a flag)
         pos.y += window->DC.CurrLineTextBaseOffset - style.FramePadding.y;
     ImVec2 size = CalcItemSize(size_arg, label_size.x + style.FramePadding.x * 2.0f, label_size.y + style.FramePadding.y * 2.0f);
 
@@ -2513,6 +2513,7 @@ inline bool inSliderBehaviorStepperT(const ImRect& bb,
 
                     // Calculate what our "new" clicked_t will be, and thus how far we actually moved the slider, and
                     // subtract this from the accumulator
+
                     TYPE v_new = inScaleValueFromRatioT<TYPE, SIGNEDTYPE, FLOATTYPE>(
                         data_type, clicked_t, v_min, v_max, is_logarithmic, logarithmic_zero_epsilon, zero_deadzone_halfsize);
                     if (is_floating_point && !(flags & ImGuiSliderFlags_NoRoundToFormat))
@@ -3953,12 +3954,10 @@ void ImWidgets::QuickStringCombo::clear() {
     m_Array.clear();
 }
 
-bool ImWidgets::QuickStringCombo::displayCombo(const float& vWidth, const std::string& vLabel, const float& vInputOffsetFromStart) {
+bool ImWidgets::QuickStringCombo::display(const float& vWidth, const char* vLabel) {
     bool change = false;
     if (!m_Array.empty()) {
         float px = ImGui::GetCursorPosX();
-        ImGui::Text("%s", vLabel.c_str());
-        ImGui::SameLine(vInputOffsetFromStart);
         ImGui::PushID(++ImGui::CustomStyle::pushId);
         change = ImGui::ContrastedButton(BUTTON_LABEL_RESET, "Reset");
         if (change) {
@@ -3968,7 +3967,7 @@ bool ImWidgets::QuickStringCombo::displayCombo(const float& vWidth, const std::s
         const float w = vWidth - (ImGui::GetCursorPosX() - px);
         change |= ImGui::ContrastedCombo(
             w,
-            "##combo",
+            vLabel,
             &m_Index,
             [](void* data, int idx, const char** out_text) {
                 *out_text = ((const std::vector<std::string>*)data)->at(idx).c_str();
@@ -3980,6 +3979,13 @@ bool ImWidgets::QuickStringCombo::displayCombo(const float& vWidth, const std::s
         ImGui::PopID();
     }
     return change;
+}
+
+bool ImWidgets::QuickStringCombo::displayWithColumn(const float vWidth, const char* vLabel, const float vColumnOffset) {
+    ImGui::Text("%s", vLabel);
+    ImGui::SameLine(vColumnOffset);
+    std::string lbl = "##" + std::string(vLabel);
+    return display(vWidth, lbl.c_str());
 }
 
 std::string ImWidgets::QuickStringCombo::getText() const {
@@ -4039,11 +4045,9 @@ void ImWidgets::QuickStringEditCombo::finalize() {
     setText(ImWidgets::QuickStringCombo::getText());
 }
 
-bool ImWidgets::QuickStringEditCombo::displayCombo(const float& vWidth, const std::string& vLabel, const float& vInputOffsetFromStart) {
+bool ImWidgets::QuickStringEditCombo::display(const float& vWidth, const char* vLabel) {
     bool change = false;
     float px = ImGui::GetCursorPosX();
-    ImGui::Text("%s", vLabel.c_str());
-    ImGui::SameLine(vInputOffsetFromStart);
     ImGui::PushID(++ImGui::CustomStyle::pushId);
     change = ImGui::ContrastedButton(BUTTON_LABEL_RESET, "Reset");
     if (change) {
@@ -4054,7 +4058,7 @@ bool ImWidgets::QuickStringEditCombo::displayCombo(const float& vWidth, const st
     const float w = vWidth - (ImGui::GetCursorPosX() - px);
     if (ImGui::ContrastedEditCombo(
             w,
-            "##combo",
+            vLabel,
             &m_Buffer[0],
             m_Len,
             &m_Index,
@@ -4069,6 +4073,13 @@ bool ImWidgets::QuickStringEditCombo::displayCombo(const float& vWidth, const st
     }
     ImGui::PopID();
     return change;
+}
+
+bool ImWidgets::QuickStringEditCombo::displayWithColumn(const float vWidth, const char* vLabel, const float vColumnOffset) {
+    ImGui::Text("%s", vLabel);
+    ImGui::SameLine(vColumnOffset);
+    std::string lbl = "##" + std::string(vLabel);
+    return display(vWidth, lbl.c_str());
 }
 
 std::string ImWidgets::QuickStringEditCombo::getText() const {
@@ -4093,3 +4104,77 @@ void ImWidgets::QuickStringEditCombo::setText(const std::string& vText) {
     strncpy(m_Buffer, vText.c_str(), len);
 #endif
 }
+
+#ifdef USE_IMPLOT
+
+ImWidgets::QuickDateTime::QuickDateTime() {
+    auto curr_date_t = std::time(nullptr);
+#ifdef _MSC_VER
+    tm _timeinfo;
+    tm* tm_curr_date = &_timeinfo;
+    if (localtime_s(tm_curr_date, &curr_date_t) != 0) {
+        return;
+    }
+#else
+    auto* tm_curr_date = std::localtime(&curr_date_t);
+#endif
+    auto curr_date = std::chrono::system_clock::from_time_t(curr_date_t);
+    strftime(m_DateBuffer.data(), m_DateBuffer.size(), "%Y-%m-%d", tm_curr_date);
+}
+
+bool ImWidgets::QuickDateTime::display(const float vWidth, const char* vLabel) {
+    bool res = false;
+    ImGui::PushItemWidth(100.0f);
+    res |= ImGui::InputText(vLabel, m_DateBuffer.data(), m_DateBuffer.size());
+    ImGui::PopItemWidth();
+    ImGui::SameLine();
+    if (ImGui::ContrastedButton("E##Date")) {
+        m_DatePickerLevel = 0;  // day level
+        m_DatePicker = ImPlotTime(m_convertToEpochTime(std::string(m_DateBuffer.data(), m_DateBuffer.size()), "%Y-%m-%d"));
+        m_ShowDatePicker = !m_ShowDatePicker;
+    }
+    if (m_ShowDatePicker) {
+        if (ImPlot::ShowDatePicker("##startDatePicekr", &m_DatePickerLevel, &m_DatePicker)) {
+            std::tm* tm_date = std::localtime(&m_DatePicker.S);
+            strftime(m_DateBuffer.data(), m_DateBuffer.size(), "%Y-%m-%d", tm_date);
+            m_ShowDatePicker = false;
+            res = true;
+        }
+    }
+    return res;
+}
+
+bool ImWidgets::QuickDateTime::displayWithColumn(const float vWidth, const char* vLabel, const float vColumnOffset) {
+    ImGui::Text(vLabel);
+    ImGui::SameLine(vColumnOffset);
+    const std::string lbl = "##" + std::string(vLabel);
+    return display(vWidth, lbl.c_str());
+}
+
+std::string ImWidgets::QuickDateTime::getDateAsString() const {
+    return std::string(m_DateBuffer.data(), m_DateBuffer.size());
+}
+
+time_t ImWidgets::QuickDateTime::getDateAsEpoch() const {
+    return m_convertToEpochTime(m_DateBuffer.data(), "%Y-%m-%d");
+}
+
+std::time_t ImWidgets::QuickDateTime::m_convertToEpochTime(const std::string& vIsoDateTime, const char* format) const {
+    struct std::tm time = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    std::istringstream ss(vIsoDateTime);
+    ss >> std::get_time(&time, format);
+    if (ss.fail()) {
+        std::cerr << "ERROR: Cannot parse date string (" << vIsoDateTime << "); required format %Y-%m-%d" << std::endl;
+        exit(1);
+    }
+    time.tm_hour = 0;
+    time.tm_min = 0;
+    time.tm_sec = 0;
+#ifdef _MSC_VER
+    return _mkgmtime(&time);
+#else
+    return timegm(&time);
+#endif
+}
+
+#endif

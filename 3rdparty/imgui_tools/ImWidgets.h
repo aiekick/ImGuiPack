@@ -23,8 +23,8 @@
 #include <vector>
 #include <string>
 #include <array>
-
 #include <functional>
+#include <ctime>
 
 #ifdef USE_OPENGL
 #include <ctools/cTools.h>
@@ -741,7 +741,8 @@ public:
     virtual ~QuickStringCombo() = default;
     virtual void init(const int32_t& vDefaultIndex, const std::vector<std::string>& vArray);
     virtual void clear();
-    virtual bool displayCombo(const float& vWidth, const std::string& vLabel, const float& vInputOffsetFromStart = 0.0f);
+    virtual bool display(const float& vWidth, const char* vLabel);
+    virtual bool displayWithColumn(const float vWidth, const char* vLabel, const float vColumnOffset);
     virtual std::string getText() const;
     virtual bool select(const std::string& vToken);
     size_t size() const;
@@ -761,10 +762,33 @@ public:
     void init(const int32_t& vDefaultIndex, const std::vector<std::string>& vArray) override;
     void clear() override;
     void finalize();
-    bool displayCombo(const float& vWidth, const std::string& vLabel, const float& vInputOffsetFromStart = 0.0f) override;
+    bool display(const float& vWidth, const char* vLabel) override;
+    bool displayWithColumn(const float vWidth, const char* vLabel, const float vColumnOffset) override;
     std::string getText() const override;
     bool select(const std::string& vToken) override;
     void setText(const std::string& vText);
 };
+
+#ifdef USE_IMPLOT
+
+class IMGUI_API QuickDateTime {
+private:
+    std::array<char, 32> m_DateBuffer = {};
+    bool m_ShowDatePicker = false;
+    int m_DatePickerLevel = 0;  // day level
+    ImPlotTime m_DatePicker;
+
+public:
+    QuickDateTime();
+    bool display(const float vWidth, const char* vLabel);
+    bool displayWithColumn(const float vWidth, const char* vLabel, const float vColumnOffset);
+    std::string getDateAsString() const;
+    time_t getDateAsEpoch() const;
+
+private:
+    std::time_t m_convertToEpochTime(const std::string& vIsoDateTime, const char* format) const;
+};
+
+#endif // USE_IMPLOT
 
 }  // namespace ImWidgets

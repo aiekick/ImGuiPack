@@ -577,7 +577,9 @@ std::string LayoutManager::getXml(const std::string& vOffset, const std::string&
     if (vUserDatas == "app") {
         str += vOffset + "<layout>\n";
         m_Pane_Focused = m_GetFocusedPanes();
+#ifdef EZ_TOOLS_VARIANT
         str += vOffset + "\t<panes opened=\"" + ez::ivariant((int32_t)pane_Shown).GetS() + "\" active=\"" + ez::ivariant((int32_t)m_Pane_Focused).GetS() + "\"/>\n";
+#endif  // EZ_TOOLS_VARIANT
         str += vOffset + "</layout>\n";
     } else if (vUserDatas == "project") {
         /*str += vOffset + "<layout>\n";
@@ -608,12 +610,13 @@ bool LayoutManager::setFromXml(tinyxml2::XMLElement* vElem, tinyxml2::XMLElement
             for (const tinyxml2::XMLAttribute* attr = vElem->FirstAttribute(); attr != nullptr; attr = attr->Next()) {
                 std::string attName = attr->Name();
                 std::string attValue = attr->Value();
-
+#ifdef EZ_TOOLS_VARIANT
                 if (attName == "opened") {
                     pane_Shown = (LayoutPaneFlag)ez::ivariant(attValue).GetI();
                 } else if (attName == "active") {
                     m_Pane_Focused = (LayoutPaneFlag)ez::ivariant(attValue).GetI();
                 }
+#endif  // EZ_TOOLS_VARIANT
             }
         }
         return true;
