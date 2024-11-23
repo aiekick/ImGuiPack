@@ -141,14 +141,14 @@ static inline ImVec4 operator*(const ImVec4& lhs, const float rhs) {
 
 #include <sstream>
 
-static inline std::ostream& operator<<(std::ostream& vOs, const ImVec4& vType) {
-    vOs << vType.x << ", " << vType.y << ", " << vType.z << ", " << vType.w;
-    return vOs;
+static inline std::ostream& operator<<(std::ostream& vOut, const ImVec4& vType) {
+    vOut << vType.x << ", " << vType.y << ", " << vType.z << ", " << vType.w;
+    return vOut;
 }
 
-static inline std::ostream& operator<<(std::ostream& vOs, const ImVec2& vType) {
-    vOs << vType.x << ", " << vType.y;
-    return vOs;
+static inline std::ostream& operator<<(std::ostream& vOut, const ImVec2& vType) {
+    vOut << vType.x << ", " << vType.y;
+    return vOut;
 }
 
 #endif
