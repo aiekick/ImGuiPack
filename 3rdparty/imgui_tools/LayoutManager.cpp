@@ -572,15 +572,15 @@ std::vector<std::string> LayoutManager::m_ParsePaneDisposal(const PaneDisposal& 
 
 #ifdef EZ_TOOLS_XML_CONFIG
 
-std::string LayoutManager::getXml(const std::string& vOffset, const std::string& vUserDatas) {
-    std::string str;
+ez::xml::Nodes LayoutManager::getXmlNodes(const std::string& vUserDatas) {
+    ez::xml::Node node("layout");
     if (vUserDatas == "app") {
-        str += vOffset + "<layout>\n";
         m_Pane_Focused = m_GetFocusedPanes();
 #ifdef EZ_TOOLS_VARIANT
-        str += vOffset + "\t<panes opened=\"" + ez::ivariant((int32_t)pane_Shown).GetS() + "\" active=\"" + ez::ivariant((int32_t)m_Pane_Focused).GetS() + "\"/>\n";
+        node.addChild("panes")
+            .addAttribute("opened", ez::ivariant((int32_t)pane_Shown).GetS())  //
+            .addAttribute("active", ez::ivariant((int32_t)m_Pane_Focused).GetS());
 #endif  // EZ_TOOLS_VARIANT
-        str += vOffset + "</layout>\n";
     } else if (vUserDatas == "project") {
         /*str += vOffset + "<layout>\n";
         for (auto pane : m_PanesByName) {
@@ -591,10 +591,10 @@ std::string LayoutManager::getXml(const std::string& vOffset, const std::string&
         }
         str += vOffset + "</layout>\n";*/
     }
-    return str;
+    return {node};
 }
 
-bool LayoutManager::setFromXml(const ez::xml::Node& vNode, const ez::xml::Node& vParent, const std::string& vUserDatas) {
+bool LayoutManager::setFromXmlNodes(const ez::xml::Node& vNode, const ez::xml::Node& vParent, const std::string& vUserDatas) {
     // The value of this child identifies the name of this element
     const auto& strName = vNode.getName();
     const auto& strValue = vNode.getContent();

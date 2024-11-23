@@ -73,8 +73,8 @@ public:
 
 public:  // configuration
 #ifdef EZ_TOOLS_XML_CONFIG
-	std::string getXml(const std::string& vOffset, const std::string& vUserDatas = "") override;
-    bool setFromXml(const ez::xml::Node& vNode, const ez::xml::Node& vParent, const std::string& vUserDatas) override;
+    ez::xml::Nodes getXmlNodes(const std::string& vUserDatas = "") override;
+    bool setFromXmlNodes(const ez::xml::Node& vNode, const ez::xml::Node& vParent, const std::string& vUserDatas) override;
 #endif // USE_XML_CONFIG
 
 	ImGuiStyle GetImGuiStyle() { return m_CurrentTheme.style; }

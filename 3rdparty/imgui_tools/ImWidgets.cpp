@@ -2176,7 +2176,7 @@ bool TextureOverLay(float vWidth,
     const bool pressed = ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
 
     // if (pressed)
-    // CTOOL_DEBUG_BREAK;
+    // EZ_TOOLS_DEBUG_BREAK;
 
     if (vBorderColor.w > 0.0f) {
         window->DrawList->AddRect(bb.Min, bb.Max, GetColorU32(vBorderColor), 0.0f, ImDrawFlags_RoundCornersAll, vBorderColor.w);
