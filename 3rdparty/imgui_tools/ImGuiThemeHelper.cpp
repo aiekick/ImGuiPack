@@ -179,7 +179,7 @@ std::string ImGuiThemeHelper::getXml(const std::string& vOffset, const std::stri
     {
 #ifdef USE_NODEGRAPH
         str += vOffset + "<Graph_Styles>\n";
-        str += vOffset + "\t<NodePadding value=\"" + ez::toStrFromImVec4(prNodeGraphStyle.NodePadding) + "\"/>\n";
+        str += vOffset + "\t<NodePadding value=\"" + ez::str::toStrFromImVec4(prNodeGraphStyle.NodePadding) + "\"/>\n";
         str += vOffset + "\t<NodeRounding value=\"" + ez::str::toStr(prNodeGraphStyle.NodeRounding) + "\"/>\n";
         str += vOffset + "\t<NodeBorderWidth value=\"" + ez::str::toStr(prNodeGraphStyle.NodeBorderWidth) + "\"/>\n";
         str += vOffset + "\t<HoveredNodeBorderWidth value=\"" + ez::str::toStr(prNodeGraphStyle.HoveredNodeBorderWidth) + "\"/>\n";
@@ -187,15 +187,15 @@ std::string ImGuiThemeHelper::getXml(const std::string& vOffset, const std::stri
         str += vOffset + "\t<PinRounding value=\"" + ez::str::toStr(prNodeGraphStyle.PinRounding) + "\"/>\n";
         str += vOffset + "\t<PinBorderWidth value=\"" + ez::str::toStr(prNodeGraphStyle.PinBorderWidth) + "\"/>\n";
         str += vOffset + "\t<LinkStrength value=\"" + ez::str::toStr(prNodeGraphStyle.LinkStrength) + "\"/>\n";
-        str += vOffset + "\t<SourceDirection value=\"" + ez::toStrFromImVec2(prNodeGraphStyle.SourceDirection) + "\"/>\n";
-        str += vOffset + "\t<TargetDirection value=\"" + ez::toStrFromImVec2(prNodeGraphStyle.TargetDirection) + "\"/>\n";
+        str += vOffset + "\t<SourceDirection value=\"" + ez::str::toStrFromImVec2(prNodeGraphStyle.SourceDirection) + "\"/>\n";
+        str += vOffset + "\t<TargetDirection value=\"" + ez::str::toStrFromImVec2(prNodeGraphStyle.TargetDirection) + "\"/>\n";
         str += vOffset + "\t<ScrollDuration value=\"" + ez::str::toStr(prNodeGraphStyle.ScrollDuration) + "\"/>\n";
         str += vOffset + "\t<FlowMarkerDistance value=\"" + ez::str::toStr(prNodeGraphStyle.FlowMarkerDistance) + "\"/>\n";
         str += vOffset + "\t<FlowSpeed value=\"" + ez::str::toStr(prNodeGraphStyle.FlowSpeed) + "\"/>\n";
         str += vOffset + "\t<FlowDuration value=\"" + ez::str::toStr(prNodeGraphStyle.FlowDuration) + "\"/>\n";
-        str += vOffset + "\t<PivotAlignment value=\"" + ez::toStrFromImVec2(prNodeGraphStyle.PivotAlignment) + "\"/>\n";
-        str += vOffset + "\t<PivotSize value=\"" + ez::toStrFromImVec2(prNodeGraphStyle.PivotSize) + "\"/>\n";
-        str += vOffset + "\t<PivotScale value=\"" + ez::toStrFromImVec2(prNodeGraphStyle.PivotScale) + "\"/>\n";
+        str += vOffset + "\t<PivotAlignment value=\"" + ez::str::toStrFromImVec2(prNodeGraphStyle.PivotAlignment) + "\"/>\n";
+        str += vOffset + "\t<PivotSize value=\"" + ez::str::toStrFromImVec2(prNodeGraphStyle.PivotSize) + "\"/>\n";
+        str += vOffset + "\t<PivotScale value=\"" + ez::str::toStrFromImVec2(prNodeGraphStyle.PivotScale) + "\"/>\n";
         str += vOffset + "\t<PinCorners value=\"" + ez::str::toStr(prNodeGraphStyle.PinCorners) + "\"/>\n";
         str += vOffset + "\t<PinRadius value=\"" + ez::str::toStr(prNodeGraphStyle.PinRadius) + "\"/>\n";
         str += vOffset + "\t<PinArrowSize value=\"" + ez::str::toStr(prNodeGraphStyle.PinArrowSize) + "\"/>\n";

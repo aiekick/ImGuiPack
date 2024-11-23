@@ -132,6 +132,23 @@
 static inline ImVec4 operator*(const float& lhs, const ImVec4 rhs) {
     return ImVec4(lhs * rhs.x, lhs * rhs.y, lhs * rhs.y, lhs * rhs.w);
 }
+
 static inline ImVec4 operator*(const ImVec4& lhs, const float rhs) {
     return ImVec4(lhs.x * rhs, lhs.y * rhs, lhs.y * rhs, lhs.w * rhs);
 }
+
+#ifdef EZ_TOOLS_XML_CONFIG
+
+#include <sstream>
+
+static inline std::ostream& operator<<(std::ostream& vOs, const ImVec4& vType) {
+    vOs << vType.x << ", " << vType.y << ", " << vType.z << ", " << vType.w;
+    return vOs;
+}
+
+static inline std::ostream& operator<<(std::ostream& vOs, const ImVec2& vType) {
+    vOs << vType.x << ", " << vType.y;
+    return vOs;
+}
+
+#endif
