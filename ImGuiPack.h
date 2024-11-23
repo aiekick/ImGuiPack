@@ -160,4 +160,11 @@ static inline std::ostream& operator<<(std::ostream& vOut, const ImVec2& vType) 
     return vOut;
 }
 
-#endif
+#ifdef USE_IMPLOT
+static inline std::ostream& operator<<(std::ostream& vOut, const ImPlotRect& vType) {
+    vOut << vType.X.Min << ", " << vType.X.Max << ", " << vType.Y.Min << ", " << vType.Y.Max;
+    return vOut;
+}
+#endif  // USE_IMPLOT
+
+#endif  // EZ_TOOLS_XML_CONFIG
