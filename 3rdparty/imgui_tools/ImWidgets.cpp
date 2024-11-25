@@ -4170,7 +4170,7 @@ std::time_t ImWidgets::QuickDateTime::m_convertToEpochTime(const std::string& vI
     time.tm_hour = 0;
     time.tm_min = 0;
     time.tm_sec = 0;
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
     return _mkgmtime(&time);
 #else
     return timegm(&time);
