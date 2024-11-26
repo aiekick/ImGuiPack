@@ -354,7 +354,7 @@ bool ImGuiThemeHelper::setFromXmlNodes(const ez::xml::Node& vNode, const ez::xml
 
     return true;
 }
-#endif // USE_XML_CONFIG
+#endif // EZ_TOOLS_XML_CONFIG
 
 ///////////////////////////////////////////////////////
 //// PRIVVATE /////////////////////////////////////////

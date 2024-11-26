@@ -173,7 +173,7 @@ private:  // configuration
 public:  // configuration
     ez::xml::Nodes getXmlNodes(const std::string& vUserDatas = "") override;
     bool setFromXmlNodes(const ez::xml::Node& vNode, const ez::xml::Node& vParent, const std::string& vUserDatas) override;
-#endif  // USE_XML_CONFIG
+#endif  // EZ_TOOLS_XML_CONFIG
 
 public:  // singleton
     static LayoutManager* Instance(LayoutManager* vCopy = nullptr, bool vForce = false) {

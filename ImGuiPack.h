@@ -151,18 +151,18 @@ static inline ImVec4 operator*(const ImVec4& lhs, const float rhs) {
 #include <sstream>
 
 static inline std::ostream& operator<<(std::ostream& vOut, const ImVec4& vType) {
-    vOut << vType.x << ", " << vType.y << ", " << vType.z << ", " << vType.w;
+    vOut << vType.x << ";" << vType.y << ";" << vType.z << ";" << vType.w;
     return vOut;
 }
 
 static inline std::ostream& operator<<(std::ostream& vOut, const ImVec2& vType) {
-    vOut << vType.x << ", " << vType.y;
+    vOut << vType.x << ";" << vType.y;
     return vOut;
 }
 
 #ifdef USE_IMPLOT
 static inline std::ostream& operator<<(std::ostream& vOut, const ImPlotRect& vType) {
-    vOut << vType.X.Min << ", " << vType.X.Max << ", " << vType.Y.Min << ", " << vType.Y.Max;
+    vOut << vType.X.Min << ";" << vType.X.Max << ";" << vType.Y.Min << ";" << vType.Y.Max;
     return vOut;
 }
 #endif  // USE_IMPLOT

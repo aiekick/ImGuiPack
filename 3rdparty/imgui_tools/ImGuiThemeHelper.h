@@ -42,7 +42,7 @@ public:
 class IMGUI_API ImGuiThemeHelper
 #ifdef EZ_TOOLS_XML_CONFIG 
 	: public ez::xml::Config
-#endif // USE_XML_CONFIG
+#endif // EZ_TOOLS_XML_CONFIG
 {
 public:
 	bool puShowImGuiStyleEdtor = false;
@@ -75,7 +75,7 @@ public:  // configuration
 #ifdef EZ_TOOLS_XML_CONFIG
     ez::xml::Nodes getXmlNodes(const std::string& vUserDatas = "") override;
     bool setFromXmlNodes(const ez::xml::Node& vNode, const ez::xml::Node& vParent, const std::string& vUserDatas) override;
-#endif // USE_XML_CONFIG
+#endif // EZ_TOOLS_XML_CONFIG
 
 	ImGuiStyle GetImGuiStyle() { return m_CurrentTheme.style; }
 
