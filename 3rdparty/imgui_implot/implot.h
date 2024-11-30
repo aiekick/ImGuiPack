@@ -498,7 +498,10 @@ struct ImPlotRect {
     ImPlotPoint Clamp(const ImPlotPoint& p)                            { return Clamp(p.x, p.y);                                       }
     ImPlotPoint Clamp(double x, double y)                              { return ImPlotPoint(X.Clamp(x),Y.Clamp(y));                    }
     ImPlotPoint Min() const                                            { return ImPlotPoint(X.Min, Y.Min);                             }
-    ImPlotPoint Max() const                                            { return ImPlotPoint(X.Max, Y.Max);                             }
+    ImPlotPoint Max() const { return ImPlotPoint(X.Max, Y.Max); }
+#ifdef IM_PLOT_RECT_CLASS_EXTRA 
+    IM_PLOT_RECT_CLASS_EXTRA 
+#endif
 };
 
 // Plot style structure
