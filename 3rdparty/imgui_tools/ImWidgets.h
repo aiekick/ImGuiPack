@@ -619,7 +619,10 @@ IMGUI_API void DisplayAlignedWidget(const float& vWidth, const std::string& vLab
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-IMGUI_API void HideByFilledRectForHiddenMode(const bool& vHidden, const char* fmt, ...);
+IMGUI_API void HideByFilledRectForHiddenMode(const bool vHidden, const char* fmt, ...);
+
+//filled recty if vThickNess = 0
+IMGUI_API void DrawRectOverText(const bool vEnabled, const ImVec4& vColor, const ImVec2& vOffset, const float vThickNess, const char* fmt, ...);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///// COMBO
@@ -720,9 +723,9 @@ public:
     bool DisplayInputText(const float& vWidth,
                           const std::string& vLabel,
                           const std::string& vDefaultText,
-                          const bool& vMultiline = false,
+                          const bool vMultiline = false,
                           const float& vInputOffsetFromStart = 0.0f,
-                          const bool& vNeedChange = false);
+                          const bool vNeedChange = false);
     void AddText(const std::string& vText);
     void SetText(const std::string& vText);
     std::string GetText(const std::string& vNumericType = "") const;

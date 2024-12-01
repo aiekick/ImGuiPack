@@ -3159,7 +3159,7 @@ void DisplayAlignedWidget(const float& vWidth, const std::string& vLabel, const 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void HideByFilledRectForHiddenMode(const bool& vHidden, const char* fmt, ...) {
+void HideByFilledRectForHiddenMode(const bool vHidden, const char* fmt, ...) {
     if (vHidden) {
         va_list args;
         va_start(args, fmt);
@@ -3174,6 +3174,27 @@ void HideByFilledRectForHiddenMode(const bool& vHidden, const char* fmt, ...) {
         }
         va_end(args);
     }
+}
+
+void DrawRectOverText(const bool vEnabled, const ImVec4& vColor, const ImVec2& vOffset, const float vThickNess, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    const char *text, *text_end;
+    ImFormatStringToTempBufferV(&text, &text_end, fmt, args);
+    if (strlen(text) != 0) {
+        ImGui::TextV(fmt, args);
+        const auto min = ImGui::GetItemRectMin() - vOffset;
+        const auto max = ImGui::GetItemRectMax() + vOffset;
+        if (vEnabled) {
+            auto drawListPtr = ImGui::GetWindowDrawList();
+            if (vThickNess > 0.0f) {
+                drawListPtr->AddRect(min, max, ImGui::GetColorU32(vColor), 2.0f, 0, vThickNess);
+            } else {
+                drawListPtr->AddRectFilled(min, max, ImGui::GetColorU32(vColor), 0);
+            }
+        }
+    }
+    va_end(args);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3856,9 +3877,9 @@ void ImWidgets::InputText::Clear() {
 bool ImWidgets::InputText::DisplayInputText(const float& vWidth,
                                             const std::string& vLabel,
                                             const std::string& vDefaultText,
-                                            const bool& vMultiline,
+                                            const bool vMultiline,
                                             const float& vInputOffsetFromStart,
-                                            const bool& vNeedChange) {
+                                            const bool vNeedChange) {
     bool res = false;
     float px = ImGui::GetCursorPosX();
     if (!vLabel.empty()) {

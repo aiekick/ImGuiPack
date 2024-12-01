@@ -58,8 +58,8 @@ bool LayoutManager::AddPane(ILayoutPaneWeak vPane,
                             const PaneCategoryName& vCategory,
                             const PaneDisposal& vPaneDisposal,
                             const float& vPaneDisposalRatio,
-                            const bool& vIsOpenedDefault,
-                            const bool& vIsFocusedDefault) {
+                            const bool vIsOpenedDefault,
+                            const bool vIsFocusedDefault) {
     static int32_t sMaxPanes = static_cast<int32_t>(sizeof(LayoutPaneFlag) * 8U);
     if (m_FlagCount < sMaxPanes) {
         LayoutPaneFlag flag = (static_cast<LayoutPaneFlag>(1) << (++m_FlagCount));
@@ -163,7 +163,7 @@ void LayoutManager::SetPaneDisposalRatio(const PaneDisposal& vPaneDisposal, cons
     }
 }
 
-void LayoutManager::Init(const std::string& vMenuLabel, const std::string& vDefaultMenuLabel, const bool& vForceDefaultLayout) {
+void LayoutManager::Init(const std::string& vMenuLabel, const std::string& vDefaultMenuLabel, const bool vForceDefaultLayout) {
     assert(!vMenuLabel.empty());
     assert(!vDefaultMenuLabel.empty());
     m_MenuLabel = vMenuLabel;
@@ -341,7 +341,7 @@ void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize) {
 template <typename T>
 static bool LayoutManager_MenuItem(const char* label, const char* shortcut, T* vContainer, T vFlag, bool vOnlyOneSameTime = false) {
     bool selected = *vContainer & vFlag;
-    const bool& res = ImGui::MenuItem(label, shortcut, &selected, true);
+    const bool res = ImGui::MenuItem(label, shortcut, &selected, true);
     if (res) {
         if (selected) {
             if (vOnlyOneSameTime) {

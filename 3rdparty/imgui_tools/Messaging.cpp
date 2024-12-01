@@ -243,7 +243,7 @@ void Messaging::AddMessage(const std::string& vMsg,
 }
 
 void Messaging::AddMessage(const MessageType& vMessageType,
-    const bool& vSelect,
+    const bool vSelect,
     const MessageData& vDatas,
     const MessageFunc& vFunction,
     const char* fmt,

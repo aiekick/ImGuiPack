@@ -129,13 +129,13 @@ public:
                  const PaneCategoryName& vCategory,
                  const PaneDisposal& vPaneDisposal,
                  const float& vPaneDisposalRatio,
-                 const bool& vIsOpenedDefault,
-                 const bool& vIsFocusedDefault);
+                 const bool vIsOpenedDefault,
+                 const bool vIsFocusedDefault);
     void RemovePane(const LayoutPaneName& vName);
     void SetPaneDisposalRatio(const PaneDisposal& vPaneDisposal, const float& vRatio);
 
 public:
-    void Init(const std::string& vMenuLabel, const std::string& vDefaultMenuLabel, const bool& vForceDefaultLayout = false);
+    void Init(const std::string& vMenuLabel, const std::string& vDefaultMenuLabel, const bool vForceDefaultLayout = false);
     void Unit();
 
     bool InitPanes();

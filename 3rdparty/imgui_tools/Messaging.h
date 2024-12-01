@@ -119,7 +119,7 @@ public:
         const ImVec4& vColor);
     void AddMessage(
         const MessageType& vMessageType,
-        const bool& vSelect,
+        const bool vSelect,
         const MessageData& vDatas,
         const MessageFunc& vFunction,
         const char* fmt,
