@@ -27,12 +27,6 @@
 
 #include <imgui_internal.h>
 
-#ifdef CUSTOM_THEME_HELPER_CONFIG_HEADER
-#    include CUSTOM_THEME_HELPER_CONFIG_HEADER
-#else
-#    include "ImGuiThemeHelperConfigHeader.h"
-#endif // THEME_HELPER_CONFIG_HEADER
-
 ImGuiThemeHelper::ImGuiThemeHelper() = default;
 ImGuiThemeHelper::~ImGuiThemeHelper() = default;
 

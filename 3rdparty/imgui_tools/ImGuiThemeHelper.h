@@ -22,6 +22,12 @@
 #include <string>
 #include <map>
 
+#ifdef CUSTOM_THEME_HELPER_CONFIG_HEADER
+#include CUSTOM_THEME_HELPER_CONFIG_HEADER
+#else
+#include "ImGuiThemeHelperConfigHeader.h"
+#endif  // THEME_HELPER_CONFIG_HEADER
+
 #ifdef USE_IMGUI_FILE_DIALOG
 namespace IGFD {
 class FileStyle;
