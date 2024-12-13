@@ -215,9 +215,9 @@ ez::xml::Nodes ImGuiThemeHelper::getXmlNodes(const std::string& vUserDatas) {
 bool ImGuiThemeHelper::setFromXmlNodes(const ez::xml::Node& vNode, const ez::xml::Node& vParent, const std::string& vUserDatas) {
     UNUSED(vUserDatas);
     const auto& strName = vNode.getName();
-    const auto& strValue = vNode.getContent();
+    //const auto& strValue = vNode.getContent();
     const auto& strParentName = vParent.getName();
-    const auto& strParentParentName = vParent.getName();
+    //const auto& strParentParentName = vParent.getName();
 
     if (strParentName == "FileTypes") {
 #ifdef EZ_TOOLS_VARIANT
