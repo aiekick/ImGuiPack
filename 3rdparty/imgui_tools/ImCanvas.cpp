@@ -1,7 +1,6 @@
 #include "ImCanvas.h"
 
 ImCanvas::ImCanvas() {
-    getConfigRef().extraWindowWrapper = true;
     getConfigRef().color = IM_COL32(33, 41, 45, 255);
 }
 
@@ -54,7 +53,6 @@ void ImCanvas::begin() {
     ImGui::PushStyleColor(ImGuiCol_ChildBg, m_Config.color);
     ImGui::BeginChild("view_port", m_Config.size, 0, ImGuiWindowFlags_NoMove);
     ImGui::PopStyleColor();
-    // m_size = ImGui::GetWindowSize();
     m_Pos = ImGui::GetWindowPos();
 
     ImVec2 size = ImGui::GetContentRegionAvail();
@@ -74,10 +72,6 @@ void ImCanvas::begin() {
     ImGui::GetIO().ConfigInputTrickleEventQueue = false;
     ImGui::NewFrame();
 
-    if (!m_Config.extraWindowWrapper) {
-        return;
-    }
-
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Appearing);
     ImGui::SetNextWindowSize(ImGui::GetMainViewport()->WorkSize);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
@@ -89,23 +83,20 @@ void ImCanvas::begin() {
 
 void ImCanvas::end() {
     m_AnyWindowHovered = ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
-    if (m_Config.extraWindowWrapper && ImGui::IsWindowHovered())
-        m_AnyWindowHovered = false;
 
     m_AnyItemActive = ImGui::IsAnyItemActive();
 
-    if (m_Config.extraWindowWrapper)
-        ImGui::End();
+    ImGui::End();
 
     ImGui::Render();
 
-    ImDrawData* draw_data = ImGui::GetDrawData();
+    auto* draw_data_ptr = ImGui::GetDrawData();
 
     ImGui::SetCurrentContext(m_OriginalCtx);
     m_OriginalCtx = nullptr;
 
-    for (int i = 0; i < draw_data->CmdListsCount; ++i) {
-        m_AppendDrawData(draw_data->CmdLists[i], m_Origin, m_Scale);
+    for (int i = 0; i < draw_data_ptr->CmdListsCount; ++i) {
+        m_AppendDrawData(draw_data_ptr->CmdLists[i], m_Origin, m_Scale);
     }
 
     m_Hovered = ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows) && !m_AnyWindowHovered;
@@ -115,7 +106,6 @@ void ImCanvas::end() {
         m_ScaleTarget += ImGui::GetIO().MouseWheel / m_Config.zoomDivisions;
         m_ScaleTarget = m_ScaleTarget < m_Config.zoomMin ? m_Config.zoomMin : m_ScaleTarget;
         m_ScaleTarget = m_ScaleTarget > m_Config.zoomMax ? m_Config.zoomMax : m_ScaleTarget;
-
         if (m_Config.zoomSmoothness == 0.f) {
             m_Scroll += (ImGui::GetMousePos() - m_Pos) / m_ScaleTarget - (ImGui::GetMousePos() - m_Pos) / m_Scale;
             m_Scale = m_ScaleTarget;
@@ -125,7 +115,6 @@ void ImCanvas::end() {
         float cs = (m_ScaleTarget - m_Scale) / m_Config.zoomSmoothness;
         m_Scroll += (ImGui::GetMousePos() - m_Pos) / (m_Scale + cs) - (ImGui::GetMousePos() - m_Pos) / m_Scale;
         m_Scale += (m_ScaleTarget - m_Scale) / m_Config.zoomSmoothness;
-
         if (abs(m_ScaleTarget - m_Scale) < 0.015f / m_Config.zoomSmoothness) {
             m_Scroll += (ImGui::GetMousePos() - m_Pos) / m_ScaleTarget - (ImGui::GetMousePos() - m_Pos) / m_Scale;
             m_Scale = m_ScaleTarget;
@@ -133,8 +122,9 @@ void ImCanvas::end() {
     }
 
     // Zoom reset
-    if (ImGui::IsKeyPressed(m_Config.resetZoomKey, false))
+    if (ImGui::IsKeyPressed(m_Config.resetZoomKey, false)) {
         m_ScaleTarget = m_Config.defaultZoom;
+    }
 
     // Scrolling
     if (m_Hovered && !m_AnyItemActive && ImGui::IsMouseDragging(m_Config.scrollButton, 0.f)) {
@@ -149,8 +139,8 @@ void ImCanvas::end() {
 void ImCanvas::drawGrid(const GridConfig& vGridConfig) {
     auto* drawListPtr = ImGui::GetWindowDrawList();
     if (drawListPtr != nullptr) {
-        const ImVec2& win_pos = ImGui::GetCursorScreenPos();
-        const ImVec2& canvas_sz = ImGui::GetWindowSize();
+        const ImVec2 win_pos = ImGui::GetCursorScreenPos();
+        const ImVec2 canvas_sz = ImGui::GetWindowSize();
         for (float x = fmodf(getScroll().x, vGridConfig.gridSize.x); x < canvas_sz.x; x += vGridConfig.gridSize.x) {
             drawListPtr->AddLine(ImVec2(x, 0.0f) + win_pos, ImVec2(x, canvas_sz.y) + win_pos, vGridConfig.gridColor);
         }

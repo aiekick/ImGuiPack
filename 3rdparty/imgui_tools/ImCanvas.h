@@ -20,7 +20,6 @@ public:
         float defaultZoom = 1.0f;
         float zoomDivisions = 5.0f;
         float zoomSmoothness = 2.5f;
-        bool extraWindowWrapper = false;
         ImVec2 size = {0.0f, 0.0f};
         ImU32 color = IM_COL32_WHITE;
         ImGuiKey resetZoomKey = ImGuiKey_R;
