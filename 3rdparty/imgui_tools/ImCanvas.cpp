@@ -1,6 +1,9 @@
 #include "ImCanvas.h"
 
-ImCanvas::ImCanvas() = default;
+ImCanvas::ImCanvas() {
+    getConfigRef().extraWindowWrapper = true;
+    getConfigRef().color = IM_COL32(33, 41, 45, 255);
+}
 
 ImCanvas::~ImCanvas() {
     if (m_Ctx) {
@@ -58,8 +61,9 @@ void ImCanvas::begin() {
     m_Origin = ImGui::GetCursorScreenPos();
     m_OriginalCtx = ImGui::GetCurrentContext();
     const ImGuiStyle& orig_style = ImGui::GetStyle();
-    if (!m_Ctx)
+    if (!m_Ctx) {
         m_Ctx = ImGui::CreateContext(ImGui::GetIO().Fonts);
+    }
     ImGui::SetCurrentContext(m_Ctx);
     ImGuiStyle& new_style = ImGui::GetStyle();
     new_style = orig_style;
@@ -73,13 +77,13 @@ void ImCanvas::begin() {
     if (!m_Config.extraWindowWrapper) {
         return;
     }
+
     ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Appearing);
     ImGui::SetNextWindowSize(ImGui::GetMainViewport()->WorkSize);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-    ImGui::Begin("viewport_container",
-                 nullptr,
-                 ImGuiWindowFlags_NoDecoration |  //
-                     ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+    static ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground |  //
+        ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
+    ImGui::Begin("viewport_container", nullptr, flags);
     ImGui::PopStyleVar();
 }
 

@@ -28,10 +28,10 @@ public:
     };
 
     struct GridConfig {
-        ImVec2 gridSize;
-        ImVec2 gridSubdivs;
-        ImU32 gridColor = 0;
-        ImU32 subGridColor = 0;
+        ImVec2 gridSize{50.0f, 50.0f};
+        ImVec2 gridSubdivs{5.0f, 5.0f};
+        ImU32 gridColor{IM_COL32(200, 200, 200, 40)};
+        ImU32 subGridColor{IM_COL32(200, 200, 200, 10)};
     };
 
 public:
