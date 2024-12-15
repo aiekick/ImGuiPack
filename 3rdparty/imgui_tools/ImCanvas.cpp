@@ -82,7 +82,7 @@ void ImCanvas::begin() {
 }
 
 void ImCanvas::end() {
-    m_AnyWindowHovered = ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
+    m_AnyWindowHovered = !ImGui::IsWindowHovered();
 
     m_AnyItemActive = ImGui::IsAnyItemActive();
 
