@@ -45,8 +45,8 @@ public:
     const ImVec2& getScroll() const;
     ImGuiContext* getRawContext();
     Config& getConfigRef();
-    ImVec2 screenToCanvas(const ImVec2& vPos, ImGuiContext* vCtx = nullptr);
-    ImVec2 canvasToScreen(const ImVec2& vPos, ImGuiContext* vCtx = nullptr);
+    ImVec2 screenToCanvas(const ImVec2& vPos);
+    ImVec2 canvasToScreen(const ImVec2& vPos);
 
 private:
     void m_CopyIOEvents(ImGuiContext* src, ImGuiContext* dst, ImVec2 origin, float scale);

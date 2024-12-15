@@ -34,15 +34,15 @@ ImGuiContext* ImCanvas::getRawContext() {
     return m_Ctx;
 }
 
-ImVec2 ImCanvas::screenToCanvas(const ImVec2& vPos, ImGuiContext* vCtx) {
-    if (vCtx == getRawContext()) {
+ImVec2 ImCanvas::screenToCanvas(const ImVec2& vPos) {
+    if (ImGui::GetCurrentContext() == getRawContext()) {
         return vPos - getScroll();
     }
     return vPos - getOrigin() - getScroll() * getScale();
 }
 
-ImVec2 ImCanvas::canvasToScreen(const ImVec2& vPos, ImGuiContext* vCtx) {
-    if (vCtx == getRawContext()) {
+ImVec2 ImCanvas::canvasToScreen(const ImVec2& vPos) {
+    if (ImGui::GetCurrentContext() == getRawContext()) {
         return vPos + getScroll();
     }
     return vPos + getOrigin() + getScroll() * getScale();
