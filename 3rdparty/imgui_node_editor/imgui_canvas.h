@@ -157,7 +157,7 @@ struct Canvas
     IMGUIEX_CANVAS_API ImVec2 FromLocal(const ImVec2& point) const;
     IMGUIEX_CANVAS_API ImVec2 FromLocal(const ImVec2& point, const CanvasView& view) const;
 
-    // Transforms vector from canvas plant to ImGui.
+    // Transforms vector from canvas plane to ImGui.
     IMGUIEX_CANVAS_API ImVec2 FromLocalV(const ImVec2& vector) const;
     IMGUIEX_CANVAS_API ImVec2 FromLocalV(const ImVec2& vector, const CanvasView& view) const;
 
