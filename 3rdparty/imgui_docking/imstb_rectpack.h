@@ -158,7 +158,7 @@ STBRP_DEF void stbrp_setup_allow_out_of_mem (stbrp_context *context, int allow_o
 // If you call init again, this will be reset to the default (false).
 
 
-//STBRP_DEF void stbrp_setup_heuristic (stbrp_context *context, int heuristic);
+STBRP_DEF void stbrp_setup_heuristic (stbrp_context *context, int heuristic);
 // Optionally select which packing heuristic the library should use. Different
 // heuristics will produce better/worse results for different data sets.
 // If you call init again, this will be reset to the default.
@@ -229,6 +229,18 @@ enum
 {
    STBRP__INIT_skyline = 1
 };
+
+STBRP_DEF void stbrp_setup_heuristic(stbrp_context *context, int heuristic)
+{
+   switch (context->init_mode) {
+      case STBRP__INIT_skyline:
+         STBRP_ASSERT(heuristic == STBRP_HEURISTIC_Skyline_BL_sortHeight || heuristic == STBRP_HEURISTIC_Skyline_BF_sortHeight);
+         context->heuristic = heuristic;
+         break;
+      default:
+         STBRP_ASSERT(0);
+   }
+}
 
 STBRP_DEF void stbrp_setup_allow_out_of_mem(stbrp_context *context, int allow_out_of_mem)
 {

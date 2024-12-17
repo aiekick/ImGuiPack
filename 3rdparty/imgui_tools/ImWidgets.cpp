@@ -611,33 +611,53 @@ bool CheckBoxIcon(const char* vLabel, const char* vIconTrue, bool* v) {
 
     const float square_sz = GetFrameHeight();
     const ImVec2 pos = window->DC.CursorPos;
-    const ImRect total_bb(pos,
-                          pos + ImVec2(square_sz + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), label_size.y + style.FramePadding.y * 2.0f));
+    const ImRect total_bb(
+        pos, pos + ImVec2(square_sz + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), label_size.y + style.FramePadding.y * 2.0f));
     ItemSize(total_bb, style.FramePadding.y);
-    if (!ItemAdd(total_bb, id)) {
-        IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
-        return false;
-    }
+    const bool is_visible = ItemAdd(total_bb, id);
+    const bool is_multi_select = (g.LastItemData.ItemFlags & ImGuiItemFlags_IsMultiSelect) != 0;
+    if (!is_visible)
+        if (!is_multi_select || !g.BoxSelectState.UnclipMode || !g.BoxSelectState.UnclipRect.Overlaps(total_bb))  // Extra layer of "no logic clip" for box-select support
+        {
+            IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
+            return false;
+        }
+
+    // Range-Selection/Multi-selection support (header)
+    bool checked = *v;
+    if (is_multi_select)
+        MultiSelectItemHeader(id, &checked, NULL);
 
     bool hovered, held;
     bool pressed = ButtonBehavior(total_bb, id, &hovered, &held);
-    if (pressed) {
-        *v = !(*v);
+
+    // Range-Selection/Multi-selection support (footer)
+    if (is_multi_select)
+        MultiSelectItemFooter(id, &checked, &pressed);
+    else if (pressed)
+        checked = !checked;
+
+    if (*v != checked) {
+        *v = checked;
+        pressed = true;  // return value
         MarkItemEdited(id);
     }
 
     const ImRect check_bb(pos, pos + ImVec2(square_sz, square_sz));
-    RenderNavHighlight(total_bb, id);
-    RenderFrame(check_bb.Min,
-                check_bb.Max,
-                GetColorU32((held && hovered) ? ImGuiCol_FrameBgActive
-                                : hovered     ? ImGuiCol_FrameBgHovered
-                                              : ImGuiCol_FrameBg),
-                true,
-                style.FrameRounding);
-    ImU32 check_col = GetColorU32(ImGuiCol_CheckMark);
-    bool mixed_value = (g.LastItemData.InFlags & ImGuiItemFlags_MixedValue) != 0;
-    if (mixed_value) {
+    const bool mixed_value = (g.LastItemData.ItemFlags & ImGuiItemFlags_MixedValue) != 0;
+    if (is_visible) {
+        RenderNavCursor(total_bb, id);
+        RenderFrame(
+            check_bb.Min,
+            check_bb.Max,
+            GetColorU32(
+                (held && hovered) ? ImGuiCol_FrameBgActive
+                    : hovered     ? ImGuiCol_FrameBgHovered
+                                  : ImGuiCol_FrameBg),
+            true,
+            style.FrameRounding);
+        ImU32 check_col = GetColorU32(ImGuiCol_CheckMark);
+        if (mixed_value) {
         // Undocumented tristate/mixed/indeterminate checkbox (#2644)
         // This may seem awkwardly designed because the aim is to make ImGuiItemFlags_MixedValue supported by all
         // widgets (not just checkbox)
@@ -650,14 +670,14 @@ bool CheckBoxIcon(const char* vLabel, const char* vIconTrue, bool* v) {
         RenderText(check_bb.Min + ImVec2(pad, pad), vIconTrue);
         // PopStyleColor();
     }
-
-    ImVec2 label_pos = ImVec2(check_bb.Max.x + style.ItemInnerSpacing.x, check_bb.Min.y + style.FramePadding.y);
+    }
+    const ImVec2 label_pos = ImVec2(check_bb.Max.x + style.ItemInnerSpacing.x, check_bb.Min.y + style.FramePadding.y);
     if (g.LogEnabled)
         LogRenderedText(&label_pos, mixed_value ? "[~]" : *v ? "[x]" : "[ ]");
-    if (label_size.x > 0.0f)
+    if (is_visible && label_size.x > 0.0f)
         RenderText(label_pos, vLabel);
 
-    IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
+    IMGUI_TEST_ENGINE_ITEM_INFO(id, vLabel, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
     return pressed;
 }
 
@@ -811,7 +831,7 @@ bool RadioButtonLabeled(float vWidth, const char* label, bool active, bool disab
     const ImGuiID id = window->GetID(label);
     const ImVec2 label_size = CalcTextSize(label, nullptr, true);
     if (w < 0.0f)
-        w = GetContentRegionMaxAbs().x - window->DC.CursorPos.x;
+        w = GetContentRegionMax().x - window->DC.CursorPos.x;
     if (IS_FLOAT_EQUAL(w, 0.0f))
         w = label_size.x + style.FramePadding.x * 2.0f;
     const ImRect total_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
@@ -899,9 +919,9 @@ bool RadioButtonLabeled(ImVec2 vSize, const char* label, bool active, bool disab
     const ImGuiID id = window->GetID(label);
     const ImVec2 label_size = CalcTextSize(label, nullptr, true);
     if (w < 0.0f)
-        w = GetContentRegionMaxAbs().x - window->DC.CursorPos.x;
+        w = GetContentRegionMax().x - window->DC.CursorPos.x;
     if (h < 0.0f)
-        w = GetContentRegionMaxAbs().y - window->DC.CursorPos.y;
+        w = GetContentRegionMax().y - window->DC.CursorPos.y;
     if (IS_FLOAT_EQUAL(w, 0.0f))
         w = label_size.x + style.FramePadding.x * 2.0f;
     if (IS_FLOAT_EQUAL(h, 0.0f))
@@ -2053,8 +2073,6 @@ bool TransparentButton(const char* label, const ImVec2& size_arg, ImGuiButtonFla
     if (!ItemAdd(bb, id))
         return false;
 
-    if (g.CurrentItemFlags & ImGuiItemFlags_ButtonRepeat)
-        flags |= ImGuiButtonFlags_Repeat;
     flags |= ImGuiButtonFlags_PressedOnClick;
     bool hovered, held;
     const bool pressed = ButtonBehavior(bb, id, &hovered, &held, flags);
@@ -2621,7 +2639,7 @@ inline bool inSliderBehaviorStepper(const ImRect& bb,
               "function with ImGuiSliderFlags_Logarithmic flags instead.");
 
     ImGuiContext& g = *GImGui;
-    if ((g.LastItemData.InFlags & ImGuiItemFlags_ReadOnly) || (flags & ImGuiSliderFlags_ReadOnly))
+    if ((g.LastItemData.ItemFlags & ImGuiItemFlags_ReadOnly) || (flags & ImGuiSliderFlags_ReadOnly))
         return false;
 
     switch (data_type) {
@@ -2731,7 +2749,7 @@ bool SliderScalarCompact(float width,
 
     float w = width;
     if (width <= 0.0f) {
-        w = GetContentRegionMaxAbs().x - window->DC.CursorPos.x - style.FramePadding.x;
+        w = GetContentRegionMax().x - window->DC.CursorPos.x - style.FramePadding.x;
     }
 
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
@@ -2749,7 +2767,7 @@ bool SliderScalarCompact(float width,
     if (format == NULL)
         format = DataTypeGetInfo(data_type)->PrintFmt;
 
-    const bool hovered = ItemHoverable(frame_bb, id, g.LastItemData.InFlags);
+    const bool hovered = ItemHoverable(frame_bb, id, g.LastItemData.ItemFlags);
     bool temp_input_is_active = temp_input_allowed && TempInputIsActive(id);
     if (!temp_input_is_active) {
         // Tabbing or CTRL-clicking on Slider turns it into an input box
@@ -2952,7 +2970,7 @@ bool SliderScalar(float width,
     if (format == NULL)
         format = DataTypeGetInfo(data_type)->PrintFmt;
 
-    const bool hovered = ItemHoverable(frame_bb, id, g.LastItemData.InFlags);
+    const bool hovered = ItemHoverable(frame_bb, id, g.LastItemData.ItemFlags);
     bool temp_input_is_active = temp_input_allowed && TempInputIsActive(id);
     if (!temp_input_is_active) {
         // Tabbing or CTRL-clicking on Slider turns it into an input box
@@ -3736,13 +3754,12 @@ bool InputFloatDefaultStepper(float vWidth,
 
     if (vStep > 0.0f) {
         SameLine(0, GetStyle().ItemInnerSpacing.x);
-        ImGuiButtonFlags button_flags = ImGuiButtonFlags_Repeat | ImGuiButtonFlags_DontClosePopups;
-        if (ContrastedButton(BUTTON_LABEL_MINUS, nullptr, nullptr, 0.0f, ImVec2(0.0f, 0.0f), button_flags)) {
+        if (ContrastedButton(BUTTON_LABEL_MINUS, nullptr, nullptr, 0.0f, ImVec2(0.0f, 0.0f))) {
             *vVar -= GetIO().KeyCtrl ? vStepFast : vStep;
             change = true;
         }
         SameLine(0, GetStyle().ItemInnerSpacing.x);
-        if (ContrastedButton(BUTTON_LABEL_PLUS, nullptr, nullptr, 0.0f, ImVec2(0.0f, 0.0f), button_flags)) {
+        if (ContrastedButton(BUTTON_LABEL_PLUS, nullptr, nullptr, 0.0f, ImVec2(0.0f, 0.0f))) {
             *vVar += GetIO().KeyCtrl ? vStepFast : vStep;
             change = true;
         }
@@ -3792,13 +3809,12 @@ bool InputDoubleDefaultStepper(float vWidth,
 
     if (vStep > 0.0f) {
         SameLine(0, GetStyle().ItemInnerSpacing.x);
-        ImGuiButtonFlags button_flags = ImGuiButtonFlags_Repeat | ImGuiButtonFlags_DontClosePopups;
-        if (ContrastedButton(BUTTON_LABEL_MINUS, nullptr, nullptr, 0.0f, ImVec2(25.0f, 0.0f), button_flags)) {
+        if (ContrastedButton(BUTTON_LABEL_MINUS, nullptr, nullptr, 0.0f, ImVec2(25.0f, 0.0f))) {
             *vVar -= GetIO().KeyCtrl ? vStepFast : vStep;
             change = true;
         }
         SameLine(0, GetStyle().ItemInnerSpacing.x);
-        if (ContrastedButton(BUTTON_LABEL_PLUS, nullptr, nullptr, 0.0f, ImVec2(25.0f, 0.0f), button_flags)) {
+        if (ContrastedButton(BUTTON_LABEL_PLUS, nullptr, nullptr, 0.0f, ImVec2(25.0f, 0.0f))) {
             *vVar += GetIO().KeyCtrl ? vStepFast : vStep;
             change = true;
         }
