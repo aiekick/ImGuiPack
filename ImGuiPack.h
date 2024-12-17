@@ -50,6 +50,7 @@
 #define IMPLOT_API __declspec(dllexport)
 #define IMGUI_IMPL_API __declspec(dllexport)
 #define IM_NODE_FLOW_API __declspec(dllexport)
+#define IMGUIEX_CANVAS_API __declspec(dllexport)
 #define IMGUI_NODE_EDITOR_API __declspec(dllexport)
 #elif defined(BUILD_IMGUI_PACK_SHARED_LIBS)
 #define IGFD_API __declspec(dllimport)
@@ -57,6 +58,7 @@
 #define IMPLOT_API __declspec(dllimport)
 #define IMGUI_IMPL_API __declspec(dllimport)
 #define IM_NODE_FLOW_API __declspec(dllimport)
+#define IMGUIEX_CANVAS_API __declspec(dllimport)
 #define IMGUI_NODE_EDITOR_API __declspec(dllimport)
 #else
 #define IGFD_API
@@ -64,6 +66,7 @@
 #define IMPLOT_API
 #define IMGUI_IMPL_API
 #define IM_NODE_FLOW_API
+#define IMGUIEX_CANVAS_API
 #define IMGUI_NODE_EDITOR_API
 #endif
 #else
@@ -72,6 +75,7 @@
 #define IMPLOT_API
 #define IMGUI_IMPL_API
 #define IM_NODE_FLOW_API
+#define IMGUIEX_CANVAS_API
 #define IMGUI_NODE_EDITOR_API
 #endif
 
@@ -119,6 +123,7 @@
 
 #ifdef USE_IMGUI_NODE_EDITOR
 #include <3rdparty/imgui_node_editor/imgui_node_editor.h>
+#include <3rdparty/imgui_node_editor/imgui_canvas.h>
 #endif
 
 #ifdef USE_IM_NODES
