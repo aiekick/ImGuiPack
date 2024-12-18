@@ -11,6 +11,8 @@
 #include <functional>
 #include <unordered_map>
 
+// based on context_wrapper of Fattorino at https://github.com/Fattorino/ImNodeFlow.git
+
 class IMGUI_API ImCanvas {
 public:
     struct Config {
