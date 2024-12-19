@@ -125,6 +125,7 @@
 #ifdef USE_IMGUI_NODE_EDITOR
 #include <3rdparty/imgui_node_editor/imgui_node_editor.h>
 #include <3rdparty/imgui_node_editor/imgui_canvas.h>
+namespace nd = ax::NodeEditor;
 #endif
 
 #ifdef USE_IM_NODES
