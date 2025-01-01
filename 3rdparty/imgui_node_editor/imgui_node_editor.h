@@ -214,7 +214,9 @@ struct Style
     float   GroupBorderWidth;
     float   HighlightConnectedLinks;
     float   SnapLinkToPinDir; // when true link will start on the line defined by pin direction
-    ImVec4  Colors[StyleColor_Count];
+    ImVec4 Colors[StyleColor_Count];
+    float baseDragSnapping;  // default snapping
+    float altDragSnapping;   // snapping used when lat key is pressed
 
     Style()
     {
@@ -249,6 +251,8 @@ struct Style
         GroupBorderWidth         = 1.0f;
         HighlightConnectedLinks  = 0.0f;
         SnapLinkToPinDir         = 0.0f;
+        baseDragSnapping         = 0.0f;
+        altDragSnapping          = 16.0f;
 
         Colors[StyleColor_Bg]                 = ImColor( 60,  60,  70, 200);
         Colors[StyleColor_Grid]               = ImColor(120, 120, 120,  40);

@@ -9,167 +9,152 @@
 // CREDITS
 //   Written by Michal Cichon
 //------------------------------------------------------------------------------
-# ifndef __IMGUI_NODE_EDITOR_INTERNAL_H__
-# define __IMGUI_NODE_EDITOR_INTERNAL_H__
-# pragma once
-
-
-//------------------------------------------------------------------------------
-# ifndef IMGUI_DEFINE_MATH_OPERATORS
-#     define IMGUI_DEFINE_MATH_OPERATORS
-# endif
-# include "imgui_node_editor.h"
-
+#ifndef __IMGUI_NODE_EDITOR_INTERNAL_H__
+#define __IMGUI_NODE_EDITOR_INTERNAL_H__
+#pragma once
 
 //------------------------------------------------------------------------------
-# include <imgui.h>
-# include <imgui_internal.h>
-# include "imgui_extra_math.h"
-# include "imgui_bezier_math.h"
-# include "imgui_canvas.h"
+#ifndef IMGUI_DEFINE_MATH_OPERATORS
+#define IMGUI_DEFINE_MATH_OPERATORS
+#endif
+#include "imgui_node_editor.h"
 
-# include "crude_json.h"
+//------------------------------------------------------------------------------
+#include <imgui.h>
+#include <imgui_internal.h>
+#include "imgui_extra_math.h"
+#include "imgui_bezier_math.h"
+#include "imgui_canvas.h"
 
-# include <vector>
-# include <string>
+#include "crude_json.h"
 
+#include <vector>
+#include <string>
 
 //------------------------------------------------------------------------------
 namespace ax {
 namespace NodeEditor {
 namespace Detail {
 
-
 //------------------------------------------------------------------------------
 namespace ed = ax::NodeEditor::Detail;
 namespace json = crude_json;
 
-
 //------------------------------------------------------------------------------
-using std::vector;
 using std::string;
-
+using std::vector;
 
 //------------------------------------------------------------------------------
 void Log(const char* fmt, ...);
 
-
 //------------------------------------------------------------------------------
-//inline ImRect ToRect(const ax::rectf& rect);
-//inline ImRect ToRect(const ax::rect& rect);
+// inline ImRect ToRect(const ax::rectf& rect);
+// inline ImRect ToRect(const ax::rect& rect);
 inline ImRect ImGui_GetItemRect();
 inline ImVec2 ImGui_GetMouseClickPos(ImGuiMouseButton buttonIndex);
 
-
 //------------------------------------------------------------------------------
 // https://stackoverflow.com/a/36079786
-# define DECLARE_HAS_MEMBER(__trait_name__, __member_name__)                         \
-                                                                                     \
-    template <typename __boost_has_member_T__>                                       \
-    class __trait_name__                                                             \
-    {                                                                                \
-        using check_type = ::std::remove_const_t<__boost_has_member_T__>;            \
-        struct no_type {char x[2];};                                                 \
-        using  yes_type = char;                                                      \
-                                                                                     \
-        struct  base { void __member_name__() {}};                                   \
-        struct mixin : public base, public check_type {};                            \
-                                                                                     \
-        template <void (base::*)()> struct aux {};                                   \
-                                                                                     \
-        template <typename U> static no_type  test(aux<&U::__member_name__>*);       \
-        template <typename U> static yes_type test(...);                             \
-                                                                                     \
-        public:                                                                      \
-                                                                                     \
-        static constexpr bool value = (sizeof(yes_type) == sizeof(test<mixin>(0)));  \
+#define DECLARE_HAS_MEMBER(__trait_name__, __member_name__)                         \
+                                                                                    \
+    template <typename __boost_has_member_T__>                                      \
+    class __trait_name__ {                                                          \
+        using check_type = ::std::remove_const_t<__boost_has_member_T__>;           \
+        struct no_type {                                                            \
+            char x[2];                                                              \
+        };                                                                          \
+        using yes_type = char;                                                      \
+                                                                                    \
+        struct base {                                                               \
+            void __member_name__() {}                                               \
+        };                                                                          \
+        struct mixin : public base, public check_type {};                           \
+                                                                                    \
+        template <void (base::*)()>                                                 \
+        struct aux {};                                                              \
+                                                                                    \
+        template <typename U>                                                       \
+        static no_type test(aux<&U::__member_name__>*);                             \
+        template <typename U>                                                       \
+        static yes_type test(...);                                                  \
+                                                                                    \
+    public:                                                                         \
+        static constexpr bool value = (sizeof(yes_type) == sizeof(test<mixin>(0))); \
     }
 
 DECLARE_HAS_MEMBER(HasFringeScale, _FringeScale);
 
-# undef DECLARE_HAS_MEMBER
+#undef DECLARE_HAS_MEMBER
 
-struct FringeScaleRef
-{
+struct FringeScaleRef {
     // Overload is present when ImDrawList does have _FringeScale member variable.
     template <typename T>
-    static float& Get(typename std::enable_if<HasFringeScale<T>::value, T>::type* drawList)
-    {
+    static float& Get(typename std::enable_if<HasFringeScale<T>::value, T>::type* drawList) {
         return drawList->_FringeScale;
     }
 
     // Overload is present when ImDrawList does not have _FringeScale member variable.
     template <typename T>
-    static float& Get(typename std::enable_if<!HasFringeScale<T>::value, T>::type*)
-    {
+    static float& Get(typename std::enable_if<!HasFringeScale<T>::value, T>::type*) {
         static float placeholder = 1.0f;
         return placeholder;
     }
 };
 
-static inline float& ImFringeScaleRef(ImDrawList* drawList)
-{
+static inline float& ImFringeScaleRef(ImDrawList* drawList) {
     return FringeScaleRef::Get<ImDrawList>(drawList);
 }
 
-struct FringeScaleScope
-{
+struct FringeScaleScope {
+    FringeScaleScope(float scale) : m_LastFringeScale(ImFringeScaleRef(ImGui::GetWindowDrawList())) { ImFringeScaleRef(ImGui::GetWindowDrawList()) = scale; }
 
-    FringeScaleScope(float scale)
-        : m_LastFringeScale(ImFringeScaleRef(ImGui::GetWindowDrawList()))
-    {
-        ImFringeScaleRef(ImGui::GetWindowDrawList()) = scale;
-    }
-
-    ~FringeScaleScope()
-    {
-        ImFringeScaleRef(ImGui::GetWindowDrawList()) = m_LastFringeScale;
-    }
+    ~FringeScaleScope() { ImFringeScaleRef(ImGui::GetWindowDrawList()) = m_LastFringeScale; }
 
 private:
     float m_LastFringeScale;
 };
 
-
 //------------------------------------------------------------------------------
-enum class ObjectType
-{
-    None,
-    Node,
-    Link,
-    Pin
-};
+enum class ObjectType { None, Node, Link, Pin };
 
 using ax::NodeEditor::PinKind;
+using ax::NodeEditor::SaveReasonFlags;
 using ax::NodeEditor::StyleColor;
 using ax::NodeEditor::StyleVar;
-using ax::NodeEditor::SaveReasonFlags;
 
+using ax::NodeEditor::LinkId;
 using ax::NodeEditor::NodeId;
 using ax::NodeEditor::PinId;
-using ax::NodeEditor::LinkId;
 
-struct ObjectId final: Details::SafePointerType<ObjectId>
-{
+struct ObjectId final : Details::SafePointerType<ObjectId> {
     using Super = Details::SafePointerType<ObjectId>;
     using Super::Super;
 
-    ObjectId():                  Super(Invalid),              m_Type(ObjectType::None)   {}
-    ObjectId(PinId  pinId):      Super(pinId.AsPointer()),    m_Type(ObjectType::Pin)    {}
-    ObjectId(NodeId nodeId):     Super(nodeId.AsPointer()),   m_Type(ObjectType::Node)   {}
-    ObjectId(LinkId linkId):     Super(linkId.AsPointer()),   m_Type(ObjectType::Link)   {}
+    ObjectId() : Super(Invalid), m_Type(ObjectType::None) {}
+    ObjectId(PinId pinId) : Super(pinId.AsPointer()), m_Type(ObjectType::Pin) {}
+    ObjectId(NodeId nodeId) : Super(nodeId.AsPointer()), m_Type(ObjectType::Node) {}
+    ObjectId(LinkId linkId) : Super(linkId.AsPointer()), m_Type(ObjectType::Link) {}
 
-    explicit operator PinId()    const { return AsPinId();    }
-    explicit operator NodeId()   const { return AsNodeId();   }
-    explicit operator LinkId()   const { return AsLinkId();   }
+    explicit operator PinId() const { return AsPinId(); }
+    explicit operator NodeId() const { return AsNodeId(); }
+    explicit operator LinkId() const { return AsLinkId(); }
 
-    PinId    AsPinId()    const { IM_ASSERT(IsPinId());    return PinId(AsPointer());    }
-    NodeId   AsNodeId()   const { IM_ASSERT(IsNodeId());   return NodeId(AsPointer());   }
-    LinkId   AsLinkId()   const { IM_ASSERT(IsLinkId());   return LinkId(AsPointer());   }
+    PinId AsPinId() const {
+        IM_ASSERT(IsPinId());
+        return PinId(AsPointer());
+    }
+    NodeId AsNodeId() const {
+        IM_ASSERT(IsNodeId());
+        return NodeId(AsPointer());
+    }
+    LinkId AsLinkId() const {
+        IM_ASSERT(IsLinkId());
+        return LinkId(AsPointer());
+    }
 
-    bool IsPinId()    const { return m_Type == ObjectType::Pin;    }
-    bool IsNodeId()   const { return m_Type == ObjectType::Node;   }
-    bool IsLinkId()   const { return m_Type == ObjectType::Link;   }
+    bool IsPinId() const { return m_Type == ObjectType::Pin; }
+    bool IsNodeId() const { return m_Type == ObjectType::Node; }
+    bool IsLinkId() const { return m_Type == ObjectType::Link; }
 
     ObjectType Type() const { return m_Type; }
 
@@ -184,58 +169,51 @@ struct Pin;
 struct Link;
 
 template <typename T, typename Id = typename T::IdType>
-struct ObjectWrapper
-{
-    Id   m_ID;
-    T*   m_Object;
+struct ObjectWrapper {
+    Id m_ID;
+    T* m_Object;
 
-          T* operator->()        { return m_Object; }
-    const T* operator->() const  { return m_Object; }
+    T* operator->() { return m_Object; }
+    const T* operator->() const { return m_Object; }
 
-    operator T*()             { return m_Object; }
+    operator T*() { return m_Object; }
     operator const T*() const { return m_Object; }
 
-    bool operator<(const ObjectWrapper& rhs) const
-    {
-        return m_ID.AsPointer() < rhs.m_ID.AsPointer();
-    }
+    bool operator<(const ObjectWrapper& rhs) const { return m_ID.AsPointer() < rhs.m_ID.AsPointer(); }
 };
 
-struct Object
-{
-    enum DrawFlags
-    {
-        None     = 0,
-        Hovered  = 1,
+struct Object {
+    enum DrawFlags {
+        None = 0,
+        Hovered = 1,
         Selected = 2,
         Highlighted = 4,
     };
 
-    inline friend DrawFlags operator|(DrawFlags lhs, DrawFlags rhs)  { return static_cast<DrawFlags>(static_cast<int>(lhs) | static_cast<int>(rhs)); }
-    inline friend DrawFlags operator&(DrawFlags lhs, DrawFlags rhs)  { return static_cast<DrawFlags>(static_cast<int>(lhs) & static_cast<int>(rhs)); }
-    inline friend DrawFlags& operator|=(DrawFlags& lhs, DrawFlags rhs) { lhs = lhs | rhs; return lhs; }
-    inline friend DrawFlags& operator&=(DrawFlags& lhs, DrawFlags rhs) { lhs = lhs & rhs; return lhs; }
+    inline friend DrawFlags operator|(DrawFlags lhs, DrawFlags rhs) { return static_cast<DrawFlags>(static_cast<int>(lhs) | static_cast<int>(rhs)); }
+    inline friend DrawFlags operator&(DrawFlags lhs, DrawFlags rhs) { return static_cast<DrawFlags>(static_cast<int>(lhs) & static_cast<int>(rhs)); }
+    inline friend DrawFlags& operator|=(DrawFlags& lhs, DrawFlags rhs) {
+        lhs = lhs | rhs;
+        return lhs;
+    }
+    inline friend DrawFlags& operator&=(DrawFlags& lhs, DrawFlags rhs) {
+        lhs = lhs & rhs;
+        return lhs;
+    }
 
     EditorContext* const Editor;
 
-    bool    m_IsLive;
-    bool    m_IsSelected;
-    bool    m_DeleteOnNewFrame;
+    bool m_IsLive;
+    bool m_IsSelected;
+    bool m_DeleteOnNewFrame;
 
-    Object(EditorContext* editor)
-        : Editor(editor)
-        , m_IsLive(true)
-        , m_IsSelected(false)
-        , m_DeleteOnNewFrame(false)
-    {
-    }
+    Object(EditorContext* editor) : Editor(editor), m_IsLive(true), m_IsSelected(false), m_DeleteOnNewFrame(false) {}
 
     virtual ~Object() = default;
 
     virtual ObjectId ID() = 0;
 
-    bool IsVisible() const
-    {
+    bool IsVisible() const {
         if (!m_IsLive)
             return false;
 
@@ -253,11 +231,14 @@ struct Object
     virtual bool EndDrag() { return false; }
     virtual ImVec2 DragStartLocation() { return GetBounds().Min; }
 
-    virtual bool IsDraggable() { bool result = AcceptDrag(); EndDrag(); return result; }
+    virtual bool IsDraggable() {
+        bool result = AcceptDrag();
+        EndDrag();
+        return result;
+    }
     virtual bool IsSelectable() { return false; }
 
-    virtual bool TestHit(const ImVec2& point, float extraThickness = 0.0f) const
-    {
+    virtual bool TestHit(const ImVec2& point, float extraThickness = 0.0f) const {
         if (!m_IsLive)
             return false;
 
@@ -268,8 +249,7 @@ struct Object
         return bounds.Contains(point);
     }
 
-    virtual bool TestHit(const ImRect& rect, bool allowIntersect = true) const
-    {
+    virtual bool TestHit(const ImRect& rect, bool allowIntersect = true) const {
         if (!m_IsLive)
             return false;
 
@@ -280,62 +260,58 @@ struct Object
 
     virtual ImRect GetBounds() const = 0;
 
-    virtual Node*  AsNode()  { return nullptr; }
-    virtual Pin*   AsPin()   { return nullptr; }
-    virtual Link*  AsLink()  { return nullptr; }
+    virtual Node* AsNode() { return nullptr; }
+    virtual Pin* AsPin() { return nullptr; }
+    virtual Link* AsLink() { return nullptr; }
 };
 
-struct Pin final: Object
-{
+struct Pin final : Object {
     using IdType = PinId;
 
-    PinId   m_ID;
+    PinId m_ID;
     PinKind m_Kind;
-    Node*   m_Node;
-    ImRect  m_Bounds;
-    ImRect  m_Pivot;
-    Pin*    m_PreviousPin;
-    ImU32   m_Color;
-    ImU32   m_BorderColor;
-    float   m_BorderWidth;
-    float   m_Rounding;
-    int     m_Corners;
-    ImVec2  m_Dir;
-    float   m_Strength;
-    float   m_Radius;
-    float   m_ArrowSize;
-    float   m_ArrowWidth;
-    bool    m_SnapLinkToDir;
-    bool    m_HasConnection;
-    bool    m_HadConnection;
+    Node* m_Node;
+    ImRect m_Bounds;
+    ImRect m_Pivot;
+    Pin* m_PreviousPin;
+    ImU32 m_Color;
+    ImU32 m_BorderColor;
+    float m_BorderWidth;
+    float m_Rounding;
+    int m_Corners;
+    ImVec2 m_Dir;
+    float m_Strength;
+    float m_Radius;
+    float m_ArrowSize;
+    float m_ArrowWidth;
+    bool m_SnapLinkToDir;
+    bool m_HasConnection;
+    bool m_HadConnection;
 
     Pin(EditorContext* editor, PinId id, PinKind kind)
-        : Object(editor)
-        , m_ID(id)
-        , m_Kind(kind)
-        , m_Node(nullptr)
-        , m_Bounds()
-        , m_PreviousPin(nullptr)
-        , m_Color(IM_COL32_WHITE)
-        , m_BorderColor(IM_COL32_BLACK)
-        , m_BorderWidth(0)
-        , m_Rounding(0)
-        , m_Corners(0)
-        , m_Dir(0, 0)
-        , m_Strength(0)
-        , m_Radius(0)
-        , m_ArrowSize(0)
-        , m_ArrowWidth(0)
-        , m_SnapLinkToDir(true)
-        , m_HasConnection(false)
-        , m_HadConnection(false)
-    {
-    }
+        : Object(editor),
+          m_ID(id),
+          m_Kind(kind),
+          m_Node(nullptr),
+          m_Bounds(),
+          m_PreviousPin(nullptr),
+          m_Color(IM_COL32_WHITE),
+          m_BorderColor(IM_COL32_BLACK),
+          m_BorderWidth(0),
+          m_Rounding(0),
+          m_Corners(0),
+          m_Dir(0, 0),
+          m_Strength(0),
+          m_Radius(0),
+          m_ArrowSize(0),
+          m_ArrowWidth(0),
+          m_SnapLinkToDir(true),
+          m_HasConnection(false),
+          m_HadConnection(false) {}
 
     virtual ObjectId ID() override { return m_ID; }
 
-    virtual void Reset() override final
-    {
+    virtual void Reset() override final {
         m_HadConnection = m_HasConnection && m_IsLive;
         m_HasConnection = false;
 
@@ -352,84 +328,79 @@ struct Pin final: Object
     virtual Pin* AsPin() override final { return this; }
 };
 
-enum class NodeType
-{
-    Node,
-    Group
-};
+enum class NodeType { Node, Group };
 
-enum class NodeRegion : uint8_t
-{
-    None        = 0x00,
-    Top         = 0x01,
-    Bottom      = 0x02,
-    Left        = 0x04,
-    Right       = 0x08,
-    Center      = 0x10,
-    Header      = 0x20,
-    TopLeft     = Top | Left,
-    TopRight    = Top | Right,
-    BottomLeft  = Bottom | Left,
+enum class NodeRegion : uint8_t {
+    None = 0x00,
+    Top = 0x01,
+    Bottom = 0x02,
+    Left = 0x04,
+    Right = 0x08,
+    Center = 0x10,
+    Header = 0x20,
+    TopLeft = Top | Left,
+    TopRight = Top | Right,
+    BottomLeft = Bottom | Left,
     BottomRight = Bottom | Right,
 };
 
-inline NodeRegion operator |(NodeRegion lhs, NodeRegion rhs) { return static_cast<NodeRegion>(static_cast<uint8_t>(lhs) | static_cast<uint8_t>(rhs)); }
-inline NodeRegion operator &(NodeRegion lhs, NodeRegion rhs) { return static_cast<NodeRegion>(static_cast<uint8_t>(lhs) & static_cast<uint8_t>(rhs)); }
+inline NodeRegion operator|(NodeRegion lhs, NodeRegion rhs) {
+    return static_cast<NodeRegion>(static_cast<uint8_t>(lhs) | static_cast<uint8_t>(rhs));
+}
+inline NodeRegion operator&(NodeRegion lhs, NodeRegion rhs) {
+    return static_cast<NodeRegion>(static_cast<uint8_t>(lhs) & static_cast<uint8_t>(rhs));
+}
 
-
-struct Node final: Object
-{
+struct Node final : Object {
     using IdType = NodeId;
 
-    NodeId   m_ID;
+    NodeId m_ID;
     NodeType m_Type;
-    ImRect   m_Bounds;
-    float    m_ZPosition;
-    int      m_Channel;
-    Pin*     m_LastPin;
-    ImVec2   m_DragStart;
+    ImRect m_Bounds;
+    float m_ZPosition;
+    int m_Channel;
+    Pin* m_LastPin;
+    ImVec2 m_DragStart;
 
-    ImU32    m_Color;
-    ImU32    m_BorderColor;
-    float    m_BorderWidth;
-    float    m_Rounding;
+    ImU32 m_Color;
+    ImU32 m_BorderColor;
+    float m_BorderWidth;
+    float m_Rounding;
 
-    ImU32    m_GroupColor;
-    ImU32    m_GroupBorderColor;
-    float    m_GroupBorderWidth;
-    float    m_GroupRounding;
-    ImRect   m_GroupBounds;
+    ImU32 m_GroupColor;
+    ImU32 m_GroupBorderColor;
+    float m_GroupBorderWidth;
+    float m_GroupRounding;
+    ImRect m_GroupBounds;
 
-    bool     m_HighlightConnectedLinks;
+    bool m_HighlightConnectedLinks;
 
-    bool     m_RestoreState;
-    bool     m_CenterOnScreen;
+    bool m_RestoreState;
+    bool m_CenterOnScreen;
 
     Node(EditorContext* editor, NodeId id)
-        : Object(editor)
-        , m_ID(id)
-        , m_Type(NodeType::Node)
-        , m_Bounds()
-        , m_ZPosition(0.0f)
-        , m_Channel(0)
-        , m_LastPin(nullptr)
-        , m_DragStart()
-        , m_Color(IM_COL32_WHITE)
-        , m_BorderColor(IM_COL32_BLACK)
-        , m_BorderWidth(0)
-        , m_Rounding(0)
-        , m_GroupBounds()
-        , m_HighlightConnectedLinks(false)
-        , m_RestoreState(false)
-        , m_CenterOnScreen(false)
-    {
-    }
+        : Object(editor),
+          m_ID(id),
+          m_Type(NodeType::Node),
+          m_Bounds(),
+          m_ZPosition(0.0f),
+          m_Channel(0),
+          m_LastPin(nullptr),
+          m_DragStart(),
+          m_Color(IM_COL32_WHITE),
+          m_BorderColor(IM_COL32_BLACK),
+          m_BorderWidth(0),
+          m_Rounding(0),
+          m_GroupBounds(),
+          m_HighlightConnectedLinks(false),
+          m_RestoreState(false),
+          m_CenterOnScreen(false) {}
 
     virtual ObjectId ID() override { return m_ID; }
 
     bool AcceptDrag() override;
     void UpdateDrag(const ImVec2& offset) override;
-    bool EndDrag() override; // return true, when changed
+    bool EndDrag() override;  // return true, when changed
     ImVec2 DragStartLocation() override { return m_DragStart; }
 
     virtual bool IsSelectable() override { return true; }
@@ -449,28 +420,19 @@ struct Node final: Object
     virtual Node* AsNode() override final { return this; }
 };
 
-struct Link final: Object
-{
+struct Link final : Object {
     using IdType = LinkId;
 
     LinkId m_ID;
-    Pin*   m_StartPin;
-    Pin*   m_EndPin;
-    ImU32  m_Color;
-    ImU32  m_HighlightColor;
-    float  m_Thickness;
+    Pin* m_StartPin;
+    Pin* m_EndPin;
+    ImU32 m_Color;
+    ImU32 m_HighlightColor;
+    float m_Thickness;
     ImVec2 m_Start;
     ImVec2 m_End;
 
-    Link(EditorContext* editor, LinkId id)
-        : Object(editor)
-        , m_ID(id)
-        , m_StartPin(nullptr)
-        , m_EndPin(nullptr)
-        , m_Color(IM_COL32_WHITE)
-        , m_Thickness(1.0f)
-    {
-    }
+    Link(EditorContext* editor, LinkId id) : Object(editor), m_ID(id), m_StartPin(nullptr), m_EndPin(nullptr), m_Color(IM_COL32_WHITE), m_Thickness(1.0f) {}
 
     virtual ObjectId ID() override { return m_ID; }
 
@@ -491,29 +453,19 @@ struct Link final: Object
     virtual Link* AsLink() override final { return this; }
 };
 
-struct NodeSettings
-{
+struct NodeSettings {
     NodeId m_ID;
     ImVec2 m_Location;
     ImVec2 m_Size;
     ImVec2 m_GroupSize;
-    bool   m_WasUsed;
+    bool m_WasUsed;
 
-    bool            m_Saved;
-    bool            m_IsDirty;
+    bool m_Saved;
+    bool m_IsDirty;
     SaveReasonFlags m_DirtyReason;
 
     NodeSettings(NodeId id)
-        : m_ID(id)
-        , m_Location(0, 0)
-        , m_Size(0, 0)
-        , m_GroupSize(0, 0)
-        , m_WasUsed(false)
-        , m_Saved(false)
-        , m_IsDirty(false)
-        , m_DirtyReason(SaveReasonFlags::None)
-    {
-    }
+        : m_ID(id), m_Location(0, 0), m_Size(0, 0), m_GroupSize(0, 0), m_WasUsed(false), m_Saved(false), m_IsDirty(false), m_DirtyReason(SaveReasonFlags::None) {}
 
     void ClearDirty();
     void MakeDirty(SaveReasonFlags reason);
@@ -524,25 +476,17 @@ struct NodeSettings
     static bool Parse(const json::value& data, NodeSettings& result);
 };
 
-struct Settings
-{
-    bool                 m_IsDirty;
-    SaveReasonFlags      m_DirtyReason;
+struct Settings {
+    bool m_IsDirty;
+    SaveReasonFlags m_DirtyReason;
 
     vector<NodeSettings> m_Nodes;
-    vector<ObjectId>     m_Selection;
-    ImVec2               m_ViewScroll;
-    float                m_ViewZoom;
-    ImRect               m_VisibleRect;
+    vector<ObjectId> m_Selection;
+    ImVec2 m_ViewScroll;
+    float m_ViewZoom;
+    ImRect m_VisibleRect;
 
-    Settings()
-        : m_IsDirty(false)
-        , m_DirtyReason(SaveReasonFlags::None)
-        , m_ViewScroll(0, 0)
-        , m_ViewZoom(1.0f)
-        , m_VisibleRect()
-    {
-    }
+    Settings() : m_IsDirty(false), m_DirtyReason(SaveReasonFlags::None), m_ViewScroll(0, 0), m_ViewZoom(1.0f), m_VisibleRect() {}
 
     NodeSettings* AddNode(NodeId id);
     NodeSettings* FindNode(NodeId id);
@@ -556,85 +500,83 @@ struct Settings
     static bool Parse(const std::string& string, Settings& settings);
 };
 
-struct Control
-{
+struct Control {
     Object* HotObject;
     Object* ActiveObject;
     Object* ClickedObject;
     Object* DoubleClickedObject;
-    Node*   HotNode;
-    Node*   ActiveNode;
-    Node*   ClickedNode;
-    Node*   DoubleClickedNode;
-    Pin*    HotPin;
-    Pin*    ActivePin;
-    Pin*    ClickedPin;
-    Pin*    DoubleClickedPin;
-    Link*   HotLink;
-    Link*   ActiveLink;
-    Link*   ClickedLink;
-    Link*   DoubleClickedLink;
-    bool    BackgroundHot;
-    bool    BackgroundActive;
-    int     BackgroundClickButtonIndex;
-    int     BackgroundDoubleClickButtonIndex;
+    Node* HotNode;
+    Node* ActiveNode;
+    Node* ClickedNode;
+    Node* DoubleClickedNode;
+    Pin* HotPin;
+    Pin* ActivePin;
+    Pin* ClickedPin;
+    Pin* DoubleClickedPin;
+    Link* HotLink;
+    Link* ActiveLink;
+    Link* ClickedLink;
+    Link* DoubleClickedLink;
+    bool BackgroundHot;
+    bool BackgroundActive;
+    int BackgroundClickButtonIndex;
+    int BackgroundDoubleClickButtonIndex;
 
-    Control()
-        : Control(nullptr, nullptr, nullptr, nullptr, false, false, -1, -1)
-    {
-    }
+    Control() : Control(nullptr, nullptr, nullptr, nullptr, false, false, -1, -1) {}
 
-    Control(Object* hotObject, Object* activeObject, Object* clickedObject, Object* doubleClickedObject,
-        bool backgroundHot, bool backgroundActive, int backgroundClickButtonIndex, int backgroundDoubleClickButtonIndex)
-        : HotObject(hotObject)
-        , ActiveObject(activeObject)
-        , ClickedObject(clickedObject)
-        , DoubleClickedObject(doubleClickedObject)
-        , HotNode(nullptr)
-        , ActiveNode(nullptr)
-        , ClickedNode(nullptr)
-        , DoubleClickedNode(nullptr)
-        , HotPin(nullptr)
-        , ActivePin(nullptr)
-        , ClickedPin(nullptr)
-        , DoubleClickedPin(nullptr)
-        , HotLink(nullptr)
-        , ActiveLink(nullptr)
-        , ClickedLink(nullptr)
-        , DoubleClickedLink(nullptr)
-        , BackgroundHot(backgroundHot)
-        , BackgroundActive(backgroundActive)
-        , BackgroundClickButtonIndex(backgroundClickButtonIndex)
-        , BackgroundDoubleClickButtonIndex(backgroundDoubleClickButtonIndex)
-    {
-        if (hotObject)
-        {
-            HotNode  = hotObject->AsNode();
-            HotPin   = hotObject->AsPin();
-            HotLink  = hotObject->AsLink();
+    Control(
+        Object* hotObject,
+        Object* activeObject,
+        Object* clickedObject,
+        Object* doubleClickedObject,
+        bool backgroundHot,
+        bool backgroundActive,
+        int backgroundClickButtonIndex,
+        int backgroundDoubleClickButtonIndex)
+        : HotObject(hotObject),
+          ActiveObject(activeObject),
+          ClickedObject(clickedObject),
+          DoubleClickedObject(doubleClickedObject),
+          HotNode(nullptr),
+          ActiveNode(nullptr),
+          ClickedNode(nullptr),
+          DoubleClickedNode(nullptr),
+          HotPin(nullptr),
+          ActivePin(nullptr),
+          ClickedPin(nullptr),
+          DoubleClickedPin(nullptr),
+          HotLink(nullptr),
+          ActiveLink(nullptr),
+          ClickedLink(nullptr),
+          DoubleClickedLink(nullptr),
+          BackgroundHot(backgroundHot),
+          BackgroundActive(backgroundActive),
+          BackgroundClickButtonIndex(backgroundClickButtonIndex),
+          BackgroundDoubleClickButtonIndex(backgroundDoubleClickButtonIndex) {
+        if (hotObject) {
+            HotNode = hotObject->AsNode();
+            HotPin = hotObject->AsPin();
+            HotLink = hotObject->AsLink();
 
             if (HotPin)
                 HotNode = HotPin->m_Node;
         }
 
-        if (activeObject)
-        {
-            ActiveNode  = activeObject->AsNode();
-            ActivePin   = activeObject->AsPin();
-            ActiveLink  = activeObject->AsLink();
+        if (activeObject) {
+            ActiveNode = activeObject->AsNode();
+            ActivePin = activeObject->AsPin();
+            ActiveLink = activeObject->AsLink();
         }
 
-        if (clickedObject)
-        {
-            ClickedNode  = clickedObject->AsNode();
-            ClickedPin   = clickedObject->AsPin();
-            ClickedLink  = clickedObject->AsLink();
+        if (clickedObject) {
+            ClickedNode = clickedObject->AsNode();
+            ClickedPin = clickedObject->AsPin();
+            ClickedLink = clickedObject->AsLink();
         }
 
-        if (doubleClickedObject)
-        {
+        if (doubleClickedObject) {
             DoubleClickedNode = doubleClickedObject->AsNode();
-            DoubleClickedPin  = doubleClickedObject->AsPin();
+            DoubleClickedPin = doubleClickedObject->AsPin();
             DoubleClickedLink = doubleClickedObject->AsLink();
         }
     }
@@ -652,18 +594,13 @@ struct ShortcutAction;
 struct AnimationController;
 struct FlowAnimationController;
 
-struct Animation
-{
-    enum State
-    {
-        Playing,
-        Stopped
-    };
+struct Animation {
+    enum State { Playing, Stopped };
 
-    EditorContext*  Editor;
-    State           m_State;
-    float           m_Time;
-    float           m_Duration;
+    EditorContext* Editor;
+    State m_State;
+    float m_Time;
+    float m_Duration;
 
     Animation(EditorContext* editor);
     virtual ~Animation();
@@ -685,11 +622,10 @@ protected:
     virtual void OnUpdate(float progress) { IM_UNUSED(progress); }
 };
 
-struct NavigateAnimation final: Animation
-{
+struct NavigateAnimation final : Animation {
     NavigateAction& Action;
-    ImRect      m_Start;
-    ImRect      m_Target;
+    ImRect m_Start;
+    ImRect m_Target;
 
     NavigateAnimation(EditorContext* editor, NavigateAction& scrollAction);
 
@@ -701,8 +637,7 @@ private:
     void OnFinish() override final;
 };
 
-struct FlowAnimation final: Animation
-{
+struct FlowAnimation final : Animation {
     FlowAnimationController* Controller;
     Link* m_Link;
     float m_Speed;
@@ -716,15 +651,14 @@ struct FlowAnimation final: Animation
     void Draw(ImDrawList* drawList);
 
 private:
-    struct CurvePoint
-    {
-        float  Distance;
+    struct CurvePoint {
+        float Distance;
         ImVec2 Point;
     };
 
     ImVec2 m_LastStart;
     ImVec2 m_LastEnd;
-    float  m_PathLength;
+    float m_PathLength;
     vector<CurvePoint> m_Path;
 
     bool IsLinkValid() const;
@@ -738,27 +672,17 @@ private:
     void OnStop() override final;
 };
 
-struct AnimationController
-{
+struct AnimationController {
     EditorContext* Editor;
 
-    AnimationController(EditorContext* editor)
-        : Editor(editor)
-    {
-    }
+    AnimationController(EditorContext* editor) : Editor(editor) {}
 
-    virtual ~AnimationController()
-    {
-    }
+    virtual ~AnimationController() {}
 
-    virtual void Draw(ImDrawList* drawList)
-    {
-        IM_UNUSED(drawList);
-    }
+    virtual void Draw(ImDrawList* drawList) { IM_UNUSED(drawList); }
 };
 
-struct FlowAnimationController final : AnimationController
-{
+struct FlowAnimationController final : AnimationController {
     FlowAnimationController(EditorContext* editor);
     virtual ~FlowAnimationController();
 
@@ -775,14 +699,10 @@ private:
     vector<FlowAnimation*> m_FreePool;
 };
 
-struct EditorAction
-{
+struct EditorAction {
     enum AcceptResult { False, True, Possible };
 
-    EditorAction(EditorContext* editor)
-        : Editor(editor)
-    {
-    }
+    EditorAction(EditorContext* editor) : Editor(editor) {}
 
     virtual ~EditorAction() {}
 
@@ -790,7 +710,7 @@ struct EditorAction
 
     virtual AcceptResult Accept(const Control& control) = 0;
     virtual bool Process(const Control& control) = 0;
-    virtual void Reject() {} // celled when Accept return 'Possible' and was rejected
+    virtual void Reject() {}  // celled when Accept return 'Possible' and was rejected
 
     virtual ImGuiMouseCursor GetCursor() { return ImGuiMouseCursor_Arrow; }
 
@@ -798,43 +718,29 @@ struct EditorAction
 
     virtual void ShowMetrics() {}
 
-    virtual NavigateAction*     AsNavigate()     { return nullptr; }
-    virtual SizeAction*         AsSize()         { return nullptr; }
-    virtual DragAction*         AsDrag()         { return nullptr; }
-    virtual SelectAction*       AsSelect()       { return nullptr; }
-    virtual CreateItemAction*   AsCreateItem()   { return nullptr; }
-    virtual DeleteItemsAction*  AsDeleteItems()  { return nullptr; }
-    virtual ContextMenuAction*  AsContextMenu()  { return nullptr; }
+    virtual NavigateAction* AsNavigate() { return nullptr; }
+    virtual SizeAction* AsSize() { return nullptr; }
+    virtual DragAction* AsDrag() { return nullptr; }
+    virtual SelectAction* AsSelect() { return nullptr; }
+    virtual CreateItemAction* AsCreateItem() { return nullptr; }
+    virtual DeleteItemsAction* AsDeleteItems() { return nullptr; }
+    virtual ContextMenuAction* AsContextMenu() { return nullptr; }
     virtual ShortcutAction* AsCutCopyPaste() { return nullptr; }
 
     EditorContext* Editor;
 };
 
-struct NavigateAction final: EditorAction
-{
-    enum class ZoomMode
-    {
-        None,
-        Exact,
-        WithMargin
-    };
+struct NavigateAction final : EditorAction {
+    enum class ZoomMode { None, Exact, WithMargin };
 
-    enum class NavigationReason
-    {
-        Unknown,
-        MouseZoom,
-        Selection,
-        Object,
-        Content,
-        Edge
-    };
+    enum class NavigationReason { Unknown, MouseZoom, Selection, Object, Content, Edge };
 
-    bool            m_IsActive;
-    float           m_Zoom;
-    ImRect          m_VisibleRect;
-    ImVec2          m_Scroll;
-    ImVec2          m_ScrollStart;
-    ImVec2          m_ScrollDelta;
+    bool m_IsActive;
+    float m_Zoom;
+    ImRect m_VisibleRect;
+    ImVec2 m_Scroll;
+    ImVec2 m_ScrollStart;
+    ImVec2 m_ScrollDelta;
 
     NavigateAction(EditorContext* editor, ImGuiEx::Canvas& canvas);
 
@@ -868,19 +774,19 @@ struct NavigateAction final: EditorAction
     ImRect GetViewRect() const;
 
 private:
-    ImGuiEx::Canvas&   m_Canvas;
-    ImVec2             m_WindowScreenPos;
-    ImVec2             m_WindowScreenSize;
+    ImGuiEx::Canvas& m_Canvas;
+    ImVec2 m_WindowScreenPos;
+    ImVec2 m_WindowScreenSize;
 
-    NavigateAnimation  m_Animation;
-    NavigationReason   m_Reason;
-    uint64_t           m_LastSelectionId;
-    Object*            m_LastObject;
-    bool               m_MovingOverEdge;
-    ImVec2             m_MoveScreenOffset;
+    NavigateAnimation m_Animation;
+    NavigationReason m_Reason;
+    uint64_t m_LastSelectionId;
+    Object* m_LastObject;
+    bool m_MovingOverEdge;
+    ImVec2 m_MoveScreenOffset;
 
-    const float*       m_ZoomLevels;
-    int                m_ZoomLevelCount;
+    const float* m_ZoomLevels;
+    int m_ZoomLevelCount;
 
     bool HandleZoom(const Control& control);
 
@@ -890,13 +796,12 @@ private:
     int MatchZoomIndex(int direction);
 
     static const float s_DefaultZoomLevels[];
-    static const int   s_DefaultZoomLevelCount;
+    static const int s_DefaultZoomLevelCount;
 };
 
-struct SizeAction final: EditorAction
-{
-    bool  m_IsActive;
-    bool  m_Clean;
+struct SizeAction final : EditorAction {
+    bool m_IsActive;
+    bool m_Clean;
     Node* m_SizedNode;
 
     SizeAction(EditorContext* editor);
@@ -920,20 +825,19 @@ private:
     NodeRegion GetRegion(Node* node);
     ImGuiMouseCursor ChooseCursor(NodeRegion region);
 
-    ImRect           m_StartBounds;
-    ImRect           m_StartGroupBounds;
-    ImVec2           m_LastSize;
-    ImVec2           m_MinimumSize;
-    ImVec2           m_LastDragOffset;
-    ed::NodeRegion   m_Pivot;
+    ImRect m_StartBounds;
+    ImRect m_StartGroupBounds;
+    ImVec2 m_LastSize;
+    ImVec2 m_MinimumSize;
+    ImVec2 m_LastDragOffset;
+    ed::NodeRegion m_Pivot;
     ImGuiMouseCursor m_Cursor;
 };
 
-struct DragAction final: EditorAction
-{
-    bool            m_IsActive;
-    bool            m_Clear;
-    Object*         m_DraggedObject;
+struct DragAction final : EditorAction {
+    bool m_IsActive;
+    bool m_Clear;
+    Object* m_DraggedObject;
     vector<Object*> m_Objects;
 
     DragAction(EditorContext* editor);
@@ -952,19 +856,18 @@ struct DragAction final: EditorAction
     virtual DragAction* AsDrag() override final { return this; }
 };
 
-struct SelectAction final: EditorAction
-{
-    bool            m_IsActive;
+struct SelectAction final : EditorAction {
+    bool m_IsActive;
 
-    bool            m_SelectGroups;
-    bool            m_SelectLinkMode;
-    bool            m_CommitSelection;
-    ImVec2          m_StartPoint;
-    ImVec2          m_EndPoint;
+    bool m_SelectGroups;
+    bool m_SelectLinkMode;
+    bool m_CommitSelection;
+    ImVec2 m_StartPoint;
+    ImVec2 m_EndPoint;
     vector<Object*> m_CandidateObjects;
     vector<Object*> m_SelectedObjectsAtStart;
 
-    Animation       m_Animation;
+    Animation m_Animation;
 
     SelectAction(EditorContext* editor);
 
@@ -982,8 +885,7 @@ struct SelectAction final: EditorAction
     void Draw(ImDrawList* drawList);
 };
 
-struct ContextMenuAction final: EditorAction
-{
+struct ContextMenuAction final : EditorAction {
     enum Menu { None, Node, Pin, Link, Background };
 
     Menu m_CandidateMenu;
@@ -1008,13 +910,12 @@ struct ContextMenuAction final: EditorAction
     bool ShowBackgroundContextMenu();
 };
 
-struct ShortcutAction final: EditorAction
-{
+struct ShortcutAction final : EditorAction {
     enum Action { None, Cut, Copy, Paste, Duplicate, CreateNode };
 
-    bool            m_IsActive;
-    bool            m_InAction;
-    Action          m_CurrentAction;
+    bool m_IsActive;
+    bool m_InAction;
+    Action m_CurrentAction;
     vector<Object*> m_Context;
 
     ShortcutAction(EditorContext* editor);
@@ -1039,52 +940,30 @@ struct ShortcutAction final: EditorAction
     bool AcceptCreateNode();
 };
 
-struct CreateItemAction final : EditorAction
-{
-    enum Stage
-    {
-        None,
-        Possible,
-        Create
-    };
+struct CreateItemAction final : EditorAction {
+    enum Stage { None, Possible, Create };
 
-    enum Action
-    {
-        Unknown,
-        UserReject,
-        UserAccept
-    };
+    enum Action { Unknown, UserReject, UserAccept };
 
-    enum Type
-    {
-        NoItem,
-        Node,
-        Link
-    };
+    enum Type { NoItem, Node, Link };
 
-    enum Result
-    {
-        True,
-        False,
-        Indeterminate
-    };
+    enum Result { True, False, Indeterminate };
 
-    bool      m_InActive;
-    Stage     m_NextStage;
+    bool m_InActive;
+    Stage m_NextStage;
 
-    Stage     m_CurrentStage;
-    Type      m_ItemType;
-    Action    m_UserAction;
-    ImU32     m_LinkColor;
-    float     m_LinkThickness;
-    Pin*      m_LinkStart;
-    Pin*      m_LinkEnd;
+    Stage m_CurrentStage;
+    Type m_ItemType;
+    Action m_UserAction;
+    ImU32 m_LinkColor;
+    float m_LinkThickness;
+    Pin* m_LinkStart;
+    Pin* m_LinkEnd;
 
-    bool      m_IsActive;
-    Pin*      m_DraggedPin;
+    bool m_IsActive;
+    Pin* m_DraggedPin;
 
-    int       m_LastChannel = -1;
-
+    int m_LastChannel = -1;
 
     CreateItemAction(EditorContext* editor);
 
@@ -1122,10 +1001,9 @@ private:
     void DropNothing();
 };
 
-struct DeleteItemsAction final: EditorAction
-{
-    bool    m_IsActive;
-    bool    m_InInteraction;
+struct DeleteItemsAction final : EditorAction {
+    bool m_IsActive;
+    bool m_InInteraction;
 
     DeleteItemsAction(EditorContext* editor);
 
@@ -1162,18 +1040,17 @@ private:
 
     vector<Object*> m_ManuallyDeletedObjects;
 
-    IteratorType    m_CurrentItemType;
-    UserAction      m_UserAction;
+    IteratorType m_CurrentItemType;
+    UserAction m_UserAction;
     vector<Object*> m_CandidateObjects;
-    int             m_CandidateItemIndex;
+    int m_CandidateItemIndex;
 };
 
-struct NodeBuilder
-{
+struct NodeBuilder {
     EditorContext* const Editor;
 
     Node* m_CurrentNode;
-    Pin*  m_CurrentPin;
+    Pin* m_CurrentPin;
 
     ImRect m_NodeRect;
 
@@ -1181,11 +1058,11 @@ struct NodeBuilder
     ImVec2 m_PivotAlignment;
     ImVec2 m_PivotSize;
     ImVec2 m_PivotScale;
-    bool   m_ResolvePinRect;
-    bool   m_ResolvePivot;
+    bool m_ResolvePinRect;
+    bool m_ResolvePivot;
 
     ImRect m_GroupBounds;
-    bool   m_IsGroup;
+    bool m_IsGroup;
 
     ImDrawListSplitter m_Splitter;
     ImDrawListSplitter m_PinSplitter;
@@ -1211,13 +1088,12 @@ struct NodeBuilder
     ImDrawList* GetUserBackgroundDrawList(Node* node) const;
 };
 
-struct HintBuilder
-{
+struct HintBuilder {
     EditorContext* const Editor;
-    bool  m_IsActive;
+    bool m_IsActive;
     Node* m_CurrentNode;
     float m_LastFringe = 1.0f;
-    int   m_LastChannel = 0;
+    int m_LastChannel = 0;
 
     HintBuilder(EditorContext* editor);
 
@@ -1231,8 +1107,7 @@ struct HintBuilder
     ImDrawList* GetBackgroundDrawList();
 };
 
-struct Style: ax::NodeEditor::Style
-{
+struct Style : ax::NodeEditor::Style {
     void PushColor(StyleColor colorIndex, const ImVec4& color);
     void PopColor(int count = 1);
 
@@ -1244,28 +1119,25 @@ struct Style: ax::NodeEditor::Style
     const char* GetColorName(StyleColor colorIndex) const;
 
 private:
-    struct ColorModifier
-    {
-        StyleColor  Index;
-        ImVec4      Value;
+    struct ColorModifier {
+        StyleColor Index;
+        ImVec4 Value;
     };
 
-    struct VarModifier
-    {
+    struct VarModifier {
         StyleVar Index;
-        ImVec4   Value;
+        ImVec4 Value;
     };
 
     float* GetVarFloatAddr(StyleVar idx);
     ImVec2* GetVarVec2Addr(StyleVar idx);
     ImVec4* GetVarVec4Addr(StyleVar idx);
 
-    vector<ColorModifier>   m_ColorStack;
-    vector<VarModifier>     m_VarStack;
+    vector<ColorModifier> m_ColorStack;
+    vector<VarModifier> m_VarStack;
 };
 
-struct Config: ax::NodeEditor::Config
-{
+struct Config : ax::NodeEditor::Config {
     Config(const ax::NodeEditor::Config* config);
 
     std::string Load();
@@ -1277,18 +1149,16 @@ struct Config: ax::NodeEditor::Config
     void EndSave();
 };
 
-enum class SuspendFlags : uint8_t
-{
-    None = 0,
-    KeepSplitter = 1
-};
+enum class SuspendFlags : uint8_t { None = 0, KeepSplitter = 1 };
 
-inline SuspendFlags operator |(SuspendFlags lhs, SuspendFlags rhs) { return static_cast<SuspendFlags>(static_cast<uint8_t>(lhs) | static_cast<uint8_t>(rhs)); }
-inline SuspendFlags operator &(SuspendFlags lhs, SuspendFlags rhs) { return static_cast<SuspendFlags>(static_cast<uint8_t>(lhs) & static_cast<uint8_t>(rhs)); }
+inline SuspendFlags operator|(SuspendFlags lhs, SuspendFlags rhs) {
+    return static_cast<SuspendFlags>(static_cast<uint8_t>(lhs) | static_cast<uint8_t>(rhs));
+}
+inline SuspendFlags operator&(SuspendFlags lhs, SuspendFlags rhs) {
+    return static_cast<SuspendFlags>(static_cast<uint8_t>(lhs) & static_cast<uint8_t>(rhs));
+}
 
-
-struct EditorContext
-{
+struct EditorContext {
     EditorContext(const ax::NodeEditor::Config* config = nullptr);
     ~EditorContext();
 
@@ -1301,7 +1171,6 @@ struct EditorContext
 
     bool DoLink(LinkId id, PinId startPinId, PinId endPinId, ImU32 color, float thickness);
 
-
     NodeBuilder& GetNodeBuilder() { return m_NodeBuilder; }
     HintBuilder& GetHintBuilder() { return m_HintBuilder; }
 
@@ -1309,12 +1178,8 @@ struct EditorContext
 
     CreateItemAction& GetItemCreator() { return m_CreateItemAction; }
     DeleteItemsAction& GetItemDeleter() { return m_DeleteItemsAction; }
-    ContextMenuAction& GetContextMenu() {
-        return m_ContextMenuAction;
-    }
-    NavigateAction& GetNavigateAction() {
-        return m_NavigateAction;
-    }
+    ContextMenuAction& GetContextMenu() { return m_ContextMenuAction; }
+    NavigateAction& GetNavigateAction() { return m_NavigateAction; }
     ShortcutAction& GetShortcut() { return m_ShortcutAction; }
 
     ImGuiEx::CanvasView& GetViewRef() { return m_Canvas.ViewRef(); }
@@ -1382,24 +1247,23 @@ struct EditorContext
     int CountLivePins() const;
     int CountLiveLinks() const;
 
-    Pin*    CreatePin(PinId id, PinKind kind);
-    Node*   CreateNode(NodeId id);
-    Link*   CreateLink(LinkId id);
+    Pin* CreatePin(PinId id, PinKind kind);
+    Node* CreateNode(NodeId id);
+    Link* CreateLink(LinkId id);
 
-    Node*   FindNode(NodeId id);
-    Pin*    FindPin(PinId id);
-    Link*   FindLink(LinkId id);
+    Node* FindNode(NodeId id);
+    Pin* FindPin(PinId id);
+    Link* FindLink(LinkId id);
     Object* FindObject(ObjectId id);
 
-    Node*  GetNode(NodeId id);
-    Pin*   GetPin(PinId id, PinKind kind);
-    Link*  GetLink(LinkId id);
+    Node* GetNode(NodeId id);
+    Pin* GetPin(PinId id, PinKind kind);
+    Link* GetLink(LinkId id);
 
     Link* FindLinkAt(const ImVec2& p);
 
     template <typename T>
-    ImRect GetBounds(const std::vector<T*>& objects)
-    {
+    ImRect GetBounds(const std::vector<T*>& objects) {
         ImRect bounds(FLT_MAX, FLT_MAX, -FLT_MAX, -FLT_MAX);
 
         for (auto object : objects)
@@ -1413,8 +1277,7 @@ struct EditorContext
     }
 
     template <typename T>
-    ImRect GetBounds(const std::vector<ObjectWrapper<T>>& objects)
-    {
+    ImRect GetBounds(const std::vector<ObjectWrapper<T>>& objects) {
         ImRect bounds(FLT_MAX, FLT_MAX, -FLT_MAX, -FLT_MAX);
 
         for (auto object : objects)
@@ -1435,8 +1298,7 @@ struct EditorContext
 
     int GetNodeIds(NodeId* nodes, int size) const;
 
-    void NavigateTo(const ImRect& bounds, bool zoomIn = false, float duration = -1)
-    {
+    void NavigateTo(const ImRect& bounds, bool zoomIn = false, float duration = -1) {
         auto zoomMode = zoomIn ? NavigateAction::ZoomMode::WithMargin : NavigateAction::ZoomMode::None;
         m_NavigateAction.NavigateTo(bounds, zoomMode, duration);
     }
@@ -1451,38 +1313,33 @@ struct EditorContext
     void EnableShortcuts(bool enable);
     bool AreShortcutsEnabled();
 
-    NodeId GetHoveredNode()            const { return m_HoveredNode;             }
-    PinId  GetHoveredPin()             const { return m_HoveredPin;              }
-    LinkId GetHoveredLink()            const { return m_HoveredLink;             }
-    NodeId GetDoubleClickedNode()      const { return m_DoubleClickedNode;       }
-    PinId  GetDoubleClickedPin()       const { return m_DoubleClickedPin;        }
-    LinkId GetDoubleClickedLink()      const { return m_DoubleClickedLink;       }
-    bool   IsBackgroundClicked()                           const { return m_BackgroundClickButtonIndex >= 0; }
-    bool   IsBackgroundDoubleClicked()                     const { return m_BackgroundDoubleClickButtonIndex >= 0; }
-    ImGuiMouseButton GetBackgroundClickButtonIndex()       const { return m_BackgroundClickButtonIndex; }
+    NodeId GetHoveredNode() const { return m_HoveredNode; }
+    PinId GetHoveredPin() const { return m_HoveredPin; }
+    LinkId GetHoveredLink() const { return m_HoveredLink; }
+    NodeId GetDoubleClickedNode() const { return m_DoubleClickedNode; }
+    PinId GetDoubleClickedPin() const { return m_DoubleClickedPin; }
+    LinkId GetDoubleClickedLink() const { return m_DoubleClickedLink; }
+    bool IsBackgroundClicked() const { return m_BackgroundClickButtonIndex >= 0; }
+    bool IsBackgroundDoubleClicked() const { return m_BackgroundDoubleClickButtonIndex >= 0; }
+    ImGuiMouseButton GetBackgroundClickButtonIndex() const { return m_BackgroundClickButtonIndex; }
     ImGuiMouseButton GetBackgroundDoubleClickButtonIndex() const { return m_BackgroundDoubleClickButtonIndex; }
 
-    float AlignPointToGrid(float p) const
-    {
-        if (!ImGui::GetIO().KeyAlt)
-            return p - ImFmod(p, 16.0f);
-        else
-            return p;
+    float AlignPointToGrid(float p) const {
+        auto snap = ImGui::GetIO().KeyAlt ? m_Style.altDragSnapping : m_Style.baseDragSnapping;
+        if (snap > 0.0f) {
+            return p - ImFmod(p, snap);
+        }
+        return p;
     }
 
-    ImVec2 AlignPointToGrid(const ImVec2& p) const
-    {
-        return ImVec2(AlignPointToGrid(p.x), AlignPointToGrid(p.y));
+    ImVec2 AlignPointToGrid(const ImVec2& p) const { 
+         return ImVec2(AlignPointToGrid(p.x), AlignPointToGrid(p.y));
     }
 
     ImDrawList* GetDrawList() { return m_DrawList; }
 
-    bool IsDirty() {
-        return m_Settings.m_IsDirty;
-    }
-    void ClearDirty() {
-        return m_Settings.ClearDirty();
-    }
+    bool IsDirty() { return m_Settings.m_IsDirty; }
+    void ClearDirty() { return m_Settings.ClearDirty(); }
 
 private:
     void LoadSettings();
@@ -1494,78 +1351,75 @@ private:
 
     void UpdateAnimations();
 
-    Config              m_Config;
+    Config m_Config;
 
-    ImGuiID             m_EditorActiveId;
-    bool                m_IsFirstFrame;
-    bool                m_IsFocused;
-    bool                m_IsHovered;
-    bool                m_IsHoveredWithoutOverlapp;
+    ImGuiID m_EditorActiveId;
+    bool m_IsFirstFrame;
+    bool m_IsFocused;
+    bool m_IsHovered;
+    bool m_IsHoveredWithoutOverlapp;
 
-    bool                m_ShortcutsEnabled;
+    bool m_ShortcutsEnabled;
 
-    Style               m_Style;
+    Style m_Style;
 
     vector<ObjectWrapper<Node>> m_Nodes;
-    vector<ObjectWrapper<Pin>>  m_Pins;
+    vector<ObjectWrapper<Pin>> m_Pins;
     vector<ObjectWrapper<Link>> m_Links;
 
-    vector<Object*>     m_SelectedObjects;
+    vector<Object*> m_SelectedObjects;
 
-    vector<Object*>     m_LastSelectedObjects;
-    uint64_t            m_SelectionId;
+    vector<Object*> m_LastSelectedObjects;
+    uint64_t m_SelectionId;
 
-    Link*               m_LastActiveLink;
+    Link* m_LastActiveLink;
 
-    vector<Animation*>  m_LiveAnimations;
-    vector<Animation*>  m_LastLiveAnimations;
+    vector<Animation*> m_LiveAnimations;
+    vector<Animation*> m_LastLiveAnimations;
 
-    ImGuiEx::Canvas     m_Canvas;
-    bool                m_IsCanvasVisible;
+    ImGuiEx::Canvas m_Canvas;
+    bool m_IsCanvasVisible;
 
-    NodeBuilder         m_NodeBuilder;
-    HintBuilder         m_HintBuilder;
+    NodeBuilder m_NodeBuilder;
+    HintBuilder m_HintBuilder;
 
-    EditorAction*       m_CurrentAction;
-    NavigateAction      m_NavigateAction;
-    SizeAction          m_SizeAction;
-    DragAction          m_DragAction;
-    SelectAction        m_SelectAction;
-    ContextMenuAction   m_ContextMenuAction;
-    ShortcutAction      m_ShortcutAction;
-    CreateItemAction    m_CreateItemAction;
-    DeleteItemsAction   m_DeleteItemsAction;
+    EditorAction* m_CurrentAction;
+    NavigateAction m_NavigateAction;
+    SizeAction m_SizeAction;
+    DragAction m_DragAction;
+    SelectAction m_SelectAction;
+    ContextMenuAction m_ContextMenuAction;
+    ShortcutAction m_ShortcutAction;
+    CreateItemAction m_CreateItemAction;
+    DeleteItemsAction m_DeleteItemsAction;
 
     vector<AnimationController*> m_AnimationControllers;
-    FlowAnimationController      m_FlowAnimationController;
+    FlowAnimationController m_FlowAnimationController;
 
-    NodeId              m_HoveredNode;
-    PinId               m_HoveredPin;
-    LinkId              m_HoveredLink;
-    NodeId              m_DoubleClickedNode;
-    PinId               m_DoubleClickedPin;
-    LinkId              m_DoubleClickedLink;
-    int                 m_BackgroundClickButtonIndex;
-    int                 m_BackgroundDoubleClickButtonIndex;
+    NodeId m_HoveredNode;
+    PinId m_HoveredPin;
+    LinkId m_HoveredLink;
+    NodeId m_DoubleClickedNode;
+    PinId m_DoubleClickedPin;
+    LinkId m_DoubleClickedLink;
+    int m_BackgroundClickButtonIndex;
+    int m_BackgroundDoubleClickButtonIndex;
 
-    bool                m_IsInitialized;
-    Settings            m_Settings;
+    bool m_IsInitialized;
+    Settings m_Settings;
 
-    ImDrawList*         m_DrawList;
-    int                 m_ExternalChannel;
-    ImDrawListSplitter  m_Splitter;
+    ImDrawList* m_DrawList;
+    int m_ExternalChannel;
+    ImDrawListSplitter m_Splitter;
 };
 
+//------------------------------------------------------------------------------
+}  // namespace Detail
+}  // namespace NodeEditor
+}  // namespace ax
 
 //------------------------------------------------------------------------------
-} // namespace Detail
-} // namespace Editor
-} // namespace ax
-
+#include "imgui_node_editor_internal.inl"
 
 //------------------------------------------------------------------------------
-# include "imgui_node_editor_internal.inl"
-
-
-//------------------------------------------------------------------------------
-# endif // __IMGUI_NODE_EDITOR_INTERNAL_H__
+#endif  // __IMGUI_NODE_EDITOR_INTERNAL_H__

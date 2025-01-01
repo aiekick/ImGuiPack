@@ -3982,7 +3982,7 @@ bool ed::DragAction::Process(const Control& control)
 
         auto alignedOffset  = Editor->AlignPointToGrid(draggedOrigin + dragOffset + alignPivot) - draggedOrigin - alignPivot;
 
-        if (!ImGui::GetIO().KeyAlt)
+        if (ImGui::GetIO().KeyAlt)
             dragOffset = alignedOffset;
 
         for (auto object : m_Objects)
