@@ -167,8 +167,17 @@ static void OpenFile(const std::string& vFile) {
 
 namespace ImGui {
 
+static inline ImU32 sCustomStyle_ColorConvertFloat4ToU32(const ImVec4& in) {
+    ImU32 out;
+    out = ((ImU32)IM_F32_TO_INT8_SAT(in.x)) << IM_COL32_R_SHIFT;
+    out |= ((ImU32)IM_F32_TO_INT8_SAT(in.y)) << IM_COL32_G_SHIFT;
+    out |= ((ImU32)IM_F32_TO_INT8_SAT(in.z)) << IM_COL32_B_SHIFT;
+    out |= ((ImU32)IM_F32_TO_INT8_SAT(in.w)) << IM_COL32_A_SHIFT;
+    return out;
+}
+
 float CustomStyle::puContrastRatio = 3.0f;
-ImU32 CustomStyle::puContrastedTextColor = 0;
+ImU32 CustomStyle::puContrastedTextColor = sCustomStyle_ColorConvertFloat4ToU32(ImVec4(0, 0, 0, 1));
 int CustomStyle::pushId = STARTING_CUSTOMID;
 int CustomStyle::minorNumber = 0;
 int CustomStyle::majorNumber = 0;
@@ -176,10 +185,6 @@ int CustomStyle::buildNumber = 0;
 ImVec4 CustomStyle::GoodColor = ImVec4(0.2f, 0.8f, 0.2f, 0.8f);
 ImVec4 CustomStyle::BadColor = ImVec4(0.8f, 0.2f, 0.2f, 0.8f);
 ImVec4 CustomStyle::ImGuiCol_Symbol = ImVec4(0, 0, 0, 1);
-void CustomStyle::Init() {
-    puContrastedTextColor = GetColorU32(ImVec4(0, 0, 0, 1));
-    puContrastRatio = 3.0f;
-}
 void CustomStyle::ResetCustomId() {
     pushId = STARTING_CUSTOMID;
 }
