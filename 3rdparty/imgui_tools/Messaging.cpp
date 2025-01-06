@@ -23,11 +23,11 @@
 #include <imgui_internal.h>
 #include <forward_list>
 
-#ifdef MESSAGING_CONFIG_HEADER
-#include MESSAGING_CONFIG_HEADER
+#ifdef CUSTOM_MESSAGING_CONFIG_HEADER
+#include CUSTOM_MESSAGING_CONFIG_HEADER
 #else
 #include "MessagingConfigHeader.h"
-#endif  // MESSAGING_CONFIG_HEADER
+#endif  // CUSTOM_MESSAGING_CONFIG_HEADER
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///// STATIC //////////////////////////////////////////////////////////////////////////////
