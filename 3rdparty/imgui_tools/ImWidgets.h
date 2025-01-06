@@ -407,6 +407,8 @@ IMGUI_API bool ToggleContrastedButton(const char* vLabelTrue, const char* vLabel
 IMGUI_API bool ButtonNoFrame(const char* vName, ImVec2 size = ImVec2(-1, -1), ImVec4 vColor = ImVec4(1, 1, 1, 1), const char* vHelp = 0, ImFont* vLabelFont = nullptr);
 IMGUI_API bool SmallContrastedButton(const char* label);
 
+IMGUI_API void SpacingFromStart(float offset_from_start_x);
+
 IMGUI_API bool Selectable_FramedText(const char* fmt, ...);
 
 void ImageZoomPoint(ImTextureID vUserTextureId, const float vWidth, const ImVec2& vCenter, const ImVec2& vPoint, const ImVec2& vRadiusInPixels);
