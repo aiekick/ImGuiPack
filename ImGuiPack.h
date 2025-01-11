@@ -157,10 +157,32 @@ static inline ImVec4 operator*(const ImVec4& lhs, const float rhs) {
 #ifdef EZ_TOOLS_XML_CONFIG
 
 #include <sstream>
+#include <ostream>
+#include <istream>
+
+static inline std::istream& operator>>(std::istream& vIn, ImVec4& vType) {
+    char separator;
+    if (vIn >> vType.x >> separator >> vType.y >> separator >> vType.z >> separator >> vType.w) {
+        if (separator != ';') {
+            vIn.setstate(std::ios::failbit);
+        }
+    }
+    return vIn;
+}
 
 static inline std::ostream& operator<<(std::ostream& vOut, const ImVec4& vType) {
     vOut << vType.x << ";" << vType.y << ";" << vType.z << ";" << vType.w;
     return vOut;
+}
+
+static inline std::istream& operator>>(std::istream& vIn, ImVec2& vType) {
+    char separator;
+    if (vIn >> vType.x >> separator >> vType.y) {
+        if (separator != ';') {
+            vIn.setstate(std::ios::failbit);
+        }
+    }
+    return vIn;
 }
 
 static inline std::ostream& operator<<(std::ostream& vOut, const ImVec2& vType) {
@@ -169,6 +191,16 @@ static inline std::ostream& operator<<(std::ostream& vOut, const ImVec2& vType) 
 }
 
 #ifdef USE_IMPLOT
+static inline std::istream& operator>>(std::istream& vIn, ImPlotRect& vType) {
+    char separator;
+    if (vIn >> vType.X.Min >> separator >> vType.X.Max >> separator >> vType.Y.Minx >> separator >> vType.Y.Max) {
+        if (separator != ';') {
+            vIn.setstate(std::ios::failbit);
+        }
+    }
+    return vIn;
+}
+
 static inline std::ostream& operator<<(std::ostream& vOut, const ImPlotRect& vType) {
     vOut << vType.X.Min << ";" << vType.X.Max << ";" << vType.Y.Min << ";" << vType.Y.Max;
     return vOut;
