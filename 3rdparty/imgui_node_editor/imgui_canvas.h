@@ -157,7 +157,7 @@ struct Canvas
     IMGUIEX_CANVAS_API ImVec2 FromLocal(const ImVec2& point) const;
     IMGUIEX_CANVAS_API ImVec2 FromLocal(const ImVec2& point, const CanvasView& view) const;
 
-    // Transforms vector from canvas plane to ImGui.
+    // Transforms vector from canvas plant to ImGui.
     IMGUIEX_CANVAS_API ImVec2 FromLocalV(const ImVec2& vector) const;
     IMGUIEX_CANVAS_API ImVec2 FromLocalV(const ImVec2& vector, const CanvasView& view) const;
 
@@ -182,8 +182,8 @@ struct Canvas
     IMGUIEX_CANVAS_API ImRect CalcViewRect(const CanvasView& view) const;
 
     // Returns current view.
-    const CanvasView& View() const { return m_View; }
     CanvasView& ViewRef() { return m_View; }
+    const CanvasView& View() const { return m_View; }
 
     // Returns origin of the view.
     //

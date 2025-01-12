@@ -21,8 +21,8 @@
 
 
 //------------------------------------------------------------------------------
-# define IMGUI_NODE_EDITOR_VERSION      "0.9.2"
-# define IMGUI_NODE_EDITOR_VERSION_NUM  000902
+# define IMGUI_NODE_EDITOR_VERSION      "0.9.3"
+# define IMGUI_NODE_EDITOR_VERSION_NUM  000903
 
 
 //------------------------------------------------------------------------------
@@ -278,11 +278,10 @@ struct Style
 
 
 //------------------------------------------------------------------------------
-
 struct EditorContext;
 
-//------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
 IMGUI_NODE_EDITOR_API void SetCurrentEditor(EditorContext* ctx);
 IMGUI_NODE_EDITOR_API EditorContext* GetCurrentEditor();
 IMGUI_NODE_EDITOR_API EditorContext* CreateEditor(const Config* config = nullptr);
@@ -389,9 +388,11 @@ IMGUI_NODE_EDITOR_API void NavigateToContent(bool zoomIn = false, float duration
 IMGUI_NODE_EDITOR_API void NavigateToSelection(bool zoomIn = false, float duration = -1);
 
 IMGUI_NODE_EDITOR_API ImVec2 GetCanvasOffset();
-IMGUI_NODE_EDITOR_API void SetCanvasOffset(const ImVec2& vOffset);
 IMGUI_NODE_EDITOR_API float GetCanvasScale();
-IMGUI_NODE_EDITOR_API void SetCanvasScale(const float& vScale);
+IMGUI_NODE_EDITOR_API void SetCanvasView(const ImVec2& vOffset, const float vScale);
+
+IMGUI_NODE_EDITOR_API void SuspendNavigation();
+IMGUI_NODE_EDITOR_API void ResumeNavigation();
 
 IMGUI_NODE_EDITOR_API bool ShowNodeContextMenu(NodeId* nodeId);
 IMGUI_NODE_EDITOR_API bool ShowPinContextMenu(PinId* pinId);
@@ -436,8 +437,13 @@ IMGUI_NODE_EDITOR_API ImVec2 CanvasToScreen(const ImVec2& pos);
 IMGUI_NODE_EDITOR_API int GetNodeCount();                                // Returns number of submitted nodes since Begin() call
 IMGUI_NODE_EDITOR_API int GetOrderedNodeIds(NodeId* nodes, int size);    // Fills an array with node id's in order they're drawn; up to 'size` elements are set. Returns actual size of filled id's.
 
-//------------------------------------------------------------------------------
 
+
+
+
+
+
+//------------------------------------------------------------------------------
 namespace Details {
 
 template <typename T, typename Tag>

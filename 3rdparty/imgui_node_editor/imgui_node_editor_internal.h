@@ -754,6 +754,7 @@ struct NavigateAction final : EditorAction {
     virtual NavigateAction* AsNavigate() override final { return this; }
 
     void NavigateTo(const ImRect& bounds, ZoomMode zoomMode, float duration = -1.0f, NavigationReason reason = NavigationReason::Unknown);
+    void NavigateTo(const ImVec2& offset, const float scale);
     void StopNavigation();
     void FinishNavigation();
 
@@ -1303,6 +1304,12 @@ struct EditorContext {
         m_NavigateAction.NavigateTo(bounds, zoomMode, duration);
     }
 
+    void NavigateTo(const ImVec2& offset, const float scale) { m_NavigateAction.NavigateTo(offset, scale); }
+
+    inline void SuspendNavigation() { m_NavigateAction.m_IsActive = false; }
+
+    inline void ResumeNavigation() { m_NavigateAction.m_IsActive = true; }
+
     void RegisterAnimation(Animation* animation);
     void UnregisterAnimation(Animation* animation);
 
@@ -1332,9 +1339,7 @@ struct EditorContext {
         return p;
     }
 
-    ImVec2 AlignPointToGrid(const ImVec2& p) const { 
-         return ImVec2(AlignPointToGrid(p.x), AlignPointToGrid(p.y));
-    }
+    ImVec2 AlignPointToGrid(const ImVec2& p) const { return ImVec2(AlignPointToGrid(p.x), AlignPointToGrid(p.y)); }
 
     ImDrawList* GetDrawList() { return m_DrawList; }
 

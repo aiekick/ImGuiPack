@@ -1965,7 +1965,8 @@ void ed::EditorContext::Suspend(SuspendFlags flags)
     IM_ASSERT(m_DrawList != nullptr && "Suspend was called outiside of Begin/End.");
     auto lastChannel = m_DrawList->_Splitter._Current;
     m_DrawList->ChannelsSetCurrent(m_ExternalChannel);
-    m_Canvas.Suspend();
+    if (m_IsCanvasVisible)
+        m_Canvas.Suspend();
     m_DrawList->ChannelsSetCurrent(lastChannel);
     if ((flags & SuspendFlags::KeepSplitter) != SuspendFlags::KeepSplitter)
         ImDrawList_SwapSplitter(m_DrawList, m_Splitter);
@@ -1978,7 +1979,8 @@ void ed::EditorContext::Resume(SuspendFlags flags)
         ImDrawList_SwapSplitter(m_DrawList, m_Splitter);
     auto lastChannel = m_DrawList->_Splitter._Current;
     m_DrawList->ChannelsSetCurrent(m_ExternalChannel);
-    m_Canvas.Resume();
+    if (m_IsCanvasVisible)
+        m_Canvas.Resume();
     m_DrawList->ChannelsSetCurrent(lastChannel);
 }
 
@@ -3527,6 +3529,11 @@ void ed::NavigateAction::NavigateTo(const ImRect& bounds, ZoomMode zoomMode, flo
     }
 }
 
+void ed::NavigateAction::NavigateTo(const ImVec2& offset, const float scale) {
+    auto targetRect = m_Canvas.CalcViewRect(ImGuiEx::CanvasView(offset, scale));
+    NavigateTo(targetRect, Detail::NavigateAction::ZoomMode::Exact, 0.0f);
+}
+
 void ed::NavigateAction::NavigateTo(const ImRect& target, float duration, NavigationReason reason)
 {
     m_Reason = reason;
@@ -3982,7 +3989,7 @@ bool ed::DragAction::Process(const Control& control)
 
         auto alignedOffset  = Editor->AlignPointToGrid(draggedOrigin + dragOffset + alignPivot) - draggedOrigin - alignPivot;
 
-        if (ImGui::GetIO().KeyAlt)
+        if (!ImGui::GetIO().KeyAlt)
             dragOffset = alignedOffset;
 
         for (auto object : m_Objects)
