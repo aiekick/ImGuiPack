@@ -4712,8 +4712,7 @@ void ed::CreateItemAction::SetStyle(ImU32 color, float thickness)
     m_LinkThickness = thickness;
 }
 
-bool ed::CreateItemAction::Begin()
-{
+bool ed::CreateItemAction::Begin(PinId* startId) {
     IM_ASSERT(false == m_InActive);
 
     m_InActive        = true;
@@ -4721,6 +4720,10 @@ bool ed::CreateItemAction::Begin()
     m_UserAction      = Unknown;
     m_LinkColor       = IM_COL32_WHITE;
     m_LinkThickness   = 1.0f;
+
+    if (m_LinkStart != nullptr) {
+        *startId = m_LinkStart->m_ID;
+    }
 
     if (m_CurrentStage == None)
         return false;

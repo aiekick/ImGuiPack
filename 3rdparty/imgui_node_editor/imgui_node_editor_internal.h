@@ -983,7 +983,7 @@ struct CreateItemAction final : EditorAction {
 
     void SetStyle(ImU32 color, float thickness);
 
-    bool Begin();
+    bool Begin(PinId* startId);
     void End();
 
     Result RejectItem();

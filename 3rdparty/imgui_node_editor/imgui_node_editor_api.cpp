@@ -183,14 +183,18 @@ void ax::NodeEditor::EndGroupHint() {
 }
 
 ImDrawList* ax::NodeEditor::GetNodeBackgroundDrawList(NodeId nodeId) {
-    if (auto node = s_Editor->FindNode(nodeId))
+    if (auto node = s_Editor->FindNode(nodeId)) {
         return s_Editor->GetNodeBuilder().GetUserBackgroundDrawList(node);
-    else
-        return nullptr;
+    }
+    return nullptr;
 }
 
 bool ax::NodeEditor::Link(LinkId id, PinId startPinId, PinId endPinId, const ImVec4& color /* = ImVec4(1, 1, 1, 1)*/, float thickness /* = 1.0f*/) {
     return s_Editor->DoLink(id, startPinId, endPinId, ImColor(color), thickness);
+}
+
+bool ax::NodeEditor::Link(LinkId id, PinId startPinId, PinId endPinId, const ImU32 color, float thickness) {
+    return s_Editor->DoLink(id, startPinId, endPinId, color, thickness);
 }
 
 void ax::NodeEditor::Flow(LinkId linkId, FlowDirection direction) {
@@ -198,53 +202,44 @@ void ax::NodeEditor::Flow(LinkId linkId, FlowDirection direction) {
         s_Editor->Flow(link, direction);
 }
 
-bool ax::NodeEditor::BeginCreate(const ImVec4& color, float thickness) {
+bool ax::NodeEditor::BeginCreate(PinId* startId, const ImVec4& color, float thickness) {
     auto& context = s_Editor->GetItemCreator();
-
-    if (context.Begin()) {
+    if (context.Begin(startId)) {
         context.SetStyle(ImColor(color), thickness);
         return true;
-    } else
-        return false;
+    }
+    return false;
 }
 
 bool ax::NodeEditor::QueryNewLink(PinId* startId, PinId* endId) {
     using Result = ax::NodeEditor::Detail::CreateItemAction::Result;
-
     auto& context = s_Editor->GetItemCreator();
-
     return context.QueryLink(startId, endId) == Result::True;
 }
 
 bool ax::NodeEditor::QueryNewLink(PinId* startId, PinId* endId, const ImVec4& color, float thickness) {
     using Result = ax::NodeEditor::Detail::CreateItemAction::Result;
-
     auto& context = s_Editor->GetItemCreator();
-
     auto result = context.QueryLink(startId, endId);
-    if (result != Result::Indeterminate)
+    if (result != Result::Indeterminate) {
         context.SetStyle(ImColor(color), thickness);
-
+    }
     return result == Result::True;
 }
 
 bool ax::NodeEditor::QueryNewNode(PinId* pinId) {
     using Result = ax::NodeEditor::Detail::CreateItemAction::Result;
-
     auto& context = s_Editor->GetItemCreator();
-
     return context.QueryNode(pinId) == Result::True;
 }
 
 bool ax::NodeEditor::QueryNewNode(PinId* pinId, const ImVec4& color, float thickness) {
     using Result = ax::NodeEditor::Detail::CreateItemAction::Result;
-
     auto& context = s_Editor->GetItemCreator();
-
     auto result = context.QueryNode(pinId);
-    if (result != Result::Indeterminate)
+    if (result != Result::Indeterminate) {
         context.SetStyle(ImColor(color), thickness);
-
+    }
     return result == Result::True;
 }
 
