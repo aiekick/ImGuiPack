@@ -25,7 +25,7 @@
 // for each static/DLL boundary you are calling from. Read "Context and Memory Allocators" section of imgui.cpp for more details.
 
 #if defined(__WIN32__) || defined(WIN32) || defined(_WIN32) || defined(__WIN64__) || defined(WIN64) || defined(_WIN64) || defined(_MSC_VER)
-#if defined(ImGuiPack_EXPORTS)
+#if defined(imGuiPack_EXPORTS)
 #define IGFD_API __declspec(dllexport)
 #define IMGUI_API __declspec(dllexport)
 #define IMPLOT_API __declspec(dllexport)

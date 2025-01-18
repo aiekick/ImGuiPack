@@ -2,7 +2,7 @@
 #pragma warning(disable : 4251)
 #pragma warning(disable : 4275)
 
-#include <ImGuiPack.h>
+#include <imGuiPack.h>
 
 // based on imgui_canvas of TheDmd at https://github.com/thedmd/imgui-node-editor.git
 

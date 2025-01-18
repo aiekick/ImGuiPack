@@ -17,7 +17,7 @@ limitations under the License.
 #pragma once
 #pragma warning(disable : 4275)
 
-#include <ImGuiPack.h>
+#include <imGuiPack.h>
 
 #ifndef ILAYOUT_PANE_INCLUDE
 #include <ILayoutPane.h>
