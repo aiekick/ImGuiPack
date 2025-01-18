@@ -44,7 +44,7 @@
 #endif
 
 #if defined(__WIN32__) || defined(WIN32) || defined(_WIN32) || defined(__WIN64__) || defined(WIN64) || defined(_WIN64) || defined(_MSC_VER)
-#if defined(imGuiPack_EXPORTS)
+#if defined(imguipack_EXPORTS)
 #define IGFD_API __declspec(dllexport)
 #define IMGUI_API __declspec(dllexport)
 #define IMPLOT_API __declspec(dllexport)

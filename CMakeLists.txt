@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-set(PROJECT imGuiPack)
+set(PROJECT imguipack)
 
 enable_language(C CXX)
 

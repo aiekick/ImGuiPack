@@ -17,7 +17,7 @@
 #pragma once
 #pragma warning(disable : 4251)
 
-#include <imGuiPack.h>
+#include <imguipack.h>
 
 #include <cstdint>  // types like uint32_t
 #include <vector>
