@@ -96,9 +96,9 @@ if ("${HarfBuzz_FIND_VERSION}" VERSION_GREATER "${HarfBuzz_VERSION}")
       "Required version (" ${HarfBuzz_FIND_VERSION} ")"
       " is higher than found version (" ${HarfBuzz_VERSION} ")")
   else ()
-    message(WARNING
-      "Required version (" ${HarfBuzz_FIND_VERSION} ")"
-      " is higher than found version (" ${HarfBuzz_VERSION} ")")
+    # message(WARNING
+    #   "Required version (" ${HarfBuzz_FIND_VERSION} ")"
+    #   " is higher than found version (" ${HarfBuzz_VERSION} ")")
     unset(HarfBuzz_VERSION)
     unset(HarfBuzz_INCLUDE_DIRS)
     unset(HarfBuzz_LIBRARIES)
