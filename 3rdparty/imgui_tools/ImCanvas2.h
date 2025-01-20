@@ -19,7 +19,7 @@ public:
 
     struct Config {
         float zoomFactor = 1.0f;
-        float zoomStep = 0.1f;
+        float zoomStep = 0.01f;
         ImGuiKey resetZoomKey = ImGuiKey_R;
         ImGuiMouseButton draggingButton = ImGuiMouseButton_Middle;
         ImGuiMouseButton contextMenuButton = ImGuiMouseButton_Right;
