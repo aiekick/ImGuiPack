@@ -728,7 +728,7 @@ IMGUI_API bool InputUIntDefault(float vWidth, const char* vName, uint32_t* vVar,
 namespace ImWidgets {
 class IMGUI_API InputText {
 private:
-    static constexpr size_t m_Len = 512U;
+    static constexpr size_t m_Len = 4096U;
     char m_Buffer[m_Len + 1] = "";
     std::string m_DefaultString;
     std::string m_Text;

@@ -2767,11 +2767,12 @@ bool SliderScalarCompact(float width,
 
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
     const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
-    const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
+    const ImRect total_bb(frame_bb.Min, frame_bb.Max);
 
     ////////////////////// CUSTOM CODE ////////////
     const bool temp_input_allowed = true;
     ///////////////////////////////////////////////
+
     ItemSize(total_bb, style.FramePadding.y);
     if (!ItemAdd(total_bb, id, &frame_bb, temp_input_allowed ? ImGuiItemFlags_Inputable : 0))
         return false;
@@ -2802,9 +2803,11 @@ bool SliderScalarCompact(float width,
 
     if (temp_input_is_active) {
         // Only clamp CTRL+Click input when ImGuiSliderFlags_AlwaysClamp is set
+        
         // ////////////////////// CUSTOM CODE ////////////
         const bool is_clamp_input = false;
         // ///////////////////////////////////////////////
+        
         return TempInputScalar(frame_bb, id, label, data_type, p_data, format, is_clamp_input ? p_min : NULL, is_clamp_input ? p_max : NULL);
     }
 
@@ -2908,7 +2911,9 @@ bool SliderScalarDefaultCompact(float width,
     }
     PopID();
 
-    SameLine();
+    if (ImGui::GetCurrentWindow() && !ImGui::GetCurrentWindow()->DC.MenuBarAppending) {
+        ImGui::SameLine();
+    }
 
     if (width > 0.0f) {
         width -= GetItemRectSize().x - GetStyle().ItemSpacing.x;
@@ -4011,7 +4016,9 @@ bool ImWidgets::QuickStringCombo::display(const float& vWidth, const char* vLabe
         if (change) {
             m_Index = 0;
         }
-        ImGui::SameLine();
+        if (ImGui::GetCurrentWindow() && !ImGui::GetCurrentWindow()->DC.MenuBarAppending) {
+            ImGui::SameLine();
+        }
         const float w = vWidth - (ImGui::GetCursorPosX() - px);
         change |= ImGui::ContrastedCombo(
             w,
