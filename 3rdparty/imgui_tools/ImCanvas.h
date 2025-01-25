@@ -59,6 +59,8 @@ public:
     bool begin(ImGuiID id, const ImVec2& size);
     void end();
 
+    bool isHovered() const;
+
     void setView(const ImVec2& origin, float scale);
     void setView(const CanvasView& view);
     void centerView(const ImVec2& canvasPoint);

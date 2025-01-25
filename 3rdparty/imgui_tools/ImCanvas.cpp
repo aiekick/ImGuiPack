@@ -140,6 +140,10 @@ void ImCanvas::end() {
     m_inBeginEnd = false;
 }
 
+bool ImCanvas::isHovered()const {
+    return ImGui::IsMouseHoveringRect(getViewRect().Min, getViewRect().Max);
+}
+
 void ImCanvas::setView(const ImVec2& origin, float scale) {
     setView(CanvasView(origin, scale));
 }
