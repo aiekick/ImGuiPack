@@ -77,21 +77,21 @@ void ImGuiThemeHelper::Draw()
 
 void ImGuiThemeHelper::DrawMenu()
 {
-	if (ImGui::BeginMenu("General UI"))
+	if (ImGui::ContrastedBeginMenu("General UI"))
 	{
 		for (auto& it : m_ThemeContainer) {
-			if (ImGui::MenuItem(it.first.c_str())) {
+            if (ImGui::ContrastedMenuItem(it.first.c_str())) {
                 ApplyTheme(it.second);
 			}
 		}
 
 		ImGui::Separator();
 
-		ImGui::MenuItem("Customize", "", &puShowImGuiStyleEdtor);
+		ImGui::ContrastedMenuItem("Customize", "", &puShowImGuiStyleEdtor);
 		
 		ImGui::Separator();
 		
-		if (ImGui::BeginMenu("Contrast"))
+		if (ImGui::ContrastedBeginMenu("Contrast"))
 		{
 			ImGui::DrawContrastWidgets();
 
@@ -101,7 +101,7 @@ void ImGuiThemeHelper::DrawMenu()
 	}
 
 #ifdef USE_IMGUI_FILE_DIALOG
-	if (ImGui::BeginMenu("File Type Colors"))
+    if (ImGui::ContrastedBeginMenu("File Type Colors"))
 	{
 		bool fileColorUpdate = false;
 
