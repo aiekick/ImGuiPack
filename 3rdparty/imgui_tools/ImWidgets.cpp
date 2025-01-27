@@ -3607,12 +3607,36 @@ bool ContrastedEditCombo(float vWidth,
     return value_changed;
 }
 
+static bool ContrastedIsRootOfOpenMenuSet() {
+    ImGuiContext& g = *GImGui;
+    ImGuiWindow* window = g.CurrentWindow;
+    if ((g.OpenPopupStack.Size <= g.BeginPopupStack.Size) || (window->Flags & ImGuiWindowFlags_ChildMenu))
+        return false;
+
+    // Initially we used 'upper_popup->OpenParentId == window->IDStack.back()' to differentiate multiple menu sets from each others
+    // (e.g. inside menu bar vs loose menu items) based on parent ID.
+    // This would however prevent the use of e.g. PushID() user code submitting menus.
+    // Previously this worked between popup and a first child menu because the first child menu always had the _ChildWindow flag,
+    // making hovering on parent popup possible while first child menu was focused - but this was generally a bug with other side effects.
+    // Instead we don't treat Popup specifically (in order to consistently support menu features in them), maybe the first child menu of a Popup
+    // doesn't have the _ChildWindow flag, and we rely on this IsRootOfOpenMenuSet() check to allow hovering between root window/popup and first child menu.
+    // In the end, lack of ID check made it so we could no longer differentiate between separate menu sets. To compensate for that, we at least check parent window nav
+    // layer. This fixes the most common case of menu opening on hover when moving between window content and menu bar. Multiple different menu sets in same nav layer
+    // would still open on hover, but that should be a lesser problem, because if such menus are close in proximity in window content then it won't feel weird and if they
+    // are far apart it likely won't be a problem anyone runs into.
+    const ImGuiPopupData* upper_popup = &g.OpenPopupStack[g.BeginPopupStack.Size];
+    if (window->DC.NavLayerCurrent != upper_popup->ParentNavLayer)
+        return false;
+    return upper_popup->Window && (upper_popup->Window->Flags & ImGuiWindowFlags_ChildMenu) && ImGui::IsWindowChildOf(upper_popup->Window, window, true, false);
+}
+
  bool ContrastedMenuItemEx(const char* label, const char* icon, const char* help, bool selected, bool enabled) {
     bool ret = false;
-    auto* storage_ptr = ImGui::GetStateStorage();
-    ImGuiCol col;
+    auto* storage_ptr = GetStateStorage();
+    ImGuiCol col = ImGuiCol_MenuBarBg;
     auto imgui_id = ImGui::GetID(label);
-    if (selected) {
+    ImGuiWindow* window = GetCurrentWindow();
+    if (selected && window->DC.LayoutType == ImGuiLayoutType_Horizontal) {
         col = ImGuiCol_HeaderActive;
     } else {
         col = storage_ptr->GetInt(imgui_id);
@@ -3669,8 +3693,14 @@ bool ContrastedEditCombo(float vWidth,
     return ret;
 }
 
- bool ContrastedBeginMenu(const char* label, bool enabled) {
-     return ContrastedBeginMenuEx(label, NULL, enabled);
+ bool ContrastedBeginMenu(const char* label, const char* help, bool enabled) {
+     auto ret = ContrastedBeginMenuEx(label, NULL, enabled);
+     if (help) {
+         if (IsItemHovered()) {
+             SetTooltip("%s", help);
+         }
+     }
+     return ret;
  }
 
  bool InputFloatDefault(float vWidth,

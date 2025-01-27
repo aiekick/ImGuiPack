@@ -677,7 +677,7 @@ bool ContrastedMenuItem(const char* label, const char* help = nullptr, bool sele
 
 bool ContrastedMenuItem(const char* label, const char* help, bool* p_selected, bool enabled = true);
 
-bool ContrastedBeginMenu(const char* label, bool enabled = true);
+bool ContrastedBeginMenu(const char* label, const char* help = nullptr, bool enabled = true);
 
 ////////////////////////////////////////////////////////////
 ///// INPUT
