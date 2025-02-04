@@ -18,8 +18,10 @@ public:
 
     public:
         CanvasView() = default;
-        CanvasView(const ImVec2& origin, float scale) : origin(origin), scale(scale), invScale(scale ? 1.0f / scale : 0.0f) {}
-        void set(const ImVec2& origin, float scale) { *this = CanvasView(origin, scale); }
+        CanvasView(const ImVec2& vOrigin, float vScale) : origin(vOrigin), scale(vScale), invScale(vScale ? 1.0f / vScale : 0.0f) {}
+        void set(const ImVec2& vOrigin, float vScale) {
+            *this = CanvasView(vOrigin, vScale);
+        }
         const ImVec2& getOrigin() const { return origin; }
         float getScale() const { return scale; }
         float getInvScale() const { return invScale; }
