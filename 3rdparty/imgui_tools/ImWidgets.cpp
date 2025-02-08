@@ -1205,28 +1205,27 @@ bool ButtonNoFrame(const char* vLabel, ImVec2 size, ImVec4 vColor, const char* v
     const ImVec2 sz = ImMax(ImVec2(h, h), size);
     const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + sz);
     ItemSize(bb);
-    if (!ItemAdd(bb, id))
+    if (!ItemAdd(bb, id)) {
         return false;
-
+    }
     bool hovered, held;
     const bool pressed = ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
-
-    if (vLabelFont)
+    if (vLabelFont) {
         PushFont(vLabelFont);
+    }
     PushStyleColor(ImGuiCol_Text, vColor);
     RenderTextClipped(bb.Min, bb.Max, vLabel, nullptr, nullptr, ImVec2(0.5f, 0.5f));
     PopStyleColor();
-    if (vLabelFont)
+    if (vLabelFont) {
         PopFont();
-
-    if (vHelp)
-        if (IsItemHovered())
-            SetTooltip("%s", vHelp);
-
+    }
+    if (vHelp && IsItemHovered()) {
+        SetTooltip("%s", vHelp);
+    }
     return pressed;
 }
 
-bool SmallContrastedButton(const char* label) {
+bool SmallContrastedButton(const char* label, const char* vHelp) {
     ImGuiContext& g = *GImGui;
     float backup_padding_y = g.Style.FramePadding.y;
     g.Style.FramePadding.y = 0.0f;
@@ -1234,9 +1233,13 @@ bool SmallContrastedButton(const char* label) {
     PushID(++CustomStyle::pushId);
     bool pressed = ButtonEx(label, ImVec2(0, 0), ImGuiButtonFlags_AlignTextBaseLine);
     PopID();
-    if (pushed)
+    if (pushed) {
         PopStyleColor();
+    }
     g.Style.FramePadding.y = backup_padding_y;
+    if (vHelp && IsItemHovered()) {
+        SetTooltip("%s", vHelp);
+    }
     return pressed;
 }
 

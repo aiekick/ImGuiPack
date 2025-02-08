@@ -414,13 +414,11 @@ IMGUI_API bool ButtonNoFrame(  //
     ImVec4 vColor = ImVec4(1, 1, 1, 1),
     const char* vHelp = 0,
     ImFont* vLabelFont = nullptr);
-IMGUI_API bool SmallContrastedButton(const char* label);
-
+IMGUI_API bool SmallContrastedButton(const char* label, const char* vHelp = nullptr);
 IMGUI_API void SpacingFromStart(float offset_from_start_x);
-
 IMGUI_API bool Selectable_FramedText(const char* fmt, ...);
 
-void ImageZoomPoint(  //
+IMGUI_API void ImageZoomPoint(  //
     ImTextureID vUserTextureId,
     const float vWidth,
     const ImVec2& vCenter,
@@ -452,7 +450,7 @@ IMGUI_API bool GradButton(  //
     const char* label,
     const ImVec2& size_arg = ImVec2(0, 0),
     ImGuiButtonFlags flags = ImGuiButtonFlags_None);
-#endif
+#endif // USE_GRADIENT
 
 IMGUI_API bool TransparentButton(  //
     const char* label,
