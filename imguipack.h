@@ -108,6 +108,7 @@
 #include <3rdparty/imgui_tools/ImGuiThemeHelper.h>
 #include <3rdparty/imgui_tools/ImCanvasWip.h>
 #include <3rdparty/imgui_tools/ImCanvas.h>
+#include <3rdparty/imgui_tools/ImCodeEditor.h>
 #endif
 
 #ifdef USE_IM_COOL_BAR
