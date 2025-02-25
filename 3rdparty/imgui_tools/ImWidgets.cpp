@@ -162,9 +162,6 @@ static void OpenFile(const std::string& vFile) {
 #endif
 }
 
-/////////////////////////////////////
-/////////////////////////////////////
-
 namespace ImGui {
 
 static inline ImU32 sCustomStyle_ColorConvertFloat4ToU32(const ImVec4& in) {
@@ -176,7 +173,7 @@ static inline ImU32 sCustomStyle_ColorConvertFloat4ToU32(const ImVec4& in) {
     return out;
 }
 
-float CustomStyle::puContrastRatio = 3.0f;
+float CustomStyle::puContrastRatio = 3.5f;
 ImU32 CustomStyle::puContrastedTextColor = sCustomStyle_ColorConvertFloat4ToU32(ImVec4(0, 0, 0, 1));
 int CustomStyle::pushId = STARTING_CUSTOMID;
 int CustomStyle::minorNumber = 0;
@@ -205,9 +202,6 @@ void DrawContrastWidgets() {
         CustomStyle::puContrastedTextColor = ColorConvertFloat4ToU32(contrastedTextColor);
     }
 }
-
-/////////////////////////////////////
-/////////////////////////////////////
 
 int IncPUSHID() {
     return ++CustomStyle::pushId;
@@ -254,9 +248,6 @@ ImVec2 GetLocalMousePos(GLFWWindow* vWin) {
     return GetMousePos();
 #endif
 }
-
-/////////////////////////////////////
-/////////////////////////////////////
 
 // contrast from 1 to 21
 // https://www.w3.org/TR/WCAG20/#relativeluminancedef
@@ -311,8 +302,6 @@ bool PushStyleColorWithContrast4(const ImU32& backGroundColor, const ImGuiCol& f
     }
     return false;
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // https://github.com/ocornut/imgui/issues/3710
 
@@ -387,8 +376,6 @@ void RenderInnerShadowFrame(ImVec2 p_min, ImVec2 p_max, ImU32 fill_col, ImU32 fi
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 void DrawShadowImage(ImTextureID vShadowImage, const ImVec2& vSize, ImU32 col) {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -401,8 +388,6 @@ void DrawShadowImage(ImTextureID vShadowImage, const ImVec2& vSize, ImU32 col) {
 
     window->DrawList->AddImage(vShadowImage, bb.Min, bb.Max, ImVec2(0, 0), ImVec2(1, 1), col);
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define ImRatioX(a) a.x / a.y
 #define ImRatioY(a) a.y / a.x
@@ -1220,28 +1205,27 @@ bool ButtonNoFrame(const char* vLabel, ImVec2 size, ImVec4 vColor, const char* v
     const ImVec2 sz = ImMax(ImVec2(h, h), size);
     const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + sz);
     ItemSize(bb);
-    if (!ItemAdd(bb, id))
+    if (!ItemAdd(bb, id)) {
         return false;
-
+    }
     bool hovered, held;
     const bool pressed = ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
-
-    if (vLabelFont)
+    if (vLabelFont) {
         PushFont(vLabelFont);
+    }
     PushStyleColor(ImGuiCol_Text, vColor);
     RenderTextClipped(bb.Min, bb.Max, vLabel, nullptr, nullptr, ImVec2(0.5f, 0.5f));
     PopStyleColor();
-    if (vLabelFont)
+    if (vLabelFont) {
         PopFont();
-
-    if (vHelp)
-        if (IsItemHovered())
-            SetTooltip("%s", vHelp);
-
+    }
+    if (vHelp && IsItemHovered()) {
+        SetTooltip("%s", vHelp);
+    }
     return pressed;
 }
 
-bool SmallContrastedButton(const char* label) {
+bool SmallContrastedButton(const char* label, const char* vHelp) {
     ImGuiContext& g = *GImGui;
     float backup_padding_y = g.Style.FramePadding.y;
     g.Style.FramePadding.y = 0.0f;
@@ -1249,9 +1233,13 @@ bool SmallContrastedButton(const char* label) {
     PushID(++CustomStyle::pushId);
     bool pressed = ButtonEx(label, ImVec2(0, 0), ImGuiButtonFlags_AlignTextBaseLine);
     PopID();
-    if (pushed)
+    if (pushed) {
         PopStyleColor();
+    }
     g.Style.FramePadding.y = backup_padding_y;
+    if (vHelp && IsItemHovered()) {
+        SetTooltip("%s", vHelp);
+    }
     return pressed;
 }
 
@@ -2249,11 +2237,6 @@ bool TextureOverLay(float vWidth,
 }
 #endif
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///// SLIDERS
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 // Convert a value v in the output space of a slider into a parametric position on the slider itself (the logical
 // opposite of ScaleValueFromRatioT)
 template <typename TYPE, typename SIGNEDTYPE, typename FLOATTYPE>
@@ -2767,11 +2750,12 @@ bool SliderScalarCompact(float width,
 
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
     const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
-    const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
+    const ImRect total_bb(frame_bb.Min, frame_bb.Max);
 
-    ////////////////////// CUSTOM CODE ////////////
+    ////////////////////////////////////////////////////////////// CUSTOM CODE ////////////
     const bool temp_input_allowed = true;
     ///////////////////////////////////////////////
+
     ItemSize(total_bb, style.FramePadding.y);
     if (!ItemAdd(total_bb, id, &frame_bb, temp_input_allowed ? ImGuiItemFlags_Inputable : 0))
         return false;
@@ -2802,9 +2786,11 @@ bool SliderScalarCompact(float width,
 
     if (temp_input_is_active) {
         // Only clamp CTRL+Click input when ImGuiSliderFlags_AlwaysClamp is set
+        
         // ////////////////////// CUSTOM CODE ////////////
         const bool is_clamp_input = false;
         // ///////////////////////////////////////////////
+        
         return TempInputScalar(frame_bb, id, label, data_type, p_data, format, is_clamp_input ? p_min : NULL, is_clamp_input ? p_max : NULL);
     }
 
@@ -2908,7 +2894,9 @@ bool SliderScalarDefaultCompact(float width,
     }
     PopID();
 
-    SameLine();
+    if (ImGui::GetCurrentWindow() && !ImGui::GetCurrentWindow()->DC.MenuBarAppending) {
+        ImGui::SameLine();
+    }
 
     if (width > 0.0f) {
         width -= GetItemRectSize().x - GetStyle().ItemSpacing.x;
@@ -3150,10 +3138,6 @@ bool SliderDoubleDefault(float width,
     return SliderScalarDefault(width, label, ImGuiDataType_Double, v, &v_min, &v_max, &v_default, &v_step, format, flags);
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///// SPLITTER /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 // https://github.com/ocornut/imgui/issues/1720
 bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size) {
     auto* window = ImGui::GetCurrentWindow();
@@ -3164,10 +3148,6 @@ bool Splitter(bool split_vertically, float thickness, float* size1, float* size2
     return ImGui::SplitterBehavior(
         bb, id, split_vertically ? ImGuiAxis_X : ImGuiAxis_Y, size1, size2, min_size1, min_size2, 1.0f, 0.0, ImGui::GetColorU32(ImGuiCol_FrameBg));
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///// ALIGNEMENTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void DisplayAlignedWidget(const float& vWidth, const std::string& vLabel, const float& vOffsetFromStart, std::function<void()> vWidget) {
     float px = ImGui::GetCursorPosX();
@@ -3182,10 +3162,6 @@ void DisplayAlignedWidget(const float& vWidth, const std::string& vLabel, const 
     ImGui::PopItemWidth();
     ImGui::PopID();
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///// HIDDEN TEXT FOR SCREENSHOT ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void HideByFilledRectForHiddenMode(const bool vHidden, const char* fmt, ...) {
     if (vHidden) {
@@ -3224,10 +3200,6 @@ void DrawRectOverText(const bool vEnabled, const ImVec4& vColor, const ImVec2& v
     }
     va_end(args);
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///// COMBO
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 inline float inCalcMaxPopupHeightFromItemCount(int items_count) {
     ImGuiContext& g = *GImGui;
@@ -3638,11 +3610,103 @@ bool ContrastedEditCombo(float vWidth,
     return value_changed;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///// INPUT
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+static bool ContrastedIsRootOfOpenMenuSet() {
+    ImGuiContext& g = *GImGui;
+    ImGuiWindow* window = g.CurrentWindow;
+    if ((g.OpenPopupStack.Size <= g.BeginPopupStack.Size) || (window->Flags & ImGuiWindowFlags_ChildMenu))
+        return false;
 
-bool InputFloatDefault(float vWidth,
+    // Initially we used 'upper_popup->OpenParentId == window->IDStack.back()' to differentiate multiple menu sets from each others
+    // (e.g. inside menu bar vs loose menu items) based on parent ID.
+    // This would however prevent the use of e.g. PushID() user code submitting menus.
+    // Previously this worked between popup and a first child menu because the first child menu always had the _ChildWindow flag,
+    // making hovering on parent popup possible while first child menu was focused - but this was generally a bug with other side effects.
+    // Instead we don't treat Popup specifically (in order to consistently support menu features in them), maybe the first child menu of a Popup
+    // doesn't have the _ChildWindow flag, and we rely on this IsRootOfOpenMenuSet() check to allow hovering between root window/popup and first child menu.
+    // In the end, lack of ID check made it so we could no longer differentiate between separate menu sets. To compensate for that, we at least check parent window nav
+    // layer. This fixes the most common case of menu opening on hover when moving between window content and menu bar. Multiple different menu sets in same nav layer
+    // would still open on hover, but that should be a lesser problem, because if such menus are close in proximity in window content then it won't feel weird and if they
+    // are far apart it likely won't be a problem anyone runs into.
+    const ImGuiPopupData* upper_popup = &g.OpenPopupStack[g.BeginPopupStack.Size];
+    if (window->DC.NavLayerCurrent != upper_popup->ParentNavLayer)
+        return false;
+    return upper_popup->Window && (upper_popup->Window->Flags & ImGuiWindowFlags_ChildMenu) && ImGui::IsWindowChildOf(upper_popup->Window, window, true, false);
+}
+
+ bool ContrastedMenuItemEx(const char* label, const char* icon, const char* help, bool selected, bool enabled) {
+    bool ret = false;
+    auto* storage_ptr = GetStateStorage();
+    ImGuiCol col = ImGuiCol_MenuBarBg;
+    auto imgui_id = ImGui::GetID(label);
+    ImGuiWindow* window = GetCurrentWindow();
+    if (selected && window->DC.LayoutType == ImGuiLayoutType_Horizontal) {
+        col = ImGuiCol_HeaderActive;
+    } else {
+        col = storage_ptr->GetInt(imgui_id);
+    }
+    const bool pushed = ImGui::PushStyleColorWithContrast1(col, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
+    ret = ImGui::MenuItemEx(label, nullptr, nullptr, selected, enabled);
+    if (ImGui::IsItemHovered()) {
+        storage_ptr->SetInt(imgui_id, ImGuiCol_HeaderHovered);
+    } else {
+        storage_ptr->SetInt(imgui_id, ImGuiCol_MenuBarBg);
+    }
+    if (pushed) {
+        PopStyleColor();
+    }
+    if (help) {
+        if (IsItemHovered()) {
+            SetTooltip("%s", help);
+        }
+    }
+    return ret;
+}
+
+ bool ContrastedMenuItem(const char* label, const char* help , bool selected , bool enabled ) {
+    return ContrastedMenuItemEx(label, nullptr, help, selected, enabled);
+}
+
+ bool ContrastedMenuItem(const char* label, const char* help, bool* p_selected, bool enabled ) {
+    if (ContrastedMenuItemEx(label, NULL, help, p_selected ? *p_selected : false, enabled)) {
+        if (p_selected)
+            *p_selected = !*p_selected;
+        return true;
+    }
+    return false;
+}
+
+ bool ContrastedBeginMenuEx(const char* label, const char* icon, bool enabled) {
+    bool ret = false;
+    auto* storage_ptr = ImGui::GetStateStorage();
+    const auto imgui_id = ImGui::GetID(label);
+    ImGuiCol col = storage_ptr->GetInt(imgui_id);
+    if (IsPopupOpen(imgui_id, ImGuiWindowFlags_ChildMenu)) {
+        col = ImGuiCol_HeaderHovered;
+    }
+    const bool pushed = ImGui::PushStyleColorWithContrast1(col, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
+    ret = BeginMenuEx(label, icon, enabled);
+    if (ImGui::IsItemHovered()) {
+        storage_ptr->SetInt(imgui_id, ImGuiCol_HeaderHovered);
+    } else {
+        storage_ptr->SetInt(imgui_id, ImGuiCol_MenuBarBg);
+    }
+    if (pushed) {
+        PopStyleColor();
+    }
+    return ret;
+}
+
+ bool ContrastedBeginMenu(const char* label, const char* help, bool enabled) {
+     auto ret = ContrastedBeginMenuEx(label, NULL, enabled);
+     if (help) {
+         if (IsItemHovered()) {
+             SetTooltip("%s", help);
+         }
+     }
+     return ret;
+ }
+
+ bool InputFloatDefault(float vWidth,
                        const char* vName,
                        float* vVar,
                        float vDefault,
@@ -4011,7 +4075,9 @@ bool ImWidgets::QuickStringCombo::display(const float& vWidth, const char* vLabe
         if (change) {
             m_Index = 0;
         }
-        ImGui::SameLine();
+        if (ImGui::GetCurrentWindow() && !ImGui::GetCurrentWindow()->DC.MenuBarAppending) {
+            ImGui::SameLine();
+        }
         const float w = vWidth - (ImGui::GetCursorPosX() - px);
         change |= ImGui::ContrastedCombo(
             w,

@@ -7,7 +7,7 @@ static inline ImVec2 ImSelectPositive(const ImVec2& lhs, const ImVec2& rhs) {
 ImCanvas::ImCanvas() = default;
 ImCanvas::~ImCanvas() = default;
 
-const ImCanvas::Config& ImCanvas::getConfig() {
+const ImCanvas::Config& ImCanvas::getConfig() const {
     return m_config;
 }
 
@@ -22,6 +22,7 @@ bool ImCanvas::begin(const char* id, const ImVec2& size) {
 bool ImCanvas::begin(ImGuiID id, const ImVec2& size) {
     IM_ASSERT(m_inBeginEnd == false);
 
+    m_beginSize = size;
     m_widgetPosition = ImGui::GetCursorScreenPos();
     m_widgetSize = ImSelectPositive(size, ImGui::GetContentRegionAvail());
     m_widgetRect = ImRect(m_widgetPosition, m_widgetPosition + m_widgetSize);
@@ -140,6 +141,14 @@ void ImCanvas::end() {
     m_inBeginEnd = false;
 }
 
+bool ImCanvas::isHovered() const {
+    return  //
+        ImGui::IsWindowHovered() &&
+        ImGui::IsMouseHoveringRect(  //
+            getViewRect().Min,
+            getViewRect().Max);
+}
+
 void ImCanvas::setView(const ImVec2& origin, float scale) {
     setView(CanvasView(origin, scale));
 }
@@ -248,6 +257,18 @@ void ImCanvas::resume() {
     drawList->ChannelsSetCurrent(lastChannel);
 }
 
+void ImCanvas::resetView() {
+    setView(m_beginSize * 0.5f, 1.0f);
+}
+
+void ImCanvas::zoomToContent(const ImRect& vContentRect) {
+    auto rect = vContentRect;
+    auto extend = ImMax(rect.GetWidth(), rect.GetHeight());
+    static float c_NavigationZoomMargin = 0.1f;
+    rect.Expand(extend * c_NavigationZoomMargin * 0.5f);
+    setViewRect(rect);
+}
+
 ImVec2 ImCanvas::canvasToScreen(const ImVec2& point) const {
     return point * m_view.scale + m_viewTransformPosition;
 }
@@ -278,6 +299,11 @@ ImVec2 ImCanvas::screenToCanvasV(const ImVec2& vector) const {
 
 ImVec2 ImCanvas::screenToCanvasV(const ImVec2& vector, const CanvasView& view) const {
     return vector * view.invScale;
+}
+
+void ImCanvas::setViewRect(const ImRect& rect) {
+    auto view = calcCenterView(rect);
+    setView(view);
 }
 
 ImRect ImCanvas::calcViewRect(const CanvasView& view) const {

@@ -194,7 +194,7 @@ static inline std::ostream& operator<<(std::ostream& vOut, const ImVec2& vType) 
 #ifdef USE_IMPLOT
 static inline std::istream& operator>>(std::istream& vIn, ImPlotRect& vType) {
     char separator;
-    if (vIn >> vType.X.Min >> separator >> vType.X.Max >> separator >> vType.Y.Minx >> separator >> vType.Y.Max) {
+    if (vIn >> vType.X.Min >> separator >> vType.X.Max >> separator >> vType.Y.Min >> separator >> vType.Y.Max) {
         if (separator != ';') {
             vIn.setstate(std::ios::failbit);
         }
