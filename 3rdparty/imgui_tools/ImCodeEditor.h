@@ -1,12 +1,12 @@
 #pragma once
 
-#include <ImGuiPack.h>
+#include <imguipack.h>
 
 #ifdef USE_IMGUI_COLOR_TEXT_EDIT
 
 #define FIND_POPUP_TEXT_FIELD_LENGTH 128
 
-class ImCodeEditor {
+class IMGUI_API ImCodeEditor {
 public:
     typedef void (*OnFocusedCallback)(int folderViewId);
     typedef void (*OnShowInFolderViewCallback)(const std::string& filePath, int folderViewId);
