@@ -3970,11 +3970,13 @@ bool ImWidgets::InputText::DisplayInputText(const float& vWidth,
                                             const bool vNeedChange) {
     bool res = false;
     float px = ImGui::GetCursorPosX();
+    float w = vWidth;
     if (!vLabel.empty()) {
         ImGui::Text("%s", vLabel.c_str());
         ImGui::SameLine(vInputOffsetFromStart);
+        w -= ImGui::GetStyle().ItemInnerSpacing.x;
     }
-    const float w = vWidth - ImGui::GetStyle().ItemInnerSpacing.x - (ImGui::GetCursorPosX() - px);
+    w -= (ImGui::GetCursorPosX() - px);
     ImGui::PushID(++ImGui::CustomStyle::pushId);
     ImGui::PushItemWidth(w);
     if (m_Buffer[0] == '\0') {  // default text
