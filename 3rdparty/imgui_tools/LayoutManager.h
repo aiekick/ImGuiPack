@@ -49,7 +49,7 @@ typedef std::string PaneDisposal;
 
 typedef std::string PaneCategoryName;
 
-class AbstractPane : public ILayoutPane {
+class IMGUI_API AbstractPane : public ILayoutPane {
 public:
     bool Init() override = 0;  // return false if the init was failed
     void Unit() override = 0;
