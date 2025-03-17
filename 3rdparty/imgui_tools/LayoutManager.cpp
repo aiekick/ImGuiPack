@@ -38,7 +38,7 @@ public:
         va_list args;
         va_start(args, fmt);
         char TempBuffer[1024 + 1];
-        const int w = vsnprintf(TempBuffer, 3072, fmt, args);
+        const int w = vsnprintf(TempBuffer, 1024 + 1, fmt, args);
         va_end(args);
         if (w) {
             m_msg = std::string(TempBuffer, (size_t)w);
