@@ -77,7 +77,7 @@ endif()
 #####################################################
 
 if (USE_IMGUI_COLOR_TEXT_EDIT)
-	message("ImGuiColorTextEdit is using the library boost_regex")
+	message(STATUS "ImGuiColorTextEdit is using the library boost_regex")
 	set(BOOST_REGEX_LIBRARIES boost_regex)
 	set(BOOST_REGEX_STANDALONE ON CACHE BOOL "" FORCE)
 	set(BOOST_REGEX_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/regex/include)
@@ -122,7 +122,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGU
 #####################################################
 
 if (USE_IMPLOT)
-	message("USE IM PLOT")
+	message(STATUS "USE IM PLOT")
 	file(GLOB IMGUI_IMPLOT_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/*.cpp)
@@ -134,7 +134,7 @@ endif()
 #####################################################
 
 if (USE_IM_TOOLS)
-	message("USE IN TOOLS")
+	message(STATUS "USE IN TOOLS")
 	file(GLOB IMGUI_IMTOOLS_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.cpp)
@@ -146,7 +146,7 @@ endif()
 #####################################################
 
 if (USE_IM_NODES)
-	message("USE IM NODES")
+	message(STATUS "USE IM NODES")
 	file(GLOB IMGUI_IMNODES_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/*.cpp
@@ -159,7 +159,7 @@ endif()
 #####################################################
 
 if (USE_IM_GUIZMO)
-	message("USE IM GUIZMO")
+	message(STATUS "USE IM GUIZMO")
 	file(GLOB IMGUI_IMGUIZMO_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/*.cpp)
@@ -171,7 +171,7 @@ endif()
 #####################################################
 
 if (USE_IM_COOL_BAR)
-	message("USE IM COOLBAR")
+	message(STATUS "USE IM COOLBAR")
 	file(GLOB IMGUI_IMCOOLBAR_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/*.cpp)
@@ -183,7 +183,7 @@ endif()
 #####################################################
 
 if (USE_IMGUI_NODE_FLOW)
-	message("USE IMGUI NODE FLOW")
+	message(STATUS "USE IMGUI NODE FLOW")
 	file(GLOB IMGUI_IMGUINODEFLOW_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/include/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/src/*.h
@@ -198,7 +198,7 @@ endif()
 #####################################################
 
 if (USE_IM_GRADIENT_HDR)
-	message("USE GRADIENT HDR")
+	message(STATUS "USE GRADIENT HDR")
 	file(GLOB IMGUI_IMGRADIENTHDR_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/src/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/src/*.cpp)
@@ -210,7 +210,7 @@ endif()
 #####################################################
 
 if (USE_IMGUI_FILE_DIALOG)
-	message("USE IMGUI FILE DIALOG")
+	message(STATUS "USE IMGUI FILE DIALOG")
 	file(GLOB IMGUI_IMGUIFILEDIALOG_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/*.cpp)
@@ -222,7 +222,7 @@ endif()
 #####################################################
 
 if (USE_IMGUI_NODE_EDITOR)
-	message("USE IMGUI NODE EDITOR")
+	message(STATUS "USE IMGUI NODE EDITOR")
 	file(GLOB IMGUI_IMGUINODEEDITOR_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_node_editor/*.inl
@@ -235,7 +235,7 @@ endif()
 #####################################################
 
 if (USE_IMGUI_MARKDOW)
-	message("USE IMGUI MARKDOWN")
+	message(STATUS "USE IMGUI MARKDOWN")
 	file(GLOB IMGUI_IMGUIMARKDONW_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/*.h)
 	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUIMARKDONW_SOURCES})
@@ -246,7 +246,7 @@ endif()
 #####################################################
 
 if (USE_IMGUI_COLOR_TEXT_EDIT)
-	message("USE IMGUI COLOR TEXT EDIT")
+	message(STATUS "USE IMGUI COLOR TEXT EDIT")
 	file(GLOB IMGUI_IMGUICOLORTEXTEDIT_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolortextedit/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolortextedit/*.cpp)
@@ -368,7 +368,7 @@ endif()
 if(USE_DEBUG_SANITIZER)
 	target_compile_options(${PROJECT} PRIVATE $<$<CONFIG:Debug>:-fsanitize=address -static-libasan -static-libasan>)
 	target_link_options(${PROJECT} PRIVATE $<$<CONFIG:Debug>:-fsanitize=address -static-libasan>)
-	message("Address Sanitizer enabled for projet ${PROJECT}")
+	message(STATUS "Address Sanitizer enabled for projet ${PROJECT}")
 endif()
 
 target_link_libraries(${PROJECT}
