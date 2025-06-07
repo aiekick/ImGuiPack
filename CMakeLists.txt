@@ -137,6 +137,7 @@ if (USE_IM_TOOLS)
 	message(STATUS "USE IN TOOLS")
 	file(GLOB IMGUI_IMTOOLS_SOURCES
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.hpp
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/*.cpp)
 	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMTOOLS_SOURCES})
 endif()
