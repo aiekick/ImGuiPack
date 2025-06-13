@@ -198,16 +198,16 @@ ez::xml::Nodes ImGuiThemeHelper::getXmlNodes(const std::string& vUserDatas) {
 #endif
     }
 
+#if defined(USE_IMGUI_FILE_DIALOG) && defined(EZ_TOOLS_VEC4)
     {
         auto& fileTypesNode = node.addChild("FileTypes");
         for (auto& it : m_CurrentTheme.fileTypeInfos) {
-#ifdef EZ_TOOLS_VEC4
             fileTypesNode.addChild("filetype")
                 .addAttribute("value", it.first)
                 .addAttribute("color", ez::fvec4(it.second.color.x, it.second.color.y, it.second.color.z, it.second.color.w).string());
-#endif  // EZ_TOOLS_VEC4
         }
     }
+#endif // USE_IMGUI_FILE_DIALOG && EZ_TOOLS_VEC4
 
     return {node};
 }
@@ -219,15 +219,15 @@ bool ImGuiThemeHelper::setFromXmlNodes(const ez::xml::Node& vNode, const ez::xml
     const auto& strParentName = vParent.getName();
     const auto& strParentParentName = vParent.getName();
 
+#if defined(USE_IMGUI_FILE_DIALOG) && defined(EZ_TOOLS_VARIANT)
     if (strParentName == "FileTypes") {
-#ifdef EZ_TOOLS_VARIANT
         std::string fileType = vNode.getAttribute("value");
         std::string color = vNode.getAttribute("color");
         auto v4 = ez::fvariant(color).GetV4();
         m_CurrentTheme.fileTypeInfos[fileType] = IGFD::FileStyle(ImVec4(v4.x, v4.y, v4.z, v4.w));
         ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, fileType.c_str(), m_CurrentTheme.fileTypeInfos[fileType]);
-#endif  // EZ_TOOLS_VARIANT
     }
+#endif // USE_IMGUI_FILE_DIALOG && EZ_TOOLS_VARIANT
 
 #ifdef USE_NODEGRAPH
     if (strParentName == "Graph_Styles") {
