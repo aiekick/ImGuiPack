@@ -38,8 +38,7 @@ void ImCodeEditor::OnImGui() {
             if (this->hasAssociatedFile && this->onShowInFolderViewCallback != nullptr && this->createdFromFolderView > -1 && 
                 ImGui::MenuItem("Show in folder view")){
                 this->onShowInFolderViewCallback(this->m_RelatedFile, this->createdFromFolderView);
-            }
-            */
+            }*/
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Edit")) {
