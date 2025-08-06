@@ -9,6 +9,8 @@ project(
 	LANGUAGES CXX
 )
 
+option(USE_NEW_SINGLETON "Use new sigleton" ON)
+
 option(USE_IMPLOT "Use ImPlot" OFF)
 option(USE_IM_TOOLS "Use ImTools" OFF)
 option(USE_IM_NODES "Use ImNodes" OFF)
@@ -327,6 +329,10 @@ target_include_directories(${PROJECT} PUBLIC
 	${BOOST_REGEX_INCLUDE_DIR}
 	${IMGUIPACK_INCLUDE_DIRS}
 )
+
+if (USE_NEW_SINGLETON)
+	target_compile_definitions(${PROJECT} PRIVATE -DNEW_SINGLETON)
+endif()
 
 if(UNIX)
     target_compile_options(${PROJECT} PUBLIC "-Wno-unknown-pragmas -Wno-unused-variable -Wno-unused-parameter")

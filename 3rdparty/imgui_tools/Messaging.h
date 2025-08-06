@@ -151,6 +151,7 @@ private:
         va_list args);
 
 public:  // singleton
+#ifdef LEGACY_SINGLETON
     static Messaging* Instance(Messaging* vCopy = nullptr, bool vForce = false) {
         static Messaging _instance;
         static Messaging* _instance_copy = nullptr;
@@ -162,6 +163,14 @@ public:  // singleton
         }
         return &_instance;
     }
+#else  // LEGACY_SINGLETON
+    static std::unique_ptr<Messaging>& initSingleton() {
+        static auto mp_instance = std::unique_ptr<Messaging>(new Messaging());
+        return mp_instance;
+    }
+    static Messaging& ref() { return *initSingleton().get(); }
+    static void unitSingleton() { initSingleton().reset(); }
+#endif  // LEGACY_SINGLETON
 
 public:
     Messaging();                                               // Prevent construction

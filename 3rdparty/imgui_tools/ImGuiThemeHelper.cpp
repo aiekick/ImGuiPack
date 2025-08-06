@@ -123,7 +123,11 @@ void ImGuiThemeHelper::DrawMenu()
 #ifdef USE_IMGUI_FILE_DIALOG
 void ImGuiThemeHelper::ApplyFileTypeColors() {
     for (auto& it : m_CurrentTheme.fileTypeInfos) {
+#ifdef NEW_SINGLETON
+        ImGuiFileDialog::ref().SetFileStyle(IGFD_FileStyleByExtention, it.first.c_str(), it.second.color, it.second.icon);
+#else // NEW_SINGLETON
         ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, it.first.c_str(), it.second.color, it.second.icon);
+#endif // NEW_SINGLETON
     }
 }
 #endif  // USE_IMGUI_FILE_DIALOG
@@ -225,7 +229,11 @@ bool ImGuiThemeHelper::setFromXmlNodes(const ez::xml::Node& vNode, const ez::xml
         std::string color = vNode.getAttribute("color");
         auto v4 = ez::fvariant(color).GetV4();
         m_CurrentTheme.fileTypeInfos[fileType] = IGFD::FileStyle(ImVec4(v4.x, v4.y, v4.z, v4.w));
+#ifdef NEW_SINGLETON
+        ImGuiFileDialog::ref().SetFileStyle(IGFD_FileStyleByExtention, fileType.c_str(), m_CurrentTheme.fileTypeInfos[fileType]);
+#else // NEW_SINGLETON
         ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByExtention, fileType.c_str(), m_CurrentTheme.fileTypeInfos[fileType]);
+#endif // NEW_SINGLETON
     }
 #endif // USE_IMGUI_FILE_DIALOG && EZ_TOOLS_VARIANT
 

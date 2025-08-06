@@ -124,13 +124,14 @@ public:
     ImVec2 m_LastSize;
 
 public:
-    bool AddPane(ILayoutPaneWeak vPane,
-                 const LayoutPaneName& vName,
-                 const PaneCategoryName& vCategory,
-                 const PaneDisposal& vPaneDisposal,
-                 const float& vPaneDisposalRatio,
-                 const bool vIsOpenedDefault,
-                 const bool vIsFocusedDefault);
+    bool AddPane(
+        ILayoutPaneWeak vPane,
+        const LayoutPaneName& vName,
+        const PaneCategoryName& vCategory,
+        const PaneDisposal& vPaneDisposal,
+        const float& vPaneDisposalRatio,
+        const bool vIsOpenedDefault,
+        const bool vIsFocusedDefault);
     void RemovePane(const LayoutPaneName& vName);
     void SetPaneDisposalRatio(const PaneDisposal& vPaneDisposal, const float& vRatio);
 
@@ -176,6 +177,8 @@ public:  // configuration
 #endif  // EZ_TOOLS_XML_CONFIG
 
 public:  // singleton
+// old behavior
+#ifdef LEGACY_SINGLETON
     static LayoutManager* Instance(LayoutManager* vCopy = nullptr, bool vForce = false) {
         static LayoutManager _instance;
         static LayoutManager* _instance_copy = nullptr;
@@ -187,8 +190,16 @@ public:  // singleton
         }
         return &_instance;
     }
+#else   // LEGACY_SINGLETON
+    static std::unique_ptr<LayoutManager>& initSingleton() {
+        static auto mp_instance = std::unique_ptr<LayoutManager>(new LayoutManager());
+        return mp_instance;
+    }
+    static LayoutManager& ref() { return *initSingleton().get(); }
+    static void unitSingleton() { initSingleton().reset(); }
+#endif  // LEGACY_SINGLETON
 
-protected:
+public:
     LayoutManager();  // Prevent construction
     LayoutManager(const LayoutManager&) = delete;
     LayoutManager& operator=(const LayoutManager&) = delete;

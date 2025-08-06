@@ -891,19 +891,19 @@ IMGUI_API bool ContrastedEditCombo(  //
 ///// MENU
 ////////////////////////////////////////////////////////////
 
-bool ContrastedMenuItem(  //
+IMGUI_API bool ContrastedMenuItem(  //
     const char* label,
     const char* help = nullptr,
     bool selected = false,
     bool enabled = true);
 
-bool ContrastedMenuItem(  //
+IMGUI_API bool ContrastedMenuItem(  //
     const char* label,
     const char* help,
     bool* p_selected,
     bool enabled = true);
 
-bool ContrastedBeginMenu(  //
+IMGUI_API bool ContrastedBeginMenu(  //
     const char* label,
     const char* help = nullptr,
     bool enabled = true);

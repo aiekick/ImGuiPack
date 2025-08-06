@@ -29,11 +29,9 @@ private:
     std::string m_msg;
 
 public:
-    LayoutManagerException() : std::exception() {
-    }
+    LayoutManagerException() : std::exception() {}
     // std::exception(msg) is not availaiable on linux it seems... but on windows yes
-    explicit LayoutManagerException(const std::string& vMsg) : std::exception(), m_msg(vMsg) {
-    }
+    explicit LayoutManagerException(const std::string& vMsg) : std::exception(), m_msg(vMsg) {}
     explicit LayoutManagerException(char const* const fmt, ...) : std::exception() {
         va_list args;
         va_start(args, fmt);
@@ -45,21 +43,20 @@ public:
         }
     }
     ~LayoutManagerException() override = default;
-    char const* what() const noexcept override {
-        return m_msg.c_str();
-    }
+    char const* what() const noexcept override { return m_msg.c_str(); }
 };
 
 LayoutManager::LayoutManager() = default;
 LayoutManager::~LayoutManager() = default;
 
-bool LayoutManager::AddPane(ILayoutPaneWeak vPane,
-                            const std::string& vName,
-                            const PaneCategoryName& vCategory,
-                            const PaneDisposal& vPaneDisposal,
-                            const float& vPaneDisposalRatio,
-                            const bool vIsOpenedDefault,
-                            const bool vIsFocusedDefault) {
+bool LayoutManager::AddPane(
+    ILayoutPaneWeak vPane,
+    const LayoutPaneName& vName,
+    const PaneCategoryName& vCategory,
+    const PaneDisposal& vPaneDisposal,
+    const float& vPaneDisposalRatio,
+    const bool vIsOpenedDefault,
+    const bool vIsFocusedDefault) {
     static int32_t sMaxPanes = static_cast<int32_t>(sizeof(LayoutPaneFlag) * 8U);
     if (m_FlagCount < sMaxPanes) {
         LayoutPaneFlag flag = (static_cast<LayoutPaneFlag>(1) << (++m_FlagCount));
@@ -104,7 +101,7 @@ bool LayoutManager::AddPane(ILayoutPaneWeak vPane,
     return false;
 }
 
-void LayoutManager::RemovePane(const std::string& vName) {
+void LayoutManager::RemovePane(const LayoutPaneName& vName) {
     if (m_PanesByName.find(vName) != m_PanesByName.end()) {
         auto pane_ptr = m_PanesByName.at(vName);
         if (pane_ptr != nullptr) {
@@ -184,6 +181,7 @@ void LayoutManager::Unit() {
     m_PanesByName.clear();
     m_PanesInDisplayOrder.clear();
     m_PanesByFlag.clear();
+    m_PanesDisposalRatios.clear();
 }
 
 bool LayoutManager::InitPanes() {

@@ -11,18 +11,6 @@
 #include <unordered_map>
 #include <map>
 
-#if defined(__WIN32__) || defined(WIN32) || defined(_WIN32) || defined(__WIN64__) || defined(WIN64) || defined(_WIN64) || defined(_MSC_VER)
-#if defined(ImGuiPack_EXPORTS)
-#define IMGUI_API __declspec(dllexport)
-#elif defined(BUILD_IMGUI_PACK_SHARED_LIBS)
-#define IMGUI_API __declspec(dllimport)
-#else
-#define IMGUI_API
-#endif
-#else
-#define IMGUI_API
-#endif
-
 #ifdef IMGUI_EDITOR_NO_BOOST
 #include <regex>
 namespace boost = std;

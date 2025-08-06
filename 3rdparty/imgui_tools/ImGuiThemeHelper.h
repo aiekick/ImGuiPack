@@ -96,6 +96,7 @@ private:
     int GetImGuiColFromName(const std::string& vName);
 
 public:  // singleton
+#ifdef LEGACY_SINGLETON
     static ImGuiThemeHelper* Instance(ImGuiThemeHelper* vCopy = nullptr, bool vForce = false) {
         static ImGuiThemeHelper _instance;
         static ImGuiThemeHelper* _instance_copy = nullptr;
@@ -107,6 +108,14 @@ public:  // singleton
         }
         return &_instance;
     }
+#else  // LEGACY_SINGLETON
+    static std::unique_ptr<ImGuiThemeHelper>& initSingleton() {
+        static auto mp_instance = std::unique_ptr<ImGuiThemeHelper>(new ImGuiThemeHelper());
+        return mp_instance;
+    }
+    static ImGuiThemeHelper& ref() { return *initSingleton().get(); }
+    static void unitSingleton() { initSingleton().reset(); }
+#endif  // LEGACY_SINGLETON
 
 public:
 	ImGuiThemeHelper(); // Prevent construction
