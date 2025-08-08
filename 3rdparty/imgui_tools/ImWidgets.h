@@ -76,15 +76,16 @@ IMGUI_API void AddInvertedRectFilled(ImDrawList* vDrawList, const ImVec2& p_min,
 IMGUI_API void RenderInnerShadowFrame(ImVec2 p_min, ImVec2 p_max, ImU32 fill_col, ImU32 fill_col_darker, ImU32 bg_Color, bool border, float rounding);
 IMGUI_API void DrawShadowImage(ImTextureID vShadowImage, const ImVec2& vSize, ImU32 col);
 
-IMGUI_API bool ImageCheckButton(ImTextureID user_texture_id,
-                                bool* v,
-                                const ImVec2& size,
-                                const ImVec2& uv0 = ImVec2(0.0f, 0.0f),
-                                const ImVec2& uv1 = ImVec2(1.0f, 1.0f),
-                                const ImVec2& vHostTextureSize = ImVec2(0.0f, 0.0f),
-                                int frame_padding = -1,
-                                float vRectThickNess = 0.0f,
-                                ImVec4 vRectColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+IMGUI_API bool ImageCheckButton(
+    ImTextureID user_texture_id,
+    bool* v,
+    const ImVec2& size,
+    const ImVec2& uv0 = ImVec2(0.0f, 0.0f),
+    const ImVec2& uv1 = ImVec2(1.0f, 1.0f),
+    const ImVec2& vHostTextureSize = ImVec2(0.0f, 0.0f),
+    int frame_padding = -1,
+    float vRectThickNess = 0.0f,
+    ImVec4 vRectColor = ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 
 IMGUI_API bool BeginFramedGroup(  //
     const char* vLabel,
@@ -100,13 +101,14 @@ IMGUI_API void FramedGroupText(ImVec4 vTextColor, const char* vFmt, ...);
 
 IMGUI_API bool CollapsingHeader_SmallHeight(const char* vName, float vHeightRatio, float vWidth, bool vDefaulExpanded, bool* vIsOpen = nullptr);
 IMGUI_API bool CollapsingHeader_CheckBox(const char* vName, float vWidth = -1, bool vDefaulExpanded = false, bool vShowCheckBox = false, bool* vCheckCatched = 0);
-IMGUI_API bool CollapsingHeader_Button(const char* vName,
-                                       float vWidth = -1,
-                                       bool vDefaulExpanded = false,
-                                       const char* vLabelButton = 0,
-                                       bool vShowButton = false,
-                                       bool* vButtonPressed = 0,
-                                       ImFont* vButtonFont = nullptr);
+IMGUI_API bool CollapsingHeader_Button(
+    const char* vName,
+    float vWidth = -1,
+    bool vDefaulExpanded = false,
+    const char* vLabelButton = 0,
+    bool vShowButton = false,
+    bool* vButtonPressed = 0,
+    ImFont* vButtonFont = nullptr);
 
 IMGUI_API bool CheckBoxIcon(const char* vLabel, const char* vIconTrue, bool* v);
 IMGUI_API bool CheckBoxBoolDefault(const char* vName, bool* vVar, bool vDefault, const char* vHelp = 0, ImFont* vLabelFont = nullptr);
@@ -121,16 +123,17 @@ IMGUI_API bool RadioButtonLabeled(float vWidth, const char* label, const char* h
 IMGUI_API bool RadioButtonLabeled(float vWidth, const char* label, const char* help, bool* active, bool disabled = false, ImFont* vLabelFont = nullptr);
 
 template <typename T>
-bool RadioButtonLabeled_BitWize(float vWidth,
-                                const char* vLabel,
-                                const char* vHelp,
-                                T* vContainer,
-                                T vFlag,
-                                bool vOneOrZeroAtTime = false,  // only one selcted at a time
-                                bool vAlwaysOne = true,         // radio behavior, always one selected
-                                T vFlagsToTakeIntoAccount = (T)0,
-                                bool vDisableSelection = false,
-                                ImFont* vLabelFont = nullptr)  // radio witl use only theses flags
+bool RadioButtonLabeled_BitWize(
+    float vWidth,
+    const char* vLabel,
+    const char* vHelp,
+    T* vContainer,
+    T vFlag,
+    bool vOneOrZeroAtTime = false,  // only one selcted at a time
+    bool vAlwaysOne = true,         // radio behavior, always one selected
+    T vFlagsToTakeIntoAccount = (T)0,
+    bool vDisableSelection = false,
+    ImFont* vLabelFont = nullptr)  // radio witl use only theses flags
 {
     bool selected = *vContainer & vFlag;
     const bool res = RadioButtonLabeled(vWidth, vLabel, vHelp, &selected, vDisableSelection, vLabelFont);
@@ -165,17 +168,18 @@ bool RadioButtonLabeled_BitWize(float vWidth,
 }
 
 template <typename T>
-bool RadioButtonLabeled_BitWize(float vWidth,
-                                const char* vLabelOK,
-                                const char* vLabelNOK,
-                                const char* vHelp,
-                                T* vContainer,
-                                T vFlag,
-                                bool vOneOrZeroAtTime = false,  // only one selcted at a time
-                                bool vAlwaysOne = true,         // radio behavior, always one selected
-                                T vFlagsToTakeIntoAccount = (T)0,
-                                bool vDisableSelection = false,
-                                ImFont* vLabelFont = nullptr)  // radio witl use only theses flags
+bool RadioButtonLabeled_BitWize(
+    float vWidth,
+    const char* vLabelOK,
+    const char* vLabelNOK,
+    const char* vHelp,
+    T* vContainer,
+    T vFlag,
+    bool vOneOrZeroAtTime = false,  // only one selcted at a time
+    bool vAlwaysOne = true,         // radio behavior, always one selected
+    T vFlagsToTakeIntoAccount = (T)0,
+    bool vDisableSelection = false,
+    ImFont* vLabelFont = nullptr)  // radio witl use only theses flags
 {
     bool selected = *vContainer & vFlag;
     const char* label = (selected ? vLabelOK : vLabelNOK);
@@ -215,16 +219,17 @@ IMGUI_API bool RadioButtonLabeled(ImVec2 vSize, const char* label, const char* h
 IMGUI_API bool RadioButtonLabeled(ImVec2 vSize, const char* label, const char* help, bool* active, bool disabled = false, ImFont* vLabelFont = nullptr);
 
 template <typename T>
-bool RadioButtonLabeled_BitWize(ImVec2 vSize,
-                                const char* vLabel,
-                                const char* vHelp,
-                                T* vContainer,
-                                T vFlag,
-                                bool vOneOrZeroAtTime = false,  // only one selcted at a time
-                                bool vAlwaysOne = true,         // radio behavior, always one selected
-                                T vFlagsToTakeIntoAccount = (T)0,
-                                bool vDisableSelection = false,
-                                ImFont* vLabelFont = nullptr)  // radio witl use only theses flags
+bool RadioButtonLabeled_BitWize(
+    ImVec2 vSize,
+    const char* vLabel,
+    const char* vHelp,
+    T* vContainer,
+    T vFlag,
+    bool vOneOrZeroAtTime = false,  // only one selcted at a time
+    bool vAlwaysOne = true,         // radio behavior, always one selected
+    T vFlagsToTakeIntoAccount = (T)0,
+    bool vDisableSelection = false,
+    ImFont* vLabelFont = nullptr)  // radio witl use only theses flags
 {
     bool selected = *vContainer & vFlag;
     const bool res = RadioButtonLabeled(vSize, vLabel, vHelp, &selected, vDisableSelection, vLabelFont);
@@ -259,17 +264,18 @@ bool RadioButtonLabeled_BitWize(ImVec2 vSize,
 }
 
 template <typename T>
-bool RadioButtonLabeled_BitWize(ImVec2 vSize,
-                                const char* vLabelOK,
-                                const char* vLabelNOK,
-                                const char* vHelp,
-                                T* vContainer,
-                                T vFlag,
-                                bool vOneOrZeroAtTime = false,  // only one selcted at a time
-                                bool vAlwaysOne = true,         // radio behavior, always one selected
-                                T vFlagsToTakeIntoAccount = (T)0,
-                                bool vDisableSelection = false,
-                                ImFont* vLabelFont = nullptr)  // radio witl use only theses flags
+bool RadioButtonLabeled_BitWize(
+    ImVec2 vSize,
+    const char* vLabelOK,
+    const char* vLabelNOK,
+    const char* vHelp,
+    T* vContainer,
+    T vFlag,
+    bool vOneOrZeroAtTime = false,  // only one selcted at a time
+    bool vAlwaysOne = true,         // radio behavior, always one selected
+    T vFlagsToTakeIntoAccount = (T)0,
+    bool vDisableSelection = false,
+    ImFont* vLabelFont = nullptr)  // radio witl use only theses flags
 {
     bool selected = *vContainer & vFlag;
     const char* label = (selected ? vLabelOK : vLabelNOK);
@@ -370,13 +376,14 @@ IMGUI_API bool CheckBoxBitWize(const char* vLabel, const char* vHelp, T* vContai
     return res;
 }*/
 
-IMGUI_API void ImageRect(ImTextureID user_texture_id,
-                         const ImVec2& pos,
-                         const ImVec2& size,
-                         const ImVec2& uv0 = ImVec2(0, 0),
-                         const ImVec2& uv1 = ImVec2(1, 1),
-                         const ImVec4& tint_col = ImVec4(1, 1, 1, 1),
-                         const ImVec4& border_col = ImVec4(0, 0, 0, 0));
+IMGUI_API void ImageRect(
+    ImTextureID user_texture_id,
+    const ImVec2& pos,
+    const ImVec2& size,
+    const ImVec2& uv0 = ImVec2(0, 0),
+    const ImVec2& uv1 = ImVec2(1, 1),
+    const ImVec4& tint_col = ImVec4(1, 1, 1, 1),
+    const ImVec4& border_col = ImVec4(0, 0, 0, 0));
 
 #ifdef USE_COLOR_EDIT_WIDGETS
 IMGUI_API bool ColorEdit3ForNode(const char* label, float col[3], ImGuiColorEditFlags flags = 0);
@@ -450,7 +457,7 @@ IMGUI_API bool GradButton(  //
     const char* label,
     const ImVec2& size_arg = ImVec2(0, 0),
     ImGuiButtonFlags flags = ImGuiButtonFlags_None);
-#endif // USE_GRADIENT
+#endif  // USE_GRADIENT
 
 IMGUI_API bool TransparentButton(  //
     const char* label,
@@ -474,13 +481,13 @@ IMGUI_API void ImageRatio(  //
 // show overlay text on mousehover // l'epaisseur du cadre vient de BorderColor.w
 IMGUI_API bool TextureOverLay(  //
     float vWidth,
-                              ez::texture* vTex,
-                              ImVec4 vBorderColor,
-                              const char* vOverlayText,
-                              ImVec4 vOverLayTextColor,
-                              ImVec4 vOverLayBgColor,
-                              ImVec2 vUV0 = ImVec2(0, 0),
-                              ImVec2 vUV1 = ImVec2(1, 1));
+    ez::texture* vTex,
+    ImVec4 vBorderColor,
+    const char* vOverlayText,
+    ImVec4 vOverLayTextColor,
+    ImVec4 vOverLayBgColor,
+    ImVec2 vUV0 = ImVec2(0, 0),
+    ImVec2 vUV1 = ImVec2(1, 1));
 #endif
 
 ////////////////////////////////////////////////////////////
@@ -980,20 +987,25 @@ private:
 
 public:
     InputText() = default;
-    InputText(const std::string& vText) {
-        SetText(vText);
-    }
+    InputText(const std::string& vText) { SetText(vText); }
 
     void Clear();
 
     // vInputOffsetFromStart set the offset from start for the alignement of the inputTexts
     bool DisplayInputText(  //
         const float& vWidth,
-                          const std::string& vLabel,
-                          const std::string& vDefaultText,
-                          const bool vMultiline = false,
-                          const float& vInputOffsetFromStart = 0.0f,
-                          const bool vNeedChange = false);
+        const std::string& vLabel,
+        const std::string& vDefaultText,
+        const bool vMultiline = false,
+        const float& vInputOffsetFromStart = 0.0f,
+        const bool vNeedChange = false);
+    bool DisplayInputText(  //
+        const float& vWidth,
+        const std::string& vLabel,
+        const std::string& vDefaultText,
+        const bool vMultiline,
+        const float& vInputOffsetFromStart,
+        std::function<bool(std::string&, std::string&)> vValidityConditionFunctor);
     void AddText(const std::string& vText);
     void SetText(const std::string& vText);
     std::string GetText(const std::string& vNumericType = "") const;
@@ -1061,5 +1073,82 @@ private:
 };
 
 #endif  // USE_IMPLOT
+
+template <typename T>
+class InputValue {
+private:
+    T m_defaultValue{};
+    T m_value{};
+
+public:
+    InputValue() = default;
+    InputValue(const T vValue) { set(vValue); }
+
+    void Clear() { set(m_defaultValue); }
+    void set(const T vValue) { m_value = vValue; }
+    T get() const { return m_value; }
+
+    // vInputOffsetFromStart set the offset from start for the alignement of the inputTexts
+    bool displayInputValue(  //
+        const float& vWidth,
+        const std::string& vLabel,
+        const T vDefaultValue,
+        const T vStep,
+        const T vStepFast,
+        const char* vFormat,
+        const float& vInputOffsetFromStart,
+        std::function<bool(T&, T&)> vValidityConditionFunctor) {
+        bool res = false;
+        float px = ImGui::GetCursorPosX();
+        float w = vWidth;
+        if (!vLabel.empty()) {
+            ImGui::Text("%s", vLabel.c_str());
+            ImGui::SameLine(vInputOffsetFromStart);
+            w -= ImGui::GetStyle().ItemInnerSpacing.x;
+        }
+        w -= (ImGui::GetCursorPosX() - px);
+        ImGui::PushID(++ImGui::CustomStyle::pushId);
+        ImGui::PushItemWidth(w);
+        bool is_bad = false;
+        if ((vValidityConditionFunctor != nullptr) &&  //
+            (!vValidityConditionFunctor(m_defaultValue, m_value))) {
+            is_bad = true;
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::CustomStyle::BadColor);
+        }
+        res |= m_inputValue("##ImWidgets_InputText_DisplayInputText", m_value, vStep, vStepFast, vFormat);
+        if (is_bad) {
+            ImGui::PopStyleColor();
+        }
+        ImGui::PopItemWidth();
+        ImGui::PopID();
+        return res;
+    }
+
+private:
+    bool m_inputValue(const char* vLabel, T& vValue, T vStep, T vStepFast, const char* vFormat) {
+        static_assert(false);
+        return false;
+    }
+};
+
+template <>
+inline bool InputValue<double>::m_inputValue(const char* vLabel, double& vValue, double vStep, double vStepFast, const char* vFormat) {
+    return ImGui::InputScalar(vLabel, ImGuiDataType_Double, (void*)&vValue, (void*)(vStep > 0 ? &vStep : NULL), (void*)(vStepFast > 0 ? &vStepFast : NULL), vFormat);
+}
+
+template <>
+inline bool InputValue<float>::m_inputValue(const char* vLabel, float& vValue, float vStep, float vStepFast, const char* vFormat) {
+    return ImGui::InputScalar(vLabel, ImGuiDataType_Float, (void*)&vValue, (void*)(vStep > 0 ? &vStep : NULL), (void*)(vStepFast > 0 ? &vStepFast : NULL), vFormat);
+}
+
+template <>
+inline bool InputValue<int32_t>::m_inputValue(const char* vLabel, int32_t& vValue, int32_t vStep, int32_t vStepFast, const char* vFormat) {
+    return ImGui::InputScalar(vLabel, ImGuiDataType_S32, (void*)&vValue, (void*)(vStep > 0 ? &vStep : NULL), (void*)(vStepFast > 0 ? &vStepFast : NULL), vFormat);
+}
+
+template <>
+inline bool InputValue<uint32_t>::m_inputValue(const char* vLabel, uint32_t& vValue, uint32_t vStep, uint32_t vStepFast, const char* vFormat) {
+    return ImGui::InputScalar(vLabel, ImGuiDataType_U32, (void*)&vValue, (void*)(vStep > 0 ? &vStep : NULL), (void*)(vStepFast > 0 ? &vStepFast : NULL), vFormat);
+}
 
 }  // namespace ImWidgets

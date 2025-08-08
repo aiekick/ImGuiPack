@@ -144,12 +144,13 @@ static void OpenFile(const std::string& vFile) {
         if (result < (HINSTANCE)32)  // open in explorer //-V112
         {
             const std::string sCmdExplorer = "/select,\"" + vFile + "\"";
-            ShellExecute(nullptr,
-                         "",
-                         "explorer.exe",
-                         sCmdExplorer.c_str(),
-                         nullptr,
-                         SW_NORMAL);  // ce serait peut etre mieu d'utilsier la commande system comme dans SelectFile
+            ShellExecute(
+                nullptr,
+                "",
+                "explorer.exe",
+                sCmdExplorer.c_str(),
+                nullptr,
+                SW_NORMAL);  // ce serait peut etre mieu d'utilsier la commande system comme dans SelectFile
         }
     }
 #elif defined(IM_OS_APPLE)
@@ -311,20 +312,22 @@ inline void PathInvertedRect(ImDrawList* vDrawList, const ImVec2& a, const ImVec
     if (!vDrawList)
         return;
 
-    rounding = ImMin(rounding,
-                     ImFabs(b.x - a.x) *
-                             (((rounding_corners & ImDrawFlags_RoundCornersTop) == ImDrawFlags_RoundCornersTop) ||
-                                      ((rounding_corners & ImDrawFlags_RoundCornersBottom) == ImDrawFlags_RoundCornersBottom)
-                                  ? 0.5f
-                                  : 1.0f) -
-                         1.0f);
-    rounding = ImMin(rounding,
-                     ImFabs(b.y - a.y) *
-                             (((rounding_corners & ImDrawFlags_RoundCornersLeft) == ImDrawFlags_RoundCornersLeft) ||
-                                      ((rounding_corners & ImDrawFlags_RoundCornersRight) == ImDrawFlags_RoundCornersRight)
-                                  ? 0.5f
-                                  : 1.0f) -
-                         1.0f);
+    rounding = ImMin(
+        rounding,
+        ImFabs(b.x - a.x) *
+                (((rounding_corners & ImDrawFlags_RoundCornersTop) == ImDrawFlags_RoundCornersTop) ||
+                         ((rounding_corners & ImDrawFlags_RoundCornersBottom) == ImDrawFlags_RoundCornersBottom)
+                     ? 0.5f
+                     : 1.0f) -
+            1.0f);
+    rounding = ImMin(
+        rounding,
+        ImFabs(b.y - a.y) *
+                (((rounding_corners & ImDrawFlags_RoundCornersLeft) == ImDrawFlags_RoundCornersLeft) ||
+                         ((rounding_corners & ImDrawFlags_RoundCornersRight) == ImDrawFlags_RoundCornersRight)
+                     ? 0.5f
+                     : 1.0f) -
+            1.0f);
 
     if (rounding <= 0.0f || rounding_corners == 0) {
         return;
@@ -395,15 +398,16 @@ void DrawShadowImage(ImTextureID vShadowImage, const ImVec2& vSize, ImU32 col) {
 #define ImRatioY(a) a.y / a.x
 
 // based on ImageButton
-bool ImageCheckButton(ImTextureID user_texture_id,
-                      bool* v,
-                      const ImVec2& size,
-                      const ImVec2& uv0,
-                      const ImVec2& uv1,
-                      const ImVec2& vHostTextureSize,
-                      int frame_padding,
-                      float vRectThickNess,
-                      ImVec4 vRectColor) {
+bool ImageCheckButton(
+    ImTextureID user_texture_id,
+    bool* v,
+    const ImVec2& size,
+    const ImVec2& uv0,
+    const ImVec2& uv1,
+    const ImVec2& vHostTextureSize,
+    int frame_padding,
+    float vRectThickNess,
+    ImVec4 vRectColor) {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;
@@ -650,18 +654,18 @@ bool CheckBoxIcon(const char* vLabel, const char* vIconTrue, bool* v) {
             style.FrameRounding);
         ImU32 check_col = GetColorU32(ImGuiCol_CheckMark);
         if (mixed_value) {
-        // Undocumented tristate/mixed/indeterminate checkbox (#2644)
-        // This may seem awkwardly designed because the aim is to make ImGuiItemFlags_MixedValue supported by all
-        // widgets (not just checkbox)
-        ImVec2 pad(ImMax(1.0f, IM_FLOOR(square_sz / 3.6f)), ImMax(1.0f, IM_FLOOR(square_sz / 3.6f)));
-        window->DrawList->AddRectFilled(check_bb.Min + pad, check_bb.Max - pad, check_col, style.FrameRounding);
-    } else if (*v) {
-        const float pad = ImMax(1.0f, IM_FLOOR(square_sz / 6.0f));
-        // RenderCheckMark(window->DrawList, check_bb.Min + ImVec2(pad, pad), check_col, square_sz - pad * 2.0f);
-        // PushStyleColor(ImGuiCol_Text, check_col);
-        RenderText(check_bb.Min + ImVec2(pad, pad), vIconTrue);
-        // PopStyleColor();
-    }
+            // Undocumented tristate/mixed/indeterminate checkbox (#2644)
+            // This may seem awkwardly designed because the aim is to make ImGuiItemFlags_MixedValue supported by all
+            // widgets (not just checkbox)
+            ImVec2 pad(ImMax(1.0f, IM_FLOOR(square_sz / 3.6f)), ImMax(1.0f, IM_FLOOR(square_sz / 3.6f)));
+            window->DrawList->AddRectFilled(check_bb.Min + pad, check_bb.Max - pad, check_col, style.FrameRounding);
+        } else if (*v) {
+            const float pad = ImMax(1.0f, IM_FLOOR(square_sz / 6.0f));
+            // RenderCheckMark(window->DrawList, check_bb.Min + ImVec2(pad, pad), check_col, square_sz - pad * 2.0f);
+            // PushStyleColor(ImGuiCol_Text, check_col);
+            RenderText(check_bb.Min + ImVec2(pad, pad), vIconTrue);
+            // PopStyleColor();
+        }
     }
     const ImVec2 label_pos = ImVec2(check_bb.Max.x + style.ItemInnerSpacing.x, check_bb.Min.y + style.FramePadding.y);
     if (g.LogEnabled)
@@ -840,20 +844,24 @@ bool RadioButtonLabeled(float vWidth, const char* label, bool active, bool disab
         pressed = ButtonBehavior(total_bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
 
         colUnderText = ImGuiCol_FrameBg;
-        window->DrawList->AddRectFilled(total_bb.Min,
-                                        total_bb.Max,
-                                        GetColorU32((held && hovered) ? ImGuiCol_FrameBgActive
-                                                        : hovered     ? ImGuiCol_FrameBgHovered
-                                                                      : colUnderText),
-                                        style.FrameRounding);
+        window->DrawList->AddRectFilled(
+            total_bb.Min,
+            total_bb.Max,
+            GetColorU32(
+                (held && hovered) ? ImGuiCol_FrameBgActive
+                    : hovered     ? ImGuiCol_FrameBgHovered
+                                  : colUnderText),
+            style.FrameRounding);
         if (active) {
             colUnderText = ImGuiCol_Button;
-            window->DrawList->AddRectFilled(total_bb.Min,
-                                            total_bb.Max,
-                                            GetColorU32((hovered && held) ? ImGuiCol_ButtonActive
-                                                            : hovered     ? ImGuiCol_ButtonHovered
-                                                                          : colUnderText),
-                                            style.FrameRounding);
+            window->DrawList->AddRectFilled(
+                total_bb.Min,
+                total_bb.Max,
+                GetColorU32(
+                    (hovered && held) ? ImGuiCol_ButtonActive
+                        : hovered     ? ImGuiCol_ButtonHovered
+                                      : colUnderText),
+                style.FrameRounding);
         }
     }
 
@@ -932,20 +940,24 @@ bool RadioButtonLabeled(ImVec2 vSize, const char* label, bool active, bool disab
         pressed = ButtonBehavior(total_bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
 
         colUnderText = ImGuiCol_FrameBg;
-        window->DrawList->AddRectFilled(total_bb.Min,
-                                        total_bb.Max,
-                                        GetColorU32((held && hovered) ? ImGuiCol_FrameBgActive
-                                                        : hovered     ? ImGuiCol_FrameBgHovered
-                                                                      : colUnderText),
-                                        style.FrameRounding);
+        window->DrawList->AddRectFilled(
+            total_bb.Min,
+            total_bb.Max,
+            GetColorU32(
+                (held && hovered) ? ImGuiCol_FrameBgActive
+                    : hovered     ? ImGuiCol_FrameBgHovered
+                                  : colUnderText),
+            style.FrameRounding);
         if (active) {
             colUnderText = ImGuiCol_Button;
-            window->DrawList->AddRectFilled(total_bb.Min,
-                                            total_bb.Max,
-                                            GetColorU32((hovered && held) ? ImGuiCol_ButtonActive
-                                                            : hovered     ? ImGuiCol_ButtonHovered
-                                                                          : colUnderText),
-                                            style.FrameRounding);
+            window->DrawList->AddRectFilled(
+                total_bb.Min,
+                total_bb.Max,
+                GetColorU32(
+                    (hovered && held) ? ImGuiCol_ButtonActive
+                        : hovered     ? ImGuiCol_ButtonHovered
+                                      : colUnderText),
+                style.FrameRounding);
         }
     }
 
@@ -1081,11 +1093,12 @@ bool CollapsingHeader_CheckBox(const char* vName, float vWidth, bool vDefaulExpa
     const ImU32 colArrow = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
     RenderFrame(bb.Min, bb.Max, colArrow, true, style.FrameRounding);
     RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, vName, nullptr, &label_size, style.ButtonTextAlign, &bb);
-    RenderArrow(window->DrawList,
-                bb.Min + padding + ImVec2(0.0f, text_base_offset_y),
-                GetColorU32(ImGuiCol_Text),
-                (is_open ? ImGuiDir::ImGuiDir_Down : ImGuiDir::ImGuiDir_Right),
-                1.0f);
+    RenderArrow(
+        window->DrawList,
+        bb.Min + padding + ImVec2(0.0f, text_base_offset_y),
+        GetColorU32(ImGuiCol_Text),
+        (is_open ? ImGuiDir::ImGuiDir_Down : ImGuiDir::ImGuiDir_Right),
+        1.0f);
 
     // menu
     if (vShowCheckBox && vCheckCatched) {
@@ -1118,13 +1131,14 @@ bool CollapsingHeader_CheckBox(const char* vName, float vWidth, bool vDefaulExpa
     return is_open;
 }
 
-bool CollapsingHeader_Button(const char* vName,
-                             float vWidth,
-                             bool vDefaulExpanded,
-                             const char* /*vLabelButton*/,
-                             bool vShowButton,
-                             bool* vButtonPressed,
-                             ImFont* /*vButtonFont*/) {
+bool CollapsingHeader_Button(
+    const char* vName,
+    float vWidth,
+    bool vDefaulExpanded,
+    const char* /*vLabelButton*/,
+    bool vShowButton,
+    bool* vButtonPressed,
+    ImFont* /*vButtonFont*/) {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;
@@ -1162,11 +1176,12 @@ bool CollapsingHeader_Button(const char* vName,
     const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_HeaderActive : hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
     RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
     RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, vName, nullptr, &label_size, style.ButtonTextAlign, &bb);
-    RenderArrow(window->DrawList,
-                bb.Min + padding + ImVec2(0.0f, text_base_offset_y),
-                GetColorU32(ImGuiCol_Text),
-                (is_open ? ImGuiDir::ImGuiDir_Down : ImGuiDir::ImGuiDir_Right),
-                1.0f);
+    RenderArrow(
+        window->DrawList,
+        bb.Min + padding + ImVec2(0.0f, text_base_offset_y),
+        GetColorU32(ImGuiCol_Text),
+        (is_open ? ImGuiDir::ImGuiDir_Down : ImGuiDir::ImGuiDir_Right),
+        1.0f);
 
     // menu
     if (vButtonPressed && vShowButton) {
@@ -1440,13 +1455,14 @@ void Header(const char* vName, float width) {
     RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, vName, NULL, &label_size, style.ButtonTextAlign, &bb);
 }
 
-void ImageRect(ImTextureID user_texture_id,
-               const ImVec2& pos,
-               const ImVec2& size,
-               const ImVec2& uv0,
-               const ImVec2& uv1,
-               const ImVec4& tint_col,
-               const ImVec4& border_col) {
+void ImageRect(
+    ImTextureID user_texture_id,
+    const ImVec2& pos,
+    const ImVec2& size,
+    const ImVec2& uv0,
+    const ImVec2& uv1,
+    const ImVec4& tint_col,
+    const ImVec4& border_col) {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return;
@@ -1594,12 +1610,13 @@ bool ColorEdit4ForNode(const char* label, float col[4], ImGuiColorEditFlags flag
                 p++;
             i[0] = i[1] = i[2] = i[3] = 0;
             if (alpha)
-                sscanf(p,
-                       "%02X%02X%02X%02X",
-                       (unsigned int*)&i[0],
-                       (unsigned int*)&i[1],
-                       (unsigned int*)&i[2],
-                       (unsigned int*)&i[3]);  // Treat at unsigned (%X is unsigned)
+                sscanf(
+                    p,
+                    "%02X%02X%02X%02X",
+                    (unsigned int*)&i[0],
+                    (unsigned int*)&i[1],
+                    (unsigned int*)&i[2],
+                    (unsigned int*)&i[3]);  // Treat at unsigned (%X is unsigned)
             else
                 sscanf(p, "%02X%02X%02X", (unsigned int*)&i[0], (unsigned int*)&i[1], (unsigned int*)&i[2]);
         }
@@ -1877,12 +1894,13 @@ bool Selectable_FramedText(const char* fmt, ...) {
     const bool pressed = ButtonBehavior(total_bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
 
     // frame display
-    const ImU32 col = GetColorU32((hovered && held) ? ImGuiCol_ButtonActive
-                                      : hovered     ? ImGuiCol_ButtonHovered
-                                                    : ImGuiCol_Button,
-                                  (hovered && held) ? 1.0f
-                                      : hovered     ? 1.0f
-                                                    : 0.0f);
+    const ImU32 col = GetColorU32(
+        (hovered && held) ? ImGuiCol_ButtonActive
+            : hovered     ? ImGuiCol_ButtonHovered
+                          : ImGuiCol_Button,
+        (hovered && held) ? 1.0f
+            : hovered     ? 1.0f
+                          : 0.0f);
     window->DrawList->AddRectFilled(total_bb.Min, total_bb.Max, col, style.FrameRounding);
 
     if (label_size.x > 0.0f) {
@@ -1957,14 +1975,15 @@ void ImageZoomLine(ImTextureID vUserTextureId, const float vWidth, const ImVec2&
 }
 */
 
-bool InputText_Validation(const char* label,
-                          char* buf,
-                          size_t buf_size,
-                          const bool* vValidation,
-                          const char* vValidationHelp,
-                          ImGuiInputTextFlags flags,
-                          ImGuiInputTextCallback callback,
-                          void* user_data) {
+bool InputText_Validation(
+    const char* label,
+    char* buf,
+    size_t buf_size,
+    const bool* vValidation,
+    const char* vValidationHelp,
+    ImGuiInputTextFlags flags,
+    ImGuiInputTextCallback callback,
+    void* user_data) {
     if (vValidation) {
         if (*vValidation)
             PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.2f, 0.8f, 0.2f, 1.0f));
@@ -2156,14 +2175,15 @@ void ImageRatio(ImTextureID vTexId, float vRatioX, float vWidth, ImVec4 vColor, 
 }
 
 #ifdef USE_OPENGL
-bool TextureOverLay(float vWidth,
-                    ez::texture* vTex,
-                    ImVec4 vBorderColor,
-                    const char* vOverlayText,
-                    ImVec4 vOverLayTextColor,
-                    ImVec4 vOverLayBgColor,
-                    ImVec2 vUV0,
-                    ImVec2 vUV1) {
+bool TextureOverLay(
+    float vWidth,
+    ez::texture* vTex,
+    ImVec4 vBorderColor,
+    const char* vOverlayText,
+    ImVec4 vOverLayTextColor,
+    ImVec4 vOverLayBgColor,
+    ImVec2 vUV0,
+    ImVec2 vUV1) {
     if (vTex == nullptr)
         return false;
 
@@ -2420,16 +2440,17 @@ extern template IMGUI_API ImU64 RoundScalarWithFormatT<ImU64>(const char*, ImGui
 
 // FIXME: Move more of the code into SliderBehavior()
 template <typename TYPE, typename SIGNEDTYPE, typename FLOATTYPE>
-inline bool inSliderBehaviorStepperT(const ImRect& bb,
-                                     ImGuiID id,
-                                     ImGuiDataType data_type,
-                                     TYPE* v,
-                                     const TYPE v_min,
-                                     const TYPE v_max,
-                                     const TYPE v_step,
-                                     const char* format,
-                                     ImGuiSliderFlags flags,
-                                     ImRect* out_grab_bb) {
+inline bool inSliderBehaviorStepperT(
+    const ImRect& bb,
+    ImGuiID id,
+    ImGuiDataType data_type,
+    TYPE* v,
+    const TYPE v_min,
+    const TYPE v_max,
+    const TYPE v_step,
+    const char* format,
+    ImGuiSliderFlags flags,
+    ImRect* out_grab_bb) {
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
 
@@ -2594,16 +2615,17 @@ inline bool inSliderBehaviorStepperT(const ImRect& bb,
 // So e.g. an integer Slider between INT_MAX-10 and INT_MAX will fail, but an integer Slider between INT_MAX/2-10 and
 // INT_MAX/2 will be ok. It would be possible to lift that limitation with some work but it doesn't seem to be worth it
 // for sliders.
-inline bool inSliderBehaviorStepper(const ImRect& bb,
-                                    ImGuiID id,
-                                    ImGuiDataType data_type,
-                                    void* p_v,
-                                    const void* p_min,
-                                    const void* p_max,
-                                    const void* p_step,
-                                    const char* format,
-                                    ImGuiSliderFlags flags,
-                                    ImRect* out_grab_bb) {
+inline bool inSliderBehaviorStepper(
+    const ImRect& bb,
+    ImGuiID id,
+    ImGuiDataType data_type,
+    void* p_v,
+    const void* p_min,
+    const void* p_max,
+    const void* p_step,
+    const char* format,
+    ImGuiSliderFlags flags,
+    ImRect* out_grab_bb) {
     // Those MIN/MAX values are not define because we need to point to them
     // static const signed char IM_S8_MIN     = -128;
     // static const signed char IM_S8_MAX     = 127;
@@ -2632,9 +2654,10 @@ inline bool inSliderBehaviorStepper(const ImRect& bb,
 #endif
 
     // Read imgui.cpp "API BREAKING CHANGES" section for 1.78 if you hit this assert.
-    IM_ASSERT((flags == 1 || (flags & ImGuiSliderFlags_InvalidMask_) == 0) &&
-              "Invalid ImGuiSliderFlags flag!  Has the 'float power' argument been mistakenly cast to flags? Call "
-              "function with ImGuiSliderFlags_Logarithmic flags instead.");
+    IM_ASSERT(
+        (flags == 1 || (flags & ImGuiSliderFlags_InvalidMask_) == 0) &&
+        "Invalid ImGuiSliderFlags flag!  Has the 'float power' argument been mistakenly cast to flags? Call "
+        "function with ImGuiSliderFlags_Logarithmic flags instead.");
 
     ImGuiContext& g = *GImGui;
     if ((g.LastItemData.ItemFlags & ImGuiItemFlags_ReadOnly) || (flags & ImGuiSliderFlags_ReadOnly))
@@ -2729,14 +2752,15 @@ Invalid format string!"); // Old versions used a default parameter of "%.0f", pl
 // Note: p_data, p_min and p_max are _pointers_ to a memory address holding the data. For a slider, they are all
 // required. Read code of e.g. SliderFloat(), SliderInt() etc. or examples in 'Demo->Widgets->Data Types' to understand
 // how to use this function directly. text on the left in the box for keep space value on the right in the box
-bool SliderScalarCompact(float width,
-                         const char* label,
-                         ImGuiDataType data_type,
-                         void* p_data,
-                         const void* p_min,
-                         const void* p_max,
-                         const void* p_step,
-                         const char* format) {
+bool SliderScalarCompact(
+    float width,
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    const void* p_min,
+    const void* p_max,
+    const void* p_step,
+    const char* format) {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;
@@ -2788,11 +2812,11 @@ bool SliderScalarCompact(float width,
 
     if (temp_input_is_active) {
         // Only clamp CTRL+Click input when ImGuiSliderFlags_AlwaysClamp is set
-        
+
         // ////////////////////// CUSTOM CODE ////////////
         const bool is_clamp_input = false;
         // ///////////////////////////////////////////////
-        
+
         return TempInputScalar(frame_bb, id, label, data_type, p_data, format, is_clamp_input ? p_min : NULL, is_clamp_input ? p_max : NULL);
     }
 
@@ -2866,15 +2890,16 @@ bool SliderDoubleCompact(float width, const char* label, double* v, double v_min
     return SliderScalarCompact(width, label, ImGuiDataType_Double, v, &v_min, &v_max, &v_step, format);
 }
 
-bool SliderScalarDefaultCompact(float width,
-                                const char* label,
-                                ImGuiDataType data_type,
-                                void* p_data,
-                                const void* p_min,
-                                const void* p_max,
-                                const void* p_default,
-                                const void* p_step,
-                                const char* format) {
+bool SliderScalarDefaultCompact(
+    float width,
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    const void* p_min,
+    const void* p_max,
+    const void* p_default,
+    const void* p_step,
+    const char* format) {
     bool change = false;
 
     PushID(label);
@@ -2939,15 +2964,16 @@ bool SliderDoubleDefaultCompact(float width, const char* label, double* v, doubl
     return SliderScalarDefaultCompact(width, label, ImGuiDataType_Double, v, &v_min, &v_max, &v_default, &v_step, format);
 }
 
-bool SliderScalar(float width,
-                  const char* label,
-                  ImGuiDataType data_type,
-                  void* p_data,
-                  const void* p_min,
-                  const void* p_max,
-                  const void* p_step,
-                  const char* format,
-                  ImGuiSliderFlags flags) {
+bool SliderScalar(
+    float width,
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    const void* p_min,
+    const void* p_max,
+    const void* p_step,
+    const char* format,
+    ImGuiSliderFlags flags) {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;
@@ -3054,16 +3080,17 @@ bool SliderDouble(float width, const char* label, double* v, double v_min, doubl
     return SliderScalar(width, label, ImGuiDataType_Double, v, &v_min, &v_max, &v_step, format, flags);
 }
 
-bool SliderScalarDefault(float width,
-                         const char* label,
-                         ImGuiDataType data_type,
-                         void* p_data,
-                         const void* p_min,
-                         const void* p_max,
-                         const void* p_default,
-                         const void* p_step,
-                         const char* format,
-                         ImGuiSliderFlags flags) {
+bool SliderScalarDefault(
+    float width,
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    const void* p_min,
+    const void* p_max,
+    const void* p_default,
+    const void* p_step,
+    const char* format,
+    ImGuiSliderFlags flags) {
     bool change = false;
 
     PushID(label);
@@ -3100,27 +3127,29 @@ bool SliderIntDefault(float width, const char* label, int* v, int v_min, int v_m
     return SliderScalarDefault(width, label, ImGuiDataType_S32, v, &v_min, &v_max, &v_default, &v_step, format, flags);
 }
 
-bool SliderUIntDefault(float width,
-                       const char* label,
-                       uint32_t* v,
-                       uint32_t v_min,
-                       uint32_t v_max,
-                       uint32_t v_default,
-                       uint32_t v_step,
-                       const char* format,
-                       ImGuiSliderFlags flags) {
+bool SliderUIntDefault(
+    float width,
+    const char* label,
+    uint32_t* v,
+    uint32_t v_min,
+    uint32_t v_max,
+    uint32_t v_default,
+    uint32_t v_step,
+    const char* format,
+    ImGuiSliderFlags flags) {
     return SliderScalarDefault(width, label, ImGuiDataType_U32, v, &v_min, &v_max, &v_default, &v_step, format, flags);
 }
 
-bool SliderSizeTDefault(float width,
-                        const char* label,
-                        size_t* v,
-                        size_t v_min,
-                        size_t v_max,
-                        size_t v_default,
-                        size_t v_step,
-                        const char* format,
-                        ImGuiSliderFlags flags) {
+bool SliderSizeTDefault(
+    float width,
+    const char* label,
+    size_t* v,
+    size_t v_min,
+    size_t v_max,
+    size_t v_default,
+    size_t v_step,
+    const char* format,
+    ImGuiSliderFlags flags) {
     return SliderScalarDefault(width, label, ImGuiDataType_U32, v, &v_min, &v_max, &v_default, &v_step, format, flags);
 }
 
@@ -3128,15 +3157,16 @@ bool SliderFloatDefault(float width, const char* label, float* v, float v_min, f
     return SliderScalarDefault(width, label, ImGuiDataType_Float, v, &v_min, &v_max, &v_default, &v_step, format, flags);
 }
 
-bool SliderDoubleDefault(float width,
-                         const char* label,
-                         double* v,
-                         double v_min,
-                         double v_max,
-                         double v_default,
-                         double v_step,
-                         const char* format,
-                         ImGuiSliderFlags flags) {
+bool SliderDoubleDefault(
+    float width,
+    const char* label,
+    double* v,
+    double v_min,
+    double v_max,
+    double v_default,
+    double v_step,
+    const char* format,
+    ImGuiSliderFlags flags) {
     return SliderScalarDefault(width, label, ImGuiDataType_Double, v, &v_min, &v_max, &v_default, &v_step, format, flags);
 }
 
@@ -3222,8 +3252,9 @@ bool BeginContrastedCombo(const char* label, const char* preview_value, ImGuiCom
 
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
-    IM_ASSERT((flags & (ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_NoPreview)) !=
-              (ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_NoPreview));  // Can't use both flags together
+    IM_ASSERT(
+        (flags & (ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_NoPreview)) !=
+        (ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_NoPreview));  // Can't use both flags together
     if (flags & ImGuiComboFlags_WidthFitPreview) {
         IM_ASSERT((flags & (ImGuiComboFlags_NoPreview | (ImGuiComboFlags)ImGuiComboFlags_CustomPreview)) == 0);
     }
@@ -3255,11 +3286,12 @@ bool BeginContrastedCombo(const char* label, const char* preview_value, ImGuiCom
     const float value_x2 = ImMax(bb.Min.x, bb.Max.x - arrow_size);
     RenderNavHighlight(bb, id);
     if (!(flags & ImGuiComboFlags_NoPreview)) {
-        window->DrawList->AddRectFilled(bb.Min,
-                                        ImVec2(value_x2, bb.Max.y),
-                                        frame_col,
-                                        style.FrameRounding,
-                                        (flags & ImGuiComboFlags_NoArrowButton) ? ImDrawFlags_RoundCornersAll : ImDrawFlags_RoundCornersLeft);
+        window->DrawList->AddRectFilled(
+            bb.Min,
+            ImVec2(value_x2, bb.Max.y),
+            frame_col,
+            style.FrameRounding,
+            (flags & ImGuiComboFlags_NoArrowButton) ? ImDrawFlags_RoundCornersAll : ImDrawFlags_RoundCornersLeft);
     }
     if (!(flags & ImGuiComboFlags_NoArrowButton)) {
         const bool pushed = PushStyleColorWithContrast1(ImGuiCol_Button, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
@@ -3324,8 +3356,9 @@ bool BeginContrastedEditCombo(const char* label, char* preview_value, size_t pre
 
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
-    IM_ASSERT((flags & (ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_NoPreview)) !=
-              (ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_NoPreview));  // Can't use both flags together
+    IM_ASSERT(
+        (flags & (ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_NoPreview)) !=
+        (ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_NoPreview));  // Can't use both flags together
     if (flags & ImGuiComboFlags_WidthFitPreview) {
         IM_ASSERT((flags & (ImGuiComboFlags_NoPreview | (ImGuiComboFlags)ImGuiComboFlags_CustomPreview)) == 0);
     }
@@ -3357,11 +3390,12 @@ bool BeginContrastedEditCombo(const char* label, char* preview_value, size_t pre
     const float value_x2 = ImMax(bb.Min.x, bb.Max.x - arrow_size);
     RenderNavHighlight(bb, id);
     if (!(flags & ImGuiComboFlags_NoPreview)) {
-        window->DrawList->AddRectFilled(bb.Min,
-                                        ImVec2(value_x2, bb.Max.y),
-                                        frame_col,
-                                        style.FrameRounding,
-                                        (flags & ImGuiComboFlags_NoArrowButton) ? ImDrawFlags_RoundCornersAll : ImDrawFlags_RoundCornersLeft);
+        window->DrawList->AddRectFilled(
+            bb.Min,
+            ImVec2(value_x2, bb.Max.y),
+            frame_col,
+            style.FrameRounding,
+            (flags & ImGuiComboFlags_NoArrowButton) ? ImDrawFlags_RoundCornersAll : ImDrawFlags_RoundCornersLeft);
     }
     if (!(flags & ImGuiComboFlags_NoArrowButton)) {
         const bool pushed = PushStyleColorWithContrast1(ImGuiCol_Button, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
@@ -3406,13 +3440,14 @@ bool BeginContrastedEditCombo(const char* label, char* preview_value, size_t pre
     return BeginComboPopup(popup_id, bb, flags);
 }
 
-bool ContrastedCombo(float vWidth,
-                     const char* label,
-                     int* current_item,
-                     bool (*items_getter)(void*, int, const char**),
-                     void* data,
-                     int items_count,
-                     int popup_max_height_in_items) {
+bool ContrastedCombo(
+    float vWidth,
+    const char* label,
+    int* current_item,
+    bool (*items_getter)(void*, int, const char**),
+    void* data,
+    int items_count,
+    int popup_max_height_in_items) {
     ImGuiContext& g = *GImGui;
 
     if (vWidth > -1)
@@ -3549,15 +3584,16 @@ bool ContrastedComboVectorDefault(float vWidth, const char* label, int* current_
     return change;
 }
 
-bool ContrastedEditCombo(float vWidth,
-                         const char* label,
-                         char* buffer,
-                         size_t buffer_size,
-                         int* current_item,
-                         bool (*items_getter)(void* data, int idx, const char** out_text),
-                         void* data,
-                         int items_count,
-                         int popup_max_height_in_items) {
+bool ContrastedEditCombo(
+    float vWidth,
+    const char* label,
+    char* buffer,
+    size_t buffer_size,
+    int* current_item,
+    bool (*items_getter)(void* data, int idx, const char** out_text),
+    void* data,
+    int items_count,
+    int popup_max_height_in_items) {
     ImGuiContext& g = *GImGui;
 
     if (vWidth > -1) {
@@ -3635,7 +3671,7 @@ static bool ContrastedIsRootOfOpenMenuSet() {
     return upper_popup->Window && (upper_popup->Window->Flags & ImGuiWindowFlags_ChildMenu) && ImGui::IsWindowChildOf(upper_popup->Window, window, true, false);
 }
 
- bool ContrastedMenuItemEx(const char* label, const char* icon, const char* help, bool selected, bool enabled) {
+bool ContrastedMenuItemEx(const char* label, const char* icon, const char* help, bool selected, bool enabled) {
     bool ret = false;
     auto* storage_ptr = GetStateStorage();
     ImGuiCol col = ImGuiCol_MenuBarBg;
@@ -3664,11 +3700,11 @@ static bool ContrastedIsRootOfOpenMenuSet() {
     return ret;
 }
 
- bool ContrastedMenuItem(const char* label, const char* help , bool selected , bool enabled ) {
+bool ContrastedMenuItem(const char* label, const char* help, bool selected, bool enabled) {
     return ContrastedMenuItemEx(label, nullptr, help, selected, enabled);
 }
 
- bool ContrastedMenuItem(const char* label, const char* help, bool* p_selected, bool enabled ) {
+bool ContrastedMenuItem(const char* label, const char* help, bool* p_selected, bool enabled) {
     if (ContrastedMenuItemEx(label, NULL, help, p_selected ? *p_selected : false, enabled)) {
         if (p_selected)
             *p_selected = !*p_selected;
@@ -3677,7 +3713,7 @@ static bool ContrastedIsRootOfOpenMenuSet() {
     return false;
 }
 
- bool ContrastedBeginMenuEx(const char* label, const char* icon, bool enabled) {
+bool ContrastedBeginMenuEx(const char* label, const char* icon, bool enabled) {
     bool ret = false;
     auto* storage_ptr = ImGui::GetStateStorage();
     const auto imgui_id = ImGui::GetID(label);
@@ -3698,25 +3734,26 @@ static bool ContrastedIsRootOfOpenMenuSet() {
     return ret;
 }
 
- bool ContrastedBeginMenu(const char* label, const char* help, bool enabled) {
-     auto ret = ContrastedBeginMenuEx(label, NULL, enabled);
-     if (help) {
-         if (IsItemHovered()) {
-             SetTooltip("%s", help);
-         }
-     }
-     return ret;
- }
+bool ContrastedBeginMenu(const char* label, const char* help, bool enabled) {
+    auto ret = ContrastedBeginMenuEx(label, NULL, enabled);
+    if (help) {
+        if (IsItemHovered()) {
+            SetTooltip("%s", help);
+        }
+    }
+    return ret;
+}
 
- bool InputFloatDefault(float vWidth,
-                       const char* vName,
-                       float* vVar,
-                       float vDefault,
-                       const char* vInputPrec,
-                       const char* vPopupPrec,
-                       bool vShowResetButton,
-                       float vStep,
-                       float vStepFast) {
+bool InputFloatDefault(
+    float vWidth,
+    const char* vName,
+    float* vVar,
+    float vDefault,
+    const char* vInputPrec,
+    const char* vPopupPrec,
+    bool vShowResetButton,
+    float vStep,
+    float vStepFast) {
     bool change = false;
 
     const float padding = GetStyle().FramePadding.x;
@@ -3749,15 +3786,16 @@ static bool ContrastedIsRootOfOpenMenuSet() {
     return change;
 }
 
-bool InputDoubleDefault(float vWidth,
-                        const char* vName,
-                        double* vVar,
-                        double vDefault,
-                        const char* vInputPrec,
-                        const char* vPopupPrec,
-                        bool vShowResetButton,
-                        double vStep,
-                        double vStepFast) {
+bool InputDoubleDefault(
+    float vWidth,
+    const char* vName,
+    double* vVar,
+    double vDefault,
+    const char* vInputPrec,
+    const char* vPopupPrec,
+    bool vShowResetButton,
+    double vStep,
+    double vStepFast) {
     bool change = false;
 
     const float padding = GetStyle().FramePadding.x;
@@ -3790,15 +3828,16 @@ bool InputDoubleDefault(float vWidth,
     return change;
 }
 
-bool InputFloatDefaultStepper(float vWidth,
-                              const char* vName,
-                              float* vVar,
-                              float vDefault,
-                              float vStep,
-                              float vStepFast,
-                              const char* vInputPrec,
-                              const char* vPopupPrec,
-                              bool vShowResetButton) {
+bool InputFloatDefaultStepper(
+    float vWidth,
+    const char* vName,
+    float* vVar,
+    float vDefault,
+    float vStep,
+    float vStepFast,
+    const char* vInputPrec,
+    const char* vPopupPrec,
+    bool vShowResetButton) {
     bool change = false;
 
     const float padding = GetStyle().FramePadding.x;
@@ -3845,16 +3884,17 @@ bool InputFloatDefaultStepper(float vWidth,
     return change;
 }
 
-bool InputDoubleDefaultStepper(float vWidth,
-                               const float& vInputOffsetFromStart,
-                               const char* vName,
-                               double* vVar,
-                               double vDefault,
-                               double vStep,
-                               double vStepFast,
-                               const char* vInputPrec,
-                               const char* vPopupPrec,
-                               bool vShowResetButton) {
+bool InputDoubleDefaultStepper(
+    float vWidth,
+    const float& vInputOffsetFromStart,
+    const char* vName,
+    double* vVar,
+    double vDefault,
+    double vStep,
+    double vStepFast,
+    const char* vInputPrec,
+    const char* vPopupPrec,
+    bool vShowResetButton) {
     bool change = false;
 
     float w = vWidth - GetStyle().FramePadding.x * 2.0f;  // -24;
@@ -3964,12 +4004,31 @@ void ImWidgets::InputText::Clear() {
     SetText(m_DefaultString);
 }
 
-bool ImWidgets::InputText::DisplayInputText(const float& vWidth,
-                                            const std::string& vLabel,
-                                            const std::string& vDefaultText,
-                                            const bool vMultiline,
-                                            const float& vInputOffsetFromStart,
-                                            const bool vNeedChange) {
+bool ImWidgets::InputText::DisplayInputText(
+    const float& vWidth,
+    const std::string& vLabel,
+    const std::string& vDefaultText,
+    const bool vMultiline,
+    const float& vInputOffsetFromStart,
+    const bool vNeedChange) {
+    return DisplayInputText(
+        vWidth,
+        vLabel,
+        vDefaultText,
+        vMultiline,
+        vInputOffsetFromStart,                                                                                                                 //
+        vNeedChange                                                                                                                            //
+            ? ([vNeedChange](std::string& vDefaultText, std::string& vTextContent) { return vNeedChange && (vDefaultText != vTextContent); })  //
+            : std::function<bool(std::string&, std::string)>());
+}
+
+bool ImWidgets::InputText::DisplayInputText(  //
+    const float& vWidth,
+    const std::string& vLabel,
+    const std::string& vDefaultText,
+    const bool vMultiline,
+    const float& vInputOffsetFromStart,
+    std::function<bool(std::string&, std::string&)> vValidityConditionFunctor) {
     bool res = false;
     float px = ImGui::GetCursorPosX();
     float w = vWidth;
@@ -3986,7 +4045,8 @@ bool ImWidgets::InputText::DisplayInputText(const float& vWidth,
         SetText(m_DefaultString);
     }
     bool is_bad = false;
-    if (vNeedChange && m_DefaultString == m_Text) {
+    if ((vValidityConditionFunctor != nullptr) &&  //
+        (!vValidityConditionFunctor(m_DefaultString, m_Text))) {
         is_bad = true;
         ImGui::PushStyleColor(ImGuiCol_FrameBg, ImGui::CustomStyle::BadColor);
     }
