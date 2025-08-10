@@ -818,7 +818,7 @@ IMGUI_API bool Splitter(  //
     float* size2,
     float min_size1,
     float min_size2,
-    float splitter_long_axis_size);
+    float splitter_long_axis_size = -1.0f);
 
 ////////////////////////////////////////////////////////////
 ///// ALIGNEMENTS
