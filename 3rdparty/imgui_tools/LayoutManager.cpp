@@ -94,6 +94,7 @@ bool LayoutManager::AddPane(
             m_PanesByName[vName] = internal_pane_ptr;
             m_PanesByFlag[internal_pane_ptr->paneFlag] = internal_pane_ptr;
             m_PanesInDisplayOrder[vCategory].push_back(internal_pane_ptr);
+            m_OrderesPanes.push_back(internal_pane_ptr);
         }
         return true;
     }
@@ -147,6 +148,12 @@ void LayoutManager::RemovePane(const LayoutPaneName& vName) {
             }
             // we do that at end, because this will destroy the shared pointer
             m_PanesByName.erase(pane_ptr->paneName);
+            for (auto pane = m_OrderesPanes.begin(); pane != m_OrderesPanes.end(); ++pane) {
+                if (pane->expired()) {
+                    m_OrderesPanes.erase(pane);
+                    break;
+                }
+            }
         }
     }
 }
@@ -182,6 +189,7 @@ void LayoutManager::Unit() {
     m_PanesInDisplayOrder.clear();
     m_PanesByFlag.clear();
     m_PanesDisposalRatios.clear();
+    m_OrderesPanes.clear();
 }
 
 bool LayoutManager::InitPanes() {
@@ -293,8 +301,8 @@ void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize) {
     guiids["RIGHT"] = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Right, rightColumnRatio, nullptr, &dockMainID);
     guiids["TOP"] = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Up, topColumnRatio, nullptr, &dockMainID);
     guiids["BOTTOM"] = ImGui::DockBuilderSplitNode(dockMainID, ImGuiDir_Down, bottomColumnRatio, nullptr, &dockMainID);
-    for (const auto& pane : m_PanesByName) {
-        auto pane_ptr = pane.second;
+    for (const auto& pane : m_OrderesPanes) {
+        auto pane_ptr = pane.lock();
         if (pane_ptr != nullptr) {
             auto arr = m_ParsePaneDisposal(pane_ptr->paneDisposal);
             if (!arr.empty()) {
@@ -303,11 +311,11 @@ void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize) {
                 std::string path = arr[0];
                 for (const auto& a : arr) {
                     if (a == "CENTRAL") {
-                        ImGui::DockBuilderDockWindow(pane.first.c_str(), dockMainID);
+                        ImGui::DockBuilderDockWindow(pane_ptr->paneName.c_str(), dockMainID);
                         break;
                     } else {
                         if (a != "LEFT" && a != "RIGHT" && a != "TOP" && a != "BOTTOM") {
-                            std::string msg = "bad split name \"" + a + "\" for pane \"" + pane.first + "\". must be CENTRAL, LEFT, RIGHT, TOP or BOTTOM";
+                            std::string msg = "bad split name \"" + a + "\" for pane \"" + pane_ptr->paneName + "\". must be CENTRAL, LEFT, RIGHT, TOP or BOTTOM";
                             throw LayoutManagerException(msg);
                         }
                         if (idx++ > 0) {
@@ -324,7 +332,7 @@ void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize) {
                             path += "/" + a;
                             guiids[path] = ImGui::DockBuilderSplitNode(guiid_to_split, dir, pane_ptr->paneDisposalRatio, nullptr, &guiid_to_split);
                         }
-                        ImGui::DockBuilderDockWindow(pane.first.c_str(), guiids[path]);
+                        ImGui::DockBuilderDockWindow(pane_ptr->paneName.c_str(), guiids[path]);
                     }
                 }
             }

@@ -571,6 +571,9 @@ std::string TextEditor::GetText() const
 {
 	auto lastLine = (int)mLines.size() - 1;
 	auto lastLineLength = GetLineMaxColumn(lastLine);
+    if (lastLine == lastLineLength) {
+        return {};
+	}
 	return GetText(Coordinates(), Coordinates(lastLine, lastLineLength));
 }
 

@@ -108,6 +108,7 @@ private:
 
 protected:
     int32_t m_FlagCount = 0U;
+    std::vector<InternalPaneWeak> m_OrderesPanes;
     std::map<LayoutPaneName, InternalPanePtr> m_PanesByName;  // InternalPanePtr are saved here
     std::map<LayoutPaneFlag, InternalPaneWeak> m_PanesByFlag;
     std::map<PaneDisposal, std::vector<InternalPaneWeak>> m_PanesByDisposal;
