@@ -431,7 +431,6 @@ void TextEditor::renderCursors() {
 			}
         }
 
-#ifdef USE_SDL2
         // notify OS of text input position for advanced Input Method Editor (IME)
         // this is required for the SDL3 backend as it will not report text input events unless we do this
         // see https://github.com/ocornut/imgui/issues/8584 for details
@@ -443,7 +442,6 @@ void TextEditor::renderCursors() {
             context->PlatformImeData.InputLineHeight = context->FontSize;
             context->PlatformImeData.ViewportId = ImGui::GetCurrentWindow()->Viewport->ID;
         }
-#endif
 	}
 }
 

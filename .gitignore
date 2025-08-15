@@ -31,3 +31,4 @@
 *.exe
 *.out
 *.app
+/3rdparty/imgui_docking/misc/fonts/out

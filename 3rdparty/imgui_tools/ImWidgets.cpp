@@ -3244,7 +3244,7 @@ bool BeginContrastedCombo(const char* label, const char* preview_value, ImGuiCom
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
 
-    ImGuiNextWindowDataFlags backup_next_window_data_flags = g.NextWindowData.Flags;
+    ImGuiNextWindowDataFlags backup_next_window_data_flags = g.NextWindowData.HasFlags;
     g.NextWindowData.ClearFlags();  // We behave like Begin() and need to consume those values
     if (window->SkipItems) {
         return false;
@@ -3330,7 +3330,7 @@ bool BeginContrastedCombo(const char* label, const char* preview_value, ImGuiCom
         return false;
     }
 
-    g.NextWindowData.Flags = backup_next_window_data_flags;
+    g.NextWindowData.HasFlags = backup_next_window_data_flags;
     return BeginComboPopup(popup_id, bb, flags);
 }
 
@@ -3348,7 +3348,7 @@ bool BeginContrastedEditCombo(const char* label, char* preview_value, size_t pre
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
 
-    ImGuiNextWindowDataFlags backup_next_window_data_flags = g.NextWindowData.Flags;
+    ImGuiNextWindowDataFlags backup_next_window_data_flags = g.NextWindowData.HasFlags;
     g.NextWindowData.ClearFlags();  // We behave like Begin() and need to consume those values
     if (window->SkipItems) {
         return false;
@@ -3434,7 +3434,7 @@ bool BeginContrastedEditCombo(const char* label, char* preview_value, size_t pre
         return false;
     }
 
-    g.NextWindowData.Flags = backup_next_window_data_flags;
+    g.NextWindowData.HasFlags = backup_next_window_data_flags;
 
     bb.Min.x -= end_input_cursor - start_input_cursor;
     return BeginComboPopup(popup_id, bb, flags);
@@ -3460,7 +3460,7 @@ bool ContrastedCombo(
 
     // The old Combo() API exposed "popup_max_height_in_items". The new more general BeginCombo() API doesn't have/need
     // it, but we emulate it here.
-    if (popup_max_height_in_items != -1 && !(g.NextWindowData.Flags & ImGuiNextWindowDataFlags_HasSizeConstraint))
+    if (popup_max_height_in_items != -1 && !(g.NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasSizeConstraint))
         SetNextWindowSizeConstraints(ImVec2(0, 0), ImVec2(FLT_MAX, inCalcMaxPopupHeightFromItemCount(popup_max_height_in_items)));
 
     if (!BeginContrastedCombo(label, preview_value, ImGuiComboFlags_None))
@@ -3607,7 +3607,7 @@ bool ContrastedEditCombo(
 
     // The old Combo() API exposed "popup_max_height_in_items". The new more general BeginCombo() API doesn't have/need
     // it, but we emulate it here.
-    if (popup_max_height_in_items != -1 && !(g.NextWindowData.Flags & ImGuiNextWindowDataFlags_HasSizeConstraint)) {
+    if (popup_max_height_in_items != -1 && !(g.NextWindowData.HasFlags & ImGuiNextWindowDataFlags_HasSizeConstraint)) {
         SetNextWindowSizeConstraints(ImVec2(0, 0), ImVec2(FLT_MAX, inCalcMaxPopupHeightFromItemCount(popup_max_height_in_items)));
     }
 

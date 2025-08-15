@@ -146,14 +146,14 @@ namespace nd = ax::NodeEditor;
 #include <3rdparty/imgui_imguifiledialog/ImGuiFileDialog.h>
 #endif
 
-// others missing math function from imgui
+/*// others missing math function from imgui
 static inline ImVec4 operator*(const float& lhs, const ImVec4 rhs) {
     return ImVec4(lhs * rhs.x, lhs * rhs.y, lhs * rhs.y, lhs * rhs.w);
 }
 
 static inline ImVec4 operator*(const ImVec4& lhs, const float rhs) {
     return ImVec4(lhs.x * rhs, lhs.y * rhs, lhs.y * rhs, lhs.w * rhs);
-}
+}*/
 
 #ifdef EZ_TOOLS_XML_CONFIG
 
