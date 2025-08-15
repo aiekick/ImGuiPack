@@ -23,6 +23,11 @@ jobs:
       MSBUILD_PATH: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\
     steps:
       - uses: actions/checkout@v4
+      - name: Append imgui_stacklayout.cpp to imgui.cpp (Windows)
+        shell: cmd
+        run: |
+          type imgui_stacklayout.cpp >> imgui.cpp
+          del imgui_stacklayout.cpp
 
       - name: Install Dependencies
         shell: powershell
@@ -218,9 +223,11 @@ jobs:
         run: '"%MSBUILD_PATH%\MSBuild.exe" examples/example_win32_directx12/example_win32_directx12.vcxproj /p:Platform=x64 /p:Configuration=Release'
 
   Linux:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Append imgui_stacklayout.cpp to imgui.cpp
+      run: cat imgui_stacklayout.cpp >> imgui.cpp && rm imgui_stacklayout.cpp
 
     - name: Install Dependencies
       run: |
@@ -438,6 +445,8 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Append imgui_stacklayout.cpp to imgui.cpp
+      run: cat imgui_stacklayout.cpp >> imgui.cpp && rm imgui_stacklayout.cpp
 
     - name: Install Dependencies
       run: |
@@ -509,6 +518,8 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Append imgui_stacklayout.cpp to imgui.cpp
+      run: cat imgui_stacklayout.cpp >> imgui.cpp && rm imgui_stacklayout.cpp
 
     - name: Build example_apple_metal
       run: |
@@ -516,9 +527,11 @@ jobs:
         xcodebuild -project examples/example_apple_metal/example_apple_metal.xcodeproj -target example_apple_metal_ios CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
 
   Emscripten:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Append imgui_stacklayout.cpp to imgui.cpp
+      run: cat imgui_stacklayout.cpp >> imgui.cpp && rm imgui_stacklayout.cpp
 
     - name: Install Dependencies
       run: |
@@ -557,9 +570,11 @@ jobs:
         cmake --build build
 
   Android:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Append imgui_stacklayout.cpp to imgui.cpp
+      run: cat imgui_stacklayout.cpp >> imgui.cpp && rm imgui_stacklayout.cpp
 
     - name: Build example_android_opengl3
       run: |

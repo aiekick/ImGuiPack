@@ -130,8 +130,6 @@ struct ImGuiLayout
     ImVec2                      StartPos;           // Initial cursor position when BeginLayout is called.
     ImVec2                      StartCursorMaxPos;  // Maximum cursor position when BeginLayout is called.
 
-    ImDrawListSplitter          Splitter;
-
     ImGuiLayout(ImGuiID id, ImGuiLayoutType type)
     {
         Id = id;
@@ -226,10 +224,6 @@ static ImVec2           BalanceLayoutItemAlignment(ImGuiLayout& layout, ImGuiLay
 static void             BalanceLayoutItemsAlignment(ImGuiLayout& layout);
 static bool             HasAnyNonZeroSpring(ImGuiLayout& layout);
 static void             BalanceChildLayouts(ImGuiLayout& layout);
-static void             BeginLayoutClipRect(ImGuiLayout& layout);
-static void             EndLayoutClipRect(ImGuiLayout& layout);
-static void             ApplyLayoutClipRect(ImGuiLayout& layout);
-static void             MergeLayoutSplitters(ImGuiLayout& layout);
 static ImGuiLayoutItem* GenerateLayoutItem(ImGuiLayout& layout, ImGuiLayoutItemType type);
 static float            CalculateLayoutItemAlignmentOffset(ImGuiLayout& layout, ImGuiLayoutItem& item);
 static void             TranslateLayoutItem(ImGuiLayoutItem& item, const ImVec2& offset);
@@ -300,6 +294,7 @@ static ImGuiLayoutState* CreateLayoutState(ImGuiID context_id, ImGuiContext* con
 
 static void StackLayout_NewFramePreCallback(ImGuiContext* ctx, ImGuiContextHook* hook)
 {
+    (void)ctx;
     ImGuiLayoutState* layout_state = (ImGuiLayoutState*)hook->UserData;
 
     for (int i = 0; i < layout_state->LayoutWindowStates.Data.Size; ++i)
@@ -312,6 +307,7 @@ static void StackLayout_NewFramePreCallback(ImGuiContext* ctx, ImGuiContextHook*
 
 static void StackLayout_EndFramePreCallback(ImGuiContext* ctx, ImGuiContextHook* hook)
 {
+    (void)ctx;
     ImGuiLayoutState* layout_state = (ImGuiLayoutState*)hook->UserData;
 
     for (int i = 0; i < layout_state->LayoutWindowStates.Data.Size; ++i)
@@ -324,6 +320,7 @@ static void StackLayout_EndFramePreCallback(ImGuiContext* ctx, ImGuiContextHook*
 
 static void StackLayout_ShutdownCallback(ImGuiContext* ctx, ImGuiContextHook* hook)
 {
+    (void)ctx;
     ImGuiLayoutState* layout_state = (ImGuiLayoutState*)hook->UserData;
 
     for (int i = 0; i < layout_state->LayoutWindowStates.Data.Size; ++i)
@@ -387,6 +384,7 @@ static void WindowLayoutState_OnNewFrame(ImGuiLayoutWindowState* state)
 
 static void WindowLayoutState_OnEndFrame(ImGuiLayoutWindowState* state)
 {
+    (void)state;
     // Check stacks (like ImGuiStackSizes::CompareWithCurrentState() does)
     IM_ASSERT(0 == state->LayoutStack.Size && (!state->LayoutStack.Size || state->LayoutStack.back()->Type == ImGuiLayoutType_Horizontal) && "BeginHorizontal/EndHorizontal Mismatch!");
     IM_ASSERT(0 == state->LayoutStack.Size && (!state->LayoutStack.Size || state->LayoutStack.back()->Type == ImGuiLayoutType_Vertical)   && "BeginVertical/EndVertical Mismatch!");
@@ -473,8 +471,6 @@ static void ImGui::BeginLayout(ImGuiID id, ImGuiLayoutType type, ImVec2 size, fl
     layout->StartPos = window->DC.CursorPos;
     layout->StartCursorMaxPos = window->DC.CursorMaxPos;
 
-    BeginLayoutClipRect(*layout);
-
     if (type == ImGuiLayoutType_Vertical)
     {
         // Push empty item to recalculate cursor position.
@@ -552,7 +548,6 @@ static void ImGui::EndLayout(ImGuiLayoutType type)
     }
 
     layout->CurrentSize = new_size;
-    layout->MeasuredSize = measured_size;
 
     PopID();
 
@@ -570,8 +565,6 @@ static void ImGui::EndLayout(ImGuiLayoutType type)
 
     if (layout->Parent == NULL)
         BalanceChildLayouts(*layout);
-
-    EndLayoutClipRect(*layout);
 
     //window->DrawList->AddRect(layout->StartPos, layout->StartPos + measured_size, IM_COL32(0,255,0,255));           // [DEBUG]
     //window->DrawList->AddRect(window->DC.LastItemRect.Min, window->DC.LastItemRect.Max, IM_COL32(255,255,0,255));   // [DEBUG]
@@ -835,76 +828,8 @@ static void ImGui::BalanceChildLayouts(ImGuiLayout& layout)
     BalanceLayoutItemsAlignment(layout);
 }
 
-static void ImGui::BeginLayoutClipRect(ImGuiLayout& layout)
-{
-    ImGuiWindow* window = GetCurrentWindow();
-
-    // Use splitter to collect draw commands in separate channel,
-    // so we can clip them to the layout bounds.
-    layout.Splitter.Split(window->DrawList, 2);
-    layout.Splitter.SetCurrentChannel(window->DrawList, 1);
-
-    // Clip to layout bounds, unrestricted and not measured bounds span
-    // all the way to the edge of the window.
-    ImVec2 clip_rect_min = layout.StartPos;
-    ImVec2 clip_rect_max;
-    clip_rect_max.x = layout.Size.x > 0.0f ? layout.StartPos.x + layout.Size.x : FLT_MAX;
-    clip_rect_max.y = layout.Size.y > 0.0f ? layout.StartPos.y + layout.Size.y : FLT_MAX;
-
-    PushClipRect(clip_rect_min, clip_rect_max, true);
-}
-
-static void ImGui::EndLayoutClipRect(ImGuiLayout& layout)
-{
-    PopClipRect();
-
-    if (layout.Parent != NULL)
-        return;
-
-    ApplyLayoutClipRect(layout);
-
-    MergeLayoutSplitters(layout);
-}
-
-static void ImGui::ApplyLayoutClipRect(ImGuiLayout& layout)
-{
-    for (ImGuiLayout* child = layout.FirstChild; child != NULL; child = child->NextSibling)
-        ApplyLayoutClipRect(*child);
-
-    ImGuiWindow* window = GetCurrentWindow();
-
-    ImVec4 current_clip_rect;
-    current_clip_rect.x = layout.StartPos.x;
-    current_clip_rect.y = layout.StartPos.y;
-    current_clip_rect.z = layout.StartPos.x + layout.MeasuredSize.x;
-    current_clip_rect.w = layout.StartPos.y + layout.MeasuredSize.y;
-
-    layout.Splitter.SetCurrentChannel(window->DrawList, 0);
-    for (ImDrawCmd& cmd : layout.Splitter._Channels[1]._CmdBuffer)
-    {
-
-        if (cmd.ClipRect.x < current_clip_rect.x) cmd.ClipRect.x = current_clip_rect.x;
-        if (cmd.ClipRect.y < current_clip_rect.y) cmd.ClipRect.y = current_clip_rect.y;
-        if (cmd.ClipRect.z > current_clip_rect.z) cmd.ClipRect.z = current_clip_rect.z;
-        if (cmd.ClipRect.w > current_clip_rect.w) cmd.ClipRect.w = current_clip_rect.w;
-    }
-
-    //GetForegroundDrawList()->AddRect(layout.StartPos, layout.StartPos + layout.MeasuredSize, IM_COL32(255,0,0,128)); // [DEBUG]
-}
-
-static void ImGui::MergeLayoutSplitters(ImGuiLayout& layout)
-{
-    for (ImGuiLayout* child = layout.FirstChild; child != NULL; child = child->NextSibling)
-        MergeLayoutSplitters(*child);
-
-    ImGuiWindow* window = GetCurrentWindow();
-
-    layout.Splitter.Merge(window->DrawList);
-}
-
 static ImGuiLayoutItem* ImGui::GenerateLayoutItem(ImGuiLayout& layout, ImGuiLayoutItemType type)
 {
-    ImGuiContext& g = *GImGui;
     IM_ASSERT(layout.CurrentItemIndex <= layout.Items.Size);
 
     if (layout.CurrentItemIndex < layout.Items.Size)
