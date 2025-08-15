@@ -2,55 +2,76 @@
 
 #ifdef USE_IMGUI_COLOR_TEXT_EDIT
 
+#include <imguipack.h>
 #include <3rdparty/imgui_imguicolortextedit/TextEditor.h>
+#include <3rdparty/imgui_imguicolortextedit/TextDiff.h>
+
+#include <algorithm>
+#include <functional>
+#include <string>
 
 #define FIND_POPUP_TEXT_FIELD_LENGTH 128
 
 class IMGUI_API ImCodeEditor {
+private:
+    ImFont* mp_font{};
+
+    std::string m_originalText;
+    TextEditor m_editor;
+    TextDiff m_diff;
+    std::string m_filename;
+    size_t m_version{};
+    bool m_done{false};
+    std::string m_errorMessage;
+    std::function<void()> m_onConfirmClose;
+
+    float m_fontSize{17.0f};
+
+    // editor state
+    enum class State {  //
+        edit,
+        diff,
+        newFile,
+        confirmClose,
+        confirmQuit,
+        confirmError
+    } m_state = State::edit;
+
 public:
-    typedef void (*OnFocusedCallback)(int folderViewId);
-    typedef void (*OnShowInFolderViewCallback)(const std::string& filePath, int folderViewId);
+    void setFont(ImFont* vpFont);
+
+    // file releated functions
+    void newFile();
+    void openFile(const std::string& path);
+    void saveFile();
+
+    // manage program exit
+    void tryToQuit();
+    inline bool isDone() const { return m_done; }
+
+    // render the editor
+    void render();
 
 private:
-    OnFocusedCallback onFocusedCallback = nullptr;
-    OnShowInFolderViewCallback onShowInFolderViewCallback = nullptr;
-    TextEditor::LanguageDefinition m_Type;
-    std::map<int32_t, std::string> m_ErrorMarkers;
-    ImFont* m_CodeFontPtr = nullptr;
-    int m_Id = -1;
-    int m_CreatedFromFolderView = -1;
-    TextEditor m_Editor;
-    bool m_ShowDebugPanel = false;
-    std::string m_PanelName;
-    std::string m_RelatedFile;
-    int m_TabSize = 4;
-    float m_LineSpacing = 1.0f;
-    int m_UndoIndexInDisk = 0;
-    char m_CtrlfTextToFind[FIND_POPUP_TEXT_FIELD_LENGTH] = "";
-    bool m_CtrlfCaseSensitive = false;
+    // private functions
+    void renderMenuBar();
+    void renderStatusBar();
 
-public:
-    ImCodeEditor() = default;
-    ~ImCodeEditor() = default;
-    bool init();
-    void unit();
+    void showDiff();
+    void showConfirmClose(std::function<void()> callback);
+    void showConfirmQuit();
+    void showError(const std::string& message);
 
-    void OnImGui();
-    void SetSelection(int startLine, int startChar, int endLine, int endChar);
-    void SetRelatedFile(const std::string& vFile);
-    const std::string& GetRelatedFile();
-    void OnFolderViewDeleted(int folderViewId);
-    void SetShowDebugPanel(bool value);
+    void renderDiff();
+    void renderConfirmClose();
+    void renderConfirmQuit();
+    void renderConfirmError();
 
-    void SetCode(const std::string& vCode, const TextEditor::LanguageDefinition& vType);
+    bool isDirty() const { return m_editor.GetUndoIndex() != m_version; }
+    bool isSavable() const { return isDirty() && m_filename != "untitled"; }
 
-    void ClearErrorMarkers();
-    void AddErrorMarker(const size_t& vErrorLine, const std::string& vErrorMsg);
-
-private:
-    void OnReloadCommand();
-    void OnLoadFromCommand();
-    void OnSaveCommand();
+    void increaseFontSIze() { m_fontSize = std::clamp(m_fontSize + 1.0f, 8.0f, 24.0f); }
+    void decreaseFontSIze() { m_fontSize = std::clamp(m_fontSize - 1.0f, 8.0f, 24.0f); }
 };
 
 #endif  // USE_IMGUI_COLOR_TEXT_EDIT
