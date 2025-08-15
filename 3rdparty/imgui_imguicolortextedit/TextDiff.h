@@ -29,7 +29,7 @@ public:
 	inline bool GetSideBySideMode() const { return sideBySideMode; }
 
 	// specify the text to be compared (using UTF-8 encoded strings)
-	void SetText(const std::string_view& left, const std::string_view& right);
+	void SetText(const std::string& left, const std::string& right);
 
 	// specify a new language
 	void SetLanguage(const Language* l);
@@ -45,7 +45,7 @@ public:
 	inline void SetShowLineNumbersEnabled(bool /* value */) {}
 	inline void SetShowMatchingBrackets(bool /* value */) {}
 
-	inline void AddMarker(int /* line */, ImU32 /* lineNumberColor */, ImU32 /* textColor */, const std::string_view& /* lineNumberTooltip */, const std::string_view& /* textTooltip */) {}
+	inline void AddMarker(int /* line */, ImU32 /* lineNumberColor */, ImU32 /* textColor */, const std::string& /* lineNumberTooltip */, const std::string& /* textTooltip */) {}
 	inline void ClearMarkers() {}
 
 	inline void SetLineDecorator(float /* width */, std::function<void(Decorator& decorator)> /* callback */) {}
@@ -105,7 +105,7 @@ private:
 	float textScroll;
 
 	// split string into lines
-	void splitLines(std::vector<std::string_view>& result, const std::string_view& text);
+	void splitLines(std::vector<std::string>& result, const std::string& text);
 
 	// create a combined view of the two documents and their differences
 	void createCombinedView();

@@ -32,10 +32,10 @@ TextDiff::TextDiff() {
 //	TextDiff::SetText
 //
 
-void TextDiff::SetText(const std::string_view& left, const std::string_view& right) {
+void TextDiff::SetText(const std::string& left, const std::string& right) {
 	// split text into lines
-	std::vector<std::string_view> leftLines;
-	std::vector<std::string_view> rightLines;
+	std::vector<std::string> leftLines;
+	std::vector<std::string> rightLines;
 	splitLines(leftLines, left);
 	splitLines(rightLines, right);
 
@@ -56,7 +56,7 @@ void TextDiff::SetText(const std::string_view& left, const std::string_view& rig
 	};
 
 	// calculate the difference
-	dtl::Diff<std::string_view> diff(leftLines, rightLines);
+	dtl::Diff<std::string> diff(leftLines, rightLines);
 	diff.compose();
 	auto ranges = diff.getSes().getSequence();
 
@@ -124,11 +124,11 @@ void TextDiff::Render(const char* title, const ImVec2& size, bool border) {
 //	TextDiff::splitLines
 //
 
-void TextDiff::splitLines(std::vector<std::string_view>& result, const std::string_view& text) {
+void TextDiff::splitLines(std::vector<std::string>& result, const std::string& text) {
 	size_t prev = CodePoint::skipBOM(text.begin(), text.end()) - text.begin();
 	size_t pos;
 
-	while ((pos = text.find('\n', prev)) != std::string_view::npos) {
+	while ((pos = text.find('\n', prev)) != std::string::npos) {
 		result.push_back(text.substr(prev, pos - prev));
 		prev = pos + 1;
 	}
