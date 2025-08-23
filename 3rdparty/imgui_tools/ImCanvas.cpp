@@ -335,21 +335,21 @@ void ImCanvas::m_manageContextMenus() {
 }
 
 void ImCanvas::m_manageZoom() {
-    const auto& viewOrigin = getView().getOrigin();
-    const auto& viewRect = getViewRect();
-    auto viewScale = getView().getScale();
     const auto& io = ImGui::GetIO();
-    auto mousePos = io.MousePos;
-    auto steps = (int)io.MouseWheel;
-    auto zoom_reseted = ImGui::IsKeyPressed(m_config.resetZoomKey);
+    const auto mousePos = io.MousePos;
+    const auto steps = (int)io.MouseWheel;
+    const auto zoom_reseted = ImGui::IsKeyPressed(m_config.resetZoomKey);
     if (IS_FLOAT_DIFFERENT(steps, 0.0f) || zoom_reseted) {
-        auto oldView = CanvasView(viewOrigin, viewScale);
+        const auto& viewOrigin = getView().getOrigin();
+        //const auto& viewRect = getViewRect();
+        auto viewScale = getView().getScale();
+        const auto oldView = CanvasView(viewOrigin, viewScale);
         viewScale = ImMax(viewScale + steps * m_config.zoomFactor, m_config.zoomStep);
-        auto newView = CanvasView(viewOrigin, viewScale);
-        auto screenPos = canvasToScreen(mousePos, oldView);
-        auto canvasPos = screenToCanvas(screenPos, newView);
-        auto offset = (canvasPos - mousePos) * viewScale;
-        auto targetScroll = viewOrigin + offset;
+        const auto newView = CanvasView(viewOrigin, viewScale);
+        const auto screenPos = canvasToScreen(mousePos, oldView);
+        const auto canvasPos = screenToCanvas(screenPos, newView);
+        const auto offset = (canvasPos - mousePos) * viewScale;
+        const auto targetScroll = viewOrigin + offset;
         if (zoom_reseted) {
             viewScale = 1.0f;
         }
