@@ -43,107 +43,117 @@
                                                     // use assignment or value-initialization instead
 #endif
 
+// clang-format off
+
 #if defined(__WIN32__) || defined(WIN32) || defined(_WIN32) || defined(__WIN64__) || defined(WIN64) || defined(_WIN64) || defined(_MSC_VER)
-#if defined(imguipack_EXPORTS)
-#define IGFD_API __declspec(dllexport)
-#define IMGUI_API __declspec(dllexport)
-#define IMPLOT_API __declspec(dllexport)
-#define IMGUI_IMPL_API __declspec(dllexport)
-#define IM_NODE_FLOW_API __declspec(dllexport)
-#define IMGUIEX_CANVAS_API __declspec(dllexport)
-#define IMGUI_NODE_EDITOR_API __declspec(dllexport)
-#elif defined(BUILD_IMGUI_PACK_SHARED_LIBS)
-#define IGFD_API __declspec(dllimport)
-#define IMGUI_API __declspec(dllimport)
-#define IMPLOT_API __declspec(dllimport)
-#define IMGUI_IMPL_API __declspec(dllimport)
-#define IM_NODE_FLOW_API __declspec(dllimport)
-#define IMGUIEX_CANVAS_API __declspec(dllimport)
-#define IMGUI_NODE_EDITOR_API __declspec(dllimport)
+	#if defined(imguipack_EXPORTS)
+		#define IGFD_API __declspec(dllexport)
+		#define IMGUI_API __declspec(dllexport)
+		#define IMPLOT_API __declspec(dllexport)
+		#define IMGUI_IMPL_API __declspec(dllexport)
+		#define IM_NODE_FLOW_API __declspec(dllexport)
+		#define IMGUIEX_CANVAS_API __declspec(dllexport)
+		#define IMGUI_NODE_EDITOR_API __declspec(dllexport)
+		#define IN_APP_GPU_PROFILER_API __declspec(dllexport)
+	#elif defined(BUILD_IMGUI_PACK_SHARED_LIBS)
+		#define IGFD_API __declspec(dllimport)
+		#define IMGUI_API __declspec(dllimport)
+		#define IMPLOT_API __declspec(dllimport)
+		#define IMGUI_IMPL_API __declspec(dllimport)
+		#define IM_NODE_FLOW_API __declspec(dllimport)
+		#define IMGUIEX_CANVAS_API __declspec(dllimport)
+		#define IMGUI_NODE_EDITOR_API __declspec(dllimport)
+		#define IN_APP_GPU_PROFILER_API __declspec(dllimport)
+	#else
+		#define IGFD_API
+		#define IMGUI_API
+		#define IMPLOT_API
+		#define IMGUI_IMPL_API
+		#define IM_NODE_FLOW_API
+		#define IMGUIEX_CANVAS_API
+		#define IMGUI_NODE_EDITOR_API
+		#define IN_APP_GPU_PROFILER_API
+	#endif
 #else
-#define IGFD_API
-#define IMGUI_API
-#define IMPLOT_API
-#define IMGUI_IMPL_API
-#define IM_NODE_FLOW_API
-#define IMGUIEX_CANVAS_API
-#define IMGUI_NODE_EDITOR_API
-#endif
-#else
-#define IGFD_API
-#define IMGUI_API
-#define IMPLOT_API
-#define IMGUI_IMPL_API
-#define IM_NODE_FLOW_API
-#define IMGUIEX_CANVAS_API
-#define IMGUI_NODE_EDITOR_API
+	#define IGFD_API
+	#define IMGUI_API
+	#define IMPLOT_API
+	#define IMGUI_IMPL_API
+	#define IM_NODE_FLOW_API
+	#define IMGUIEX_CANVAS_API
+	#define IMGUI_NODE_EDITOR_API
+	#define IN_APP_GPU_PROFILER_API
 #endif
 
 #ifdef IMGUI_USER_CONFIG
-#include IMGUI_USER_CONFIG
+	#include IMGUI_USER_CONFIG
 #endif
 
 #include <3rdparty/imgui_docking/imgui.h>
 #include <3rdparty/imgui_docking/imgui_internal.h>
 
 #ifdef USE_IMPLOT
-#include <3rdparty/imgui_implot/implot.h>
-#include <3rdparty/imgui_implot/implot_internal.h>
+	#include <3rdparty/imgui_implot/implot.h>
+	#include <3rdparty/imgui_implot/implot_internal.h>
 #endif
 
 #ifdef USE_IM_GUIZMO
-#include <3rdparty/imgui_imguizmo/ImGuizmo.h>
-#include <3rdparty/imgui_imguizmo/ImSequencer.h>
+	#include <3rdparty/imgui_imguizmo/ImGuizmo.h>
+	#include <3rdparty/imgui_imguizmo/ImSequencer.h>
 #endif
 
 #ifdef USE_IM_TOOLS
-#include <3rdparty/imgui_tools/ImWidgets.h>
-#include <3rdparty/imgui_tools/Messaging.h>
-#ifndef ILAYOUT_PANE_INCLUDE
-#include <3rdparty/imgui_tools/ILayoutPane.h>
-#else
-#include ILAYOUT_PANE_INCLUDE
-#endif
-#include <3rdparty/imgui_tools/LayoutManager.h>
-#include <3rdparty/imgui_tools/ImGuiThemeHelper.h>
-#include <3rdparty/imgui_tools/ImCanvasWip.h>
-#include <3rdparty/imgui_tools/ImCanvas.h>
-#include <3rdparty/imgui_tools/ImCodeEditor.h>
+	#include <3rdparty/imgui_tools/ImWidgets.h>
+	#include <3rdparty/imgui_tools/Messaging.h>
+	#ifndef ILAYOUT_PANE_INCLUDE
+		#include <3rdparty/imgui_tools/ILayoutPane.h>
+	#else
+		#include ILAYOUT_PANE_INCLUDE
+	#endif
+	#include <3rdparty/imgui_tools/LayoutManager.h>
+	#include <3rdparty/imgui_tools/ImGuiThemeHelper.h>
+	#include <3rdparty/imgui_tools/ImCanvasWip.h>
+	#include <3rdparty/imgui_tools/ImCanvas.h>
+	#include <3rdparty/imgui_tools/ImCodeEditor.h>
 #endif
 
 #ifdef USE_IM_COOL_BAR
-#include <3rdparty/imgui_imcoolbar/ImCoolBar.h>
+	#include <3rdparty/imgui_imcoolbar/ImCoolBar.h>
 #endif
 
 #ifdef USE_IMGUI_MARKDOW
-#include <3rdparty/imgui_markdown/imgui_markdown.h>
+	#include <3rdparty/imgui_markdown/imgui_markdown.h>
 #endif
 
 #ifdef USE_IMGUI_NODE_FLOW
-#include <3rdparty/imgui_imnodeflow/include/ImNodeFlow.h>
+	#include <3rdparty/imgui_imnodeflow/include/ImNodeFlow.h>
 #endif
 
 #ifdef USE_IMGUI_NODE_EDITOR
-#include <3rdparty/imgui_node_editor/imgui_node_editor.h>
-#include <3rdparty/imgui_node_editor/imgui_canvas.h>
-namespace nd = ax::NodeEditor;
+	#include <3rdparty/imgui_node_editor/imgui_node_editor.h>
+	#include <3rdparty/imgui_node_editor/imgui_canvas.h>
+	namespace nd = ax::NodeEditor;
 #endif
 
 #ifdef USE_IM_NODES
-#include <3rdparty/imgui_imnodes/imnodes.h>
-#include <3rdparty/imgui_imnodes/imnodes_internal.h>
+	#include <3rdparty/imgui_imnodes/imnodes.h>
+	#include <3rdparty/imgui_imnodes/imnodes_internal.h>
 #endif
 
 #ifdef USE_IMGUI_COLOR_TEXT_EDIT
-#include <3rdparty/imgui_imguicolortextedit/TextEditor.h>
+	#include <3rdparty/imgui_imguicolortextedit/TextEditor.h>
 #endif
 
 #ifdef USE_IM_GRADIENT_HDR
-#include <3rdparty/imgui_imgradienthdr/src/ImGradientHDR.h>
+	#include <3rdparty/imgui_imgradienthdr/src/ImGradientHDR.h>
 #endif
 
 #ifdef USE_IMGUI_FILE_DIALOG
-#include <3rdparty/imgui_imguifiledialog/ImGuiFileDialog.h>
+	#include <3rdparty/imgui_imguifiledialog/ImGuiFileDialog.h>
+#endif
+
+#ifdef USE_EMBEDDED_FRAME_PROFILER
+	#include <3rdparty/imgui_embeddedframeprofiler/iagp.h>
 #endif
 
 /*// others missing math function from imgui
@@ -154,6 +164,8 @@ static inline ImVec4 operator*(const float& lhs, const ImVec4 rhs) {
 static inline ImVec4 operator*(const ImVec4& lhs, const float rhs) {
     return ImVec4(lhs.x * rhs, lhs.y * rhs, lhs.y * rhs, lhs.w * rhs);
 }*/
+
+// clang-format on
 
 #ifdef EZ_TOOLS_XML_CONFIG
 

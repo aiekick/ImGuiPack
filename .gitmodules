@@ -17,3 +17,7 @@
 [submodule "3rdparty/imgui_imnodes"]
 	path = 3rdparty/imgui_imnodes
 	url = https://github.com/aiekick/ImNodes.git
+[submodule "3rdparty/imgui_embeddedframeprofiler"]
+	path = 3rdparty/imgui_embeddedframeprofiler
+	url = https://github.com/aiekick/InAppGpuProfiler.git
+	branch = master
