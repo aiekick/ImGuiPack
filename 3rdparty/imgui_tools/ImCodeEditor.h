@@ -70,8 +70,8 @@ private:
     bool isDirty() const { return m_editor.GetUndoIndex() != m_version; }
     bool isSavable() const { return isDirty() && m_filename != "untitled"; }
 
-    void increaseFontSIze() { m_fontSize = std::clamp(m_fontSize + 1.0f, 8.0f, 24.0f); }
-    void decreaseFontSIze() { m_fontSize = std::clamp(m_fontSize - 1.0f, 8.0f, 24.0f); }
+    void increaseFontSIze() { m_fontSize = ImClamp(m_fontSize + 1.0f, 8.0f, 24.0f); }
+    void decreaseFontSIze() { m_fontSize = ImClamp(m_fontSize - 1.0f, 8.0f, 24.0f); }
 };
 
 #endif  // USE_IMGUI_COLOR_TEXT_EDIT
