@@ -22,6 +22,8 @@ option(USE_IMGUI_NODE_FLOW "Use ImGuiNodeFlow" OFF)
 option(USE_IMGUI_NODE_EDITOR "ImGuiNodeEditor" OFF)
 option(USE_IMGUI_FILE_DIALOG "Use ImGuiFileDialog" OFF)
 option(USE_IMGUI_COLOR_TEXT_EDIT "Use ImGuiColorTextEdit" OFF)
+option(USE_EMBEDDED_FRAME_PROFILER "Use EmbeddedFrameProfiler" OFF)
+
 option(IMGUIPACK_USE_STD_FILESYSTEM "Enable the use of std::filesystem in ImGuiFileDialog" OFF)
 
 option(USE_CUSTOM_IMGUI_CONFIG "Use Custom ImGui Config (User Side)" OFF)
@@ -257,6 +259,19 @@ if (USE_IMGUI_COLOR_TEXT_EDIT)
 endif()
 
 #####################################################
+##### EMBEDDED_FRAME_PROFILER
+#####################################################
+
+if (USE_EMBEDDED_FRAME_PROFILER)
+	message(STATUS "USE EMBEDDED FRAME PROFILER")
+	file(GLOB EMBEDDED_FRAME_PROFILER_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_embeddedframeprofiler/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_embeddedframeprofiler/*.cpp)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${EMBEDDED_FRAME_PROFILER_SOURCES})
+endif()
+
+
+#####################################################
 ##### IMGUIPACK
 #####################################################
 
@@ -284,6 +299,7 @@ if (BUILD_SHARED_LIBS)
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
 		${IMGUI_IMGUINODEEDITOR_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
+		${EMBEDDED_FRAME_PROFILER_SOURCES}
 	)
 	target_compile_definitions(${PROJECT} INTERFACE BUILD_IMGUI_PACK_SHARED_LIBS)
 	set_target_properties(${PROJECT} PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -303,6 +319,7 @@ else()
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
 		${IMGUI_IMGUINODEEDITOR_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
+		${EMBEDDED_FRAME_PROFILER_SOURCES}
 	)
 endif()
 
@@ -323,6 +340,7 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolortextedit/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/include/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_embeddedframeprofiler/
 )
 
 target_include_directories(${PROJECT} PUBLIC
@@ -370,6 +388,9 @@ if (USE_IMGUI_FILE_DIALOG)
 endif()
 if (USE_IMGUI_COLOR_TEXT_EDIT)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_COLOR_TEXT_EDIT)
+endif()
+if (USE_EMBEDDED_FRAME_PROFILER)
+	target_compile_definitions(${PROJECT} PUBLIC USE_EMBEDDED_FRAME_PROFILER)
 endif()
  
 if(USE_DEBUG_SANITIZER)
