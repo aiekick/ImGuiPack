@@ -47,7 +47,8 @@ typedef std::string PaneDisposal;
 // TOP
 // BOTTOM
 
-typedef std::string PaneCategoryName;
+typedef std::string PaneMenuCategoryName;
+typedef std::string PaneMenuName;
 
 class IMGUI_API AbstractPane : public ILayoutPane {
 public:
@@ -81,62 +82,78 @@ class IMGUI_API LayoutManager
     : public ez::xml::Config
 #endif  // EZ_TOOLS_XML_CONFIG
 {
-private:
-    class InternalPane {
+public:
+    class PaneInfos {
+        friend class LayoutManager;
+
+    private:
+        LayoutPaneFlag m_paneFlag{0};
+        bool m_showPaneAtFirstCall{false};
+        bool m_hidePaneAtFirstCall{false};
+        int32_t m_paneWidgetId{0}; // tofix : seem unused
+
     public:
         ILayoutPaneWeak ilayoutPane;
         LayoutPaneName paneName;
-        LayoutPaneFlag paneFlag = 0;
-        PaneDisposal paneDisposal = "CENTRAL";
-        float paneDisposalRatio = 0.5f;
-        bool openedDefault = false;
-        bool focusedDefault = false;
-        bool showPaneAtFirstCall = false;
-        bool hidePaneAtFirstCall = false;
-        int32_t paneWidgetId = 0;
-        PaneCategoryName paneCategory;
+        PaneDisposal paneDisposal{"CENTRAL"};
+        float paneDisposalRatio{0.5f};
+        bool openedDefault{false};
+        bool focusedDefault{false};
+        PaneMenuCategoryName paneMenuCategoryName;
+        PaneMenuName paneMenuName;
+        PaneInfos() = default;
+        PaneInfos(
+            ILayoutPaneWeak vPane,
+            const LayoutPaneName& vName,
+            const PaneMenuCategoryName& vMenuCategory,
+            const PaneMenuName& vMenuName,
+            const PaneDisposal& vPaneDisposal,
+            const float vPaneDisposalRatio,
+            const bool vIsOpenedDefault,
+            const bool vIsFocusedDefault);
+        PaneInfos(ILayoutPaneWeak vPane, const std::string& vName);
+        PaneInfos& setMenu(const std::string& vName, const std::string& vCategory = {});
+        PaneInfos& setDisposalSide(const std::string& vDisposal, const float vDisposalRatio = 0.4f);
+        PaneInfos& setDisposalCentral();
+        PaneInfos& setDefaultOpened(const bool vOpened);
+        PaneInfos& setDefaultFocused(const bool vFocused);
+
+    private:
+        void m_finalize();
     };
-    typedef std::shared_ptr<InternalPane> InternalPanePtr;
-    typedef std::weak_ptr<InternalPane> InternalPaneWeak;
 
 private:
-    ImGuiID m_DockSpaceID = 0;
-    bool m_FirstLayout = false;
-    bool m_FirstStart = true;
+    typedef std::shared_ptr<PaneInfos> InternalPanePtr;
+    typedef std::weak_ptr<PaneInfos> InternalPaneWeak;
+
+    ImGuiID m_DockSpaceID{0};
+    bool m_FirstLayout{false};
+    bool m_FirstStart{true};
     std::string m_MenuLabel;
     std::string m_DefaultMenuLabel;
 
+    LayoutPaneFlag m_paneFocusedDefault{0};
+    LayoutPaneFlag m_paneOpenedDefault{0};
+    LayoutPaneFlag m_paneShown{0};
+    LayoutPaneFlag m_paneFocused{0};
+    LayoutPaneFlag m_paneHovered{0};
+    LayoutPaneFlag m_paneLastHovered{0};
+    ImVec2 m_lastViewportSize;
+
 protected:
-    int32_t m_FlagCount = 0U;
+    int32_t m_FlagCount{0};
     std::vector<InternalPaneWeak> m_OrderesPanes;
     std::map<LayoutPaneName, InternalPanePtr> m_PanesByName;  // InternalPanePtr are saved here
     std::map<LayoutPaneFlag, InternalPaneWeak> m_PanesByFlag;
     std::map<PaneDisposal, std::vector<InternalPaneWeak>> m_PanesByDisposal;
-    std::map<PaneCategoryName, std::vector<InternalPaneWeak>> m_PanesInDisplayOrder;
-    std::unordered_map<PaneDisposal, float> m_PanesDisposalRatios;
+    std::map<PaneMenuCategoryName, std::vector<InternalPaneWeak>> m_PanesInDisplayOrder;
+    std::map<PaneDisposal, float> m_PanesDisposalRatios;
 
 public:
-    LayoutPaneFlag m_Pane_Focused_Default = 0;
-    LayoutPaneFlag m_Pane_Opened_Default = 0;
-    LayoutPaneFlag pane_Shown = 0;
-    LayoutPaneFlag m_Pane_Focused = 0;
-    LayoutPaneFlag m_Pane_Hovered = 0;
-    LayoutPaneFlag m_Pane_LastHovered = 0;
-    ImVec2 m_LastSize;
-
-public:
-    bool AddPane(
-        ILayoutPaneWeak vPane,
-        const LayoutPaneName& vName,
-        const PaneCategoryName& vCategory,
-        const PaneDisposal& vPaneDisposal,
-        const float& vPaneDisposalRatio,
-        const bool vIsOpenedDefault,
-        const bool vIsFocusedDefault);
+    bool AddPane(const PaneInfos& vPaneInfos);
     void RemovePane(const LayoutPaneName& vName);
-    void SetPaneDisposalRatio(const PaneDisposal& vPaneDisposal, const float& vRatio);
+    void SetPaneDisposalRatio(const PaneDisposal& vPaneDisposal, const float vRatio);
 
-public:
     void Init(const std::string& vMenuLabel, const std::string& vDefaultMenuLabel, const bool vForceDefaultLayout = false);
     void Unit();
 
@@ -156,19 +173,26 @@ public:
     virtual bool DrawPanes(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr);
     virtual bool DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr);
 
-public:
-    void ShowSpecificPane(const LayoutPaneFlag& vPane);
-    void HideSpecificPane(const LayoutPaneFlag& vPane);
-    void FocusSpecificPane(const LayoutPaneFlag& vPane);
+    void ShowSpecificPane(const LayoutPaneFlag vPane);
+    void HideSpecificPane(const LayoutPaneFlag vPane);
+    void FocusSpecificPane(const LayoutPaneFlag vPane);
     void FocusSpecificPane(const std::string& vlabel);
-    void ShowAndFocusSpecificPane(const LayoutPaneFlag& vPane);
-    bool IsSpecificPaneFocused(const LayoutPaneFlag& vPane);
+    void ShowAndFocusSpecificPane(const LayoutPaneFlag vPane);
+    bool IsSpecificPaneFocused(const LayoutPaneFlag vPane);
     bool IsSpecificPaneFocused(const std::string& vlabel);
     void AddSpecificPaneToExisting(const std::string& vNewPane, const std::string& vExistingPane);
 
+    const LayoutPaneFlag& getPaneFocusedDefault() const { return m_paneFocusedDefault; }
+    const LayoutPaneFlag& getPaneOpenedDefault() const { return m_paneOpenedDefault; }
+    const LayoutPaneFlag& getPaneShown() const { return m_paneShown; }
+    const LayoutPaneFlag& getPaneFocused() const { return m_paneFocused; }
+    const LayoutPaneFlag& getPaneHovered() const { return m_paneHovered; }
+    const LayoutPaneFlag& getPaneLastHovered() const { return m_paneLastHovered; }
+    const ImVec2& getLastViewportSize() const { return m_lastViewportSize; }
+
 private:  // configuration
     LayoutPaneFlag m_GetFocusedPanes();
-    void m_SetFocusedPanes(const LayoutPaneFlag& vActivePanes);
+    void m_SetFocusedPanes(const LayoutPaneFlag vActivePanes);
     std::vector<std::string> m_ParsePaneDisposal(const PaneDisposal& vPaneDisposal);
 
 #ifdef EZ_TOOLS_XML_CONFIG
@@ -206,3 +230,5 @@ public:
     LayoutManager& operator=(const LayoutManager&) = delete;
     virtual ~LayoutManager();  // Prevent unwanted destruction
 };
+
+typedef LayoutManager::PaneInfos LayoutPaneInfos;
