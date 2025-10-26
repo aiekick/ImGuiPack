@@ -2807,6 +2807,8 @@ void TextEditor::Cursors::update() {
 			return a.getSelectionStart() < b.getSelectionStart();
 		});
 
+		std::vector<size_t> toErase;
+
 		// merge cursors
 		for (auto cursor = rbegin(); cursor < rend() - 1;) {
 			auto previous = cursor + 1;
@@ -2820,7 +2822,7 @@ void TextEditor::Cursors::update() {
 					previous->setCurrent(true);
 				}
 
-				erase((++cursor).base());
+				erase((cursor + 1).base());
 
 			} else if (previous->getSelectionEnd() > cursor->getSelectionStart()) {
 				if (cursor->getInteractiveEnd() < cursor->getInteractiveStart()) {
@@ -2838,10 +2840,14 @@ void TextEditor::Cursors::update() {
 					previous->setCurrent(true);
 				}
 
-				erase((++cursor).base());
+                erase((cursor + 1).base());
 
 			} else {
 				cursor++;
+			}
+
+			if (size() <= 1) {
+                break;
 			}
 		}
 
