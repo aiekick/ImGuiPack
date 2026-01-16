@@ -4018,8 +4018,8 @@ bool ImWidgets::InputText::DisplayInputText(
         vMultiline,
         vInputOffsetFromStart,                                                                                                                 //
         vNeedChange                                                                                                                            //
-            ? ([vNeedChange](std::string& vDefaultText, std::string& vTextContent) { return vNeedChange && (vDefaultText != vTextContent); })  //
-            : std::function<bool(std::string&, std::string)>());
+            ? ([vNeedChange](std::string& vDefaultText, std::string& vTextContent)-> bool { return vNeedChange && (vDefaultText != vTextContent); })  //
+            : std::function<bool(std::string&, std::string&)>());
 }
 
 bool ImWidgets::InputText::DisplayInputText(  //
