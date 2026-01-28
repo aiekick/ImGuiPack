@@ -18,6 +18,7 @@ limitations under the License.
 
 #include <cstdint>
 #include <memory>
+#include <string>
 
 typedef int64_t LayoutPaneFlag; // int64_t give 64 Panes max.
 typedef std::string LayoutPaneName;
