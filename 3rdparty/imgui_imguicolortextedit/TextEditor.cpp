@@ -3042,7 +3042,7 @@ void TextEditor::Document::deleteText(Coordinate start, Coordinate end) {
 	}
 
 	// update maximum column counts
-	updateMaximumColumn(start.line, end.line);
+	updateMaximumColumn(start.line, last);
 	updated = true;
 }
 
