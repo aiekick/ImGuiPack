@@ -664,6 +664,12 @@ static bool inputString(const char* label, std::string* value, ImGuiInputTextFla
 void TextEditor::renderFindReplace(ImVec2 pos, float width) {
 	// render find/replace window (if required)
 	if (findReplaceVisible) {
+		if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {
+			findReplaceVisible = false;
+			focusOnEditor = true;
+			return;
+		}
+
 		// save current screen position
 		auto currentScreenPosition = ImGui::GetCursorScreenPos();
 
