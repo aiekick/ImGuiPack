@@ -73,7 +73,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/freetype2 EXCLUDE_FROM_ALL
 if(USE_SHARED_LIBS)
 	set_target_properties(freetype PROPERTIES FOLDER 3rdparty/Shared)
 else()
-	set_target_properties(freetype PROPERTIES FOLDER 3rdparty/Static)
+	set_target_properties(freetype PROPERTIES FOLDER 3rdparty/static)
 endif()
 
 #####################################################
@@ -89,7 +89,7 @@ if (USE_IMGUI_COLOR_TEXT_EDIT)
 	if(USE_SHARED_LIBS)
 		set_target_properties(boost_regex PROPERTIES FOLDER 3rdparty/Shared)
 	else()
-		set_target_properties(boost_regex PROPERTIES FOLDER 3rdparty/Static)
+		set_target_properties(boost_regex PROPERTIES FOLDER 3rdparty/static)
 	endif()
 endif()
 
@@ -410,5 +410,5 @@ set(IMGUIPACK_INCLUDE_DIRS ${IMGUIPACK_INCLUDE_DIRS} PARENT_SCOPE)
 set(IMGUIPACK_LIBRARIES ${PROJECT} PARENT_SCOPE)
 set(FREETYPE_LIBRARIES ${FREETYPE_LIBRARIES} PARENT_SCOPE)
 
-install(TARGETS ${PROJECT} RUNTIME DESTINATION / COMPONENT APP_LIBS_${TINYXML2_LIBRARIES})
+install(TARGETS ${PROJECT} RUNTIME DESTINATION / COMPONENT APP_LIBS_${${PROJECT}_LIBRARIES})
 install(TARGETS ${FREETYPE_LIBRARIES} RUNTIME DESTINATION / COMPONENT APP_LIBS_${FREETYPE_LIBRARIES})
