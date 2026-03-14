@@ -219,7 +219,6 @@ ez::xml::Nodes ImGuiThemeHelper::getXmlNodes(const std::string& vUserDatas) {
 bool ImGuiThemeHelper::setFromXmlNodes(const ez::xml::Node& vNode, const ez::xml::Node& vParent, const std::string& vUserDatas) {
     UNUSED(vUserDatas);
     const auto& strName = vNode.getName();
-    const auto& strValue = vNode.getContent();
     const auto& strParentName = vParent.getName();
     const auto& strParentParentName = vParent.getName();
 
@@ -238,6 +237,7 @@ bool ImGuiThemeHelper::setFromXmlNodes(const ez::xml::Node& vNode, const ez::xml
 #endif // USE_IMGUI_FILE_DIALOG && EZ_TOOLS_VARIANT
 
 #ifdef USE_NODEGRAPH
+    const auto& strValue = vNode.getContent();
     if (strParentName == "Graph_Styles") {
         const auto att = vNode->FirstAttribute();
         if (att && std::string(att->Name()) == "value") {
@@ -744,7 +744,7 @@ void ImGuiThemeHelper::ShowCustomImGuiStyleEditor(bool* vOpen, ImGuiStyle* ref)
 
 				ImGui::Separator();
 
-				ImGui::BeginChild("##sizes", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_NavFlattened);
+				ImGui::BeginChild("##sizes", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar);
 				ImGui::PushItemWidth(-160);
 
 				ImGui::Text("Main");
@@ -820,7 +820,7 @@ void ImGuiThemeHelper::ShowCustomImGuiStyleEditor(bool* vOpen, ImGuiStyle* ref)
 				if (ImGui::RadioButton("Both", alpha_flags == ImGuiColorEditFlags_AlphaPreviewHalf)) { alpha_flags = ImGuiColorEditFlags_AlphaPreviewHalf; } ImGui::SameLine();
 				ImGui::HelpMarker("In the color list:\nLeft-click on colored square to open color picker,\nRight-click to open edit options menu.");
 
-				ImGui::BeginChild("##colors", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_NavFlattened);
+				ImGui::BeginChild("##colors", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar);
 				ImGui::PushItemWidth(-160);
 
 				DrawItem(14582, filter, "Good Color", ImGui::CustomStyle::GoodColor, ref_Good_Color, alpha_flags);

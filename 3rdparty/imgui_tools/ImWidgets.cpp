@@ -679,10 +679,10 @@ bool CheckBoxIcon(const char* vLabel, const char* vIconTrue, bool* v) {
             // Undocumented tristate/mixed/indeterminate checkbox (#2644)
             // This may seem awkwardly designed because the aim is to make ImGuiItemFlags_MixedValue supported by all
             // widgets (not just checkbox)
-            ImVec2 pad(ImMax(1.0f, IM_FLOOR(square_sz / 3.6f)), ImMax(1.0f, IM_FLOOR(square_sz / 3.6f)));
+            ImVec2 pad(ImMax(1.0f, IM_TRUNC(square_sz / 3.6f)), ImMax(1.0f, IM_TRUNC(square_sz / 3.6f)));
             window->DrawList->AddRectFilled(check_bb.Min + pad, check_bb.Max - pad, check_col, style.FrameRounding);
         } else if (*v) {
-            const float pad = ImMax(1.0f, IM_FLOOR(square_sz / 6.0f));
+            const float pad = ImMax(1.0f, IM_TRUNC(square_sz / 6.0f));
             // RenderCheckMark(window->DrawList, check_bb.Min + ImVec2(pad, pad), check_col, square_sz - pad * 2.0f);
             // PushStyleColor(ImGuiCol_Text, check_col);
             RenderText(check_bb.Min + ImVec2(pad, pad), vIconTrue);
@@ -1195,7 +1195,7 @@ bool CollapsingHeader_Button(
     bool is_open = window->DC.StateStorage->GetInt(id, vDefaulExpanded ? 1 : 0) != 0;
     bool hovered, held;
     const bool pressed = ButtonBehavior(bbTrigger, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
-    SetItemAllowOverlap();
+    //SetItemAllowOverlap();
     if (pressed) {
         is_open = !is_open;
         window->DC.StateStorage->SetInt(id, is_open);
@@ -1484,7 +1484,7 @@ void Header(const char* vName, float width) {
 
     bool hovered, held;
     /*bool pressed = */ ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
-    SetItemAllowOverlap();
+    //SetItemAllowOverlap();
 
     // Render
     const ImU32 col = GetColorU32(hovered ? ImGuiCol_HeaderHovered : ImGuiCol_Header);
@@ -1599,8 +1599,8 @@ bool ColorEdit4ForNode(const char* label, float col[4], ImGuiColorEditFlags flag
 
     if ((flags & (ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_DisplayHSV)) != 0 && (flags & ImGuiColorEditFlags_NoInputs) == 0) {
         // RGB/HSV 0..255 Sliders
-        const float w_item_one = ImMax(1.0f, IM_FLOOR((w_inputs - (style.ItemInnerSpacing.x) * (components - 1)) / (float)components));
-        const float w_item_last = ImMax(1.0f, IM_FLOOR(w_inputs - (w_item_one + style.ItemInnerSpacing.x) * (components - 1)));
+        const float w_item_one = ImMax(1.0f, IM_TRUNC((w_inputs - (style.ItemInnerSpacing.x) * (components - 1)) / (float)components));
+        const float w_item_last = ImMax(1.0f, IM_TRUNC(w_inputs - (w_item_one + style.ItemInnerSpacing.x) * (components - 1)));
 
         const bool hide_prefix = (w_item_one <= CalcTextSize((flags & ImGuiColorEditFlags_Float) ? "M:0.000" : "M:000").x);
         static const char* ids[4] = {"##X", "##Y", "##Z", "##W"};
