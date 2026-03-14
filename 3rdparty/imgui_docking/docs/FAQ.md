@@ -13,12 +13,14 @@ or view this file with any Markdown viewer.
 :---------------------------------------------------------- |
 | [Where is the documentation?](#q-where-is-the-documentation) |
 | [What is this library called?](#q-what-is-this-library-called) |
+| [What is the difference between Dear ImGui and traditional UI toolkits?](#q-what-is-the-difference-between-dear-imgui-and-traditional-ui-toolkits) |
 | [Which version should I get?](#q-which-version-should-i-get) |
 | **Q&A: Integration** |
 | **[How to get started?](#q-how-to-get-started)** |
 | **[How can I tell whether to dispatch mouse/keyboard to Dear ImGui or my application?](#q-how-can-i-tell-whether-to-dispatch-mousekeyboard-to-dear-imgui-or-my-application)** |
 | [How can I enable keyboard or gamepad controls?](#q-how-can-i-enable-keyboard-or-gamepad-controls) |
 | [How can I use this on a machine without mouse, keyboard or screen? (input share, remote display)](#q-how-can-i-use-this-on-a-machine-without-mouse-keyboard-or-screen-input-share-remote-display) |
+| [How can I create my own backend?](#q-how-can-i-create-my-own-backend)
 | [I integrated Dear ImGui in my engine and little squares are showing instead of text...](#q-i-integrated-dear-imgui-in-my-engine-and-little-squares-are-showing-instead-of-text) |
 | [I integrated Dear ImGui in my engine and some elements are clipping or disappearing when I move windows around...](#q-i-integrated-dear-imgui-in-my-engine-and-some-elements-are-clipping-or-disappearing-when-i-move-windows-around) |
 | [I integrated Dear ImGui in my engine and some elements are displaying outside their expected windows boundaries...](#q-i-integrated-dear-imgui-in-my-engine-and-some-elements-are-displaying-outside-their-expected-windows-boundaries) |
@@ -53,6 +55,7 @@ or view this file with any Markdown viewer.
 - Handy [Getting Started](https://github.com/ocornut/imgui/wiki/Getting-Started) guide to integrate Dear ImGui in an existing application.
 - 20+ standalone example applications using e.g. OpenGL/DirectX are provided in the [examples/](https://github.com/ocornut/imgui/blob/master/examples/) folder to explain how to integrate Dear ImGui with your own engine/application. You can run those applications and explore them.
 - See demo code in [imgui_demo.cpp](https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp) and particularly the `ImGui::ShowDemoWindow()` function. The demo covers most features of Dear ImGui, so you can read the code and see its output.
+- See pthom's online [imgui_explorer](https://pthom.github.io/imgui_explorer) which is a web version of the demo with a source code browser.
 - See documentation: [Backends](https://github.com/ocornut/imgui/blob/master/docs/BACKENDS.md), [Examples](https://github.com/ocornut/imgui/blob/master/docs/EXAMPLES.md), [Fonts](https://github.com/ocornut/imgui/blob/master/docs/FONTS.md).
 - See documentation and comments at the top of [imgui.cpp](https://github.com/ocornut/imgui/blob/master/imgui.cpp) + general API comments in [imgui.h](https://github.com/ocornut/imgui/blob/master/imgui.h).
 - The [Glossary](https://github.com/ocornut/imgui/wiki/Glossary) page may be useful.
@@ -69,6 +72,60 @@ or view this file with any Markdown viewer.
 **This library is called Dear ImGui**. Please refer to it as Dear ImGui (not ImGui, not IMGUI).
 
 (The library misleadingly started its life in 2014 as "ImGui" due to the fact that I didn't give it a proper name when I released 1.0, and had no particular expectation that it would take off. However, the term IMGUI (immediate-mode graphical user interface) was coined before and is being used in variety of other situations e.g. Unity uses it own implementation of the IMGUI paradigm. To reduce the ambiguity without affecting existing code bases, I have decided in December 2015 a fully qualified name "Dear ImGui" for this library.
+
+##### [Return to Index](#index)
+
+---
+
+### Q: What is the difference between Dear ImGui and traditional UI toolkits?
+
+Here's a very simplified comparison between the approach taken by Dear ImGui vs traditional toolkits:
+
+| Dear ImGui | Qt/GTK/WPF... |
+|--------------------------|--------------------------|
+| UI fully issued on every update. | UI issued once then later modified. |
+| UI layout is fully dynamic and can change at any time.<BR>UI is generally emitted programmatically, which empowers reflecting a dynamic set of data. | UI layout is mostly static.<BR>UI may be emitted programmatically or from data created by offline tools. UI need extra code to evolve, which is often tedious and error-prone if it needs to be reflecting dynamic data and systems. |
+| Application can submit UI based on arbitrary logic and then forget about it. | Application needs more bookkeeping of UI elements. |
+| UI library stores minimal amounts of data. At one point in time, it typically doesn't know or remember which other widgets are displayed and which widgets are coming next. As a result, certain layout features (alignment, resizing) are not as easy to implement or require ad-hoc code. | UI library stores entire widgets tree and state. UI library can use this retained data to easily layout things. |
+| UI code may be added anywhere.<BR>You can even create UI to edit a local variable! | UI code needs to be added in dedicated spots. |
+| UI layout/logic/action/data bindings are all nearby in the code. | UI layout/logic/action/data bindings in distinct functions, files or formats. |
+| Data is naturally always synchronized. | Use callback/signal/slot for synchronizing data (error-prone). |
+| API is simple and easy to learn. In particular, doing basic things is very easy. | API is more complex and specialized. |
+| API is low-level (raw language types). | API are higher-level (more abstractions, advanced language features). |
+| Less fancy look and feel. | Standard look and feel. |
+| Compile yourself. Easy to debug, hack, modify, study. | Mostly use precompiled libraries. Compiling, modifying or studying is daunting if not impossible. |
+| Run on every platform. | Run on limited desktop platforms. |
+
+Idiomatic Dear ImGui code:
+```cpp
+if (ImGui::Button("Save"))
+    MySaveFunction();
+
+ImGui::SliderFloat("Slider", &m_MyValue, 0.0f, 1.0f);
+```
+Idiomatic code with traditional toolkit:
+```cpp
+UiButton* button = new UiButton("Save");
+button->OnClick = &MySaveFunction;
+parent->Add(button);
+
+UiSlider* slider = new UiSlider("Slider");
+slider->SetRange(0.0f, 1.0f);
+slider->BindData<float>(&m_MyValue);
+parent->Add(slider);
+```
+This is only meant to give you a intuitive feeling of the main differences, but pros & cons go deeper than that.
+
+Some of those properties are typically associated to the umbrella term "IMGUI", but the term has no simple and well-agreed definition. There are many erroneous statements and misunderstandings with what IMGUI means. It is partly caused by the fact that most popular IMGUI implementations (including Dear ImGui) have originated from game industry needs and have targeted specific use cases, causing people to conflate IMGUI properties with what a specific library does. However, it is perfectly possible to implement an IMGUI library that would have very different properties than e.g. Dear ImGui. My take on defining what an IMGUI is:
+
+**IMGUI refers to the API: literally the interface between the application and the UI system.**
+- An IMGUI API favors the application code owning its data and being the single source of truth for it.
+- An IMGUI API tries to minimize the application having to retain/manage data related to the UI system.
+- An IMGUI API tries to minimize the UI system having to retain/manage data related to the application.
+- Synchronization between application data and UI data is natural and less error-prone.
+
+**IMGUI does NOT refer to the implementation. Whatever happens inside the UI library code doesn't matter.**
+<BR>Also see: [Links to many articles about the IMGUI paradigm](https://github.com/ocornut/imgui/wiki/#about-the-imgui-paradigm).
 
 ##### [Return to Index](#index)
 
@@ -92,8 +149,8 @@ Many projects are using this branch and it is kept in sync with master regularly
 ### Q: How to get started?
 
 Read [Getting Started](https://github.com/ocornut/imgui/wiki/Getting-Started). <BR>
-Read [EXAMPLES.md](https://github.com/ocornut/imgui/blob/master/docs/EXAMPLES.md). <BR>
-Read [BACKENDS.md](https://github.com/ocornut/imgui/blob/master/docs/BACKENDS.md). <BR>
+Read [docs/EXAMPLES.md](https://github.com/ocornut/imgui/blob/master/docs/EXAMPLES.md). <BR>
+Read [docs/BACKENDS.md](https://github.com/ocornut/imgui/blob/master/docs/BACKENDS.md). <BR>
 Read `PROGRAMMER GUIDE` section of [imgui.cpp](https://github.com/ocornut/imgui/blob/master/imgui.cpp). <BR>
 The [Wiki](https://github.com/ocornut/imgui/wiki) is a hub to many resources and links.
 
@@ -154,6 +211,14 @@ Console SDK also sometimes provide equivalent tooling or wrapper for Synergy-lik
 - Game console users: consider emulating a mouse cursor with DualShock4 touch pad or a spare analog stick as a mouse-emulation fallback.
 - You may also use a third party solution such as [netImgui](https://github.com/sammyfreg/netImgui), [Remote ImGui](https://github.com/JordiRos/remoteimgui) or [imgui-ws](https://github.com/ggerganov/imgui-ws) which sends the vertices to render over the local network, allowing you to use Dear ImGui even on a screen-less machine. See [Wiki](https://github.com/ocornut/imgui/wiki) index for most details.
 - For touch inputs, you can increase the hit box of widgets (via the `style.TouchPadding` setting) to accommodate for the lack of precision of touch inputs, but it is recommended you use a mouse or gamepad to allow optimizing for screen real-estate and precision.
+
+##### [Return to Index](#index)
+
+---
+
+### Q: How can I create my own backend?
+- See [docs/BACKENDS.md](https://github.com/ocornut/imgui/blob/master/docs/BACKENDS.md).
+- See Documentation at the top of imgui.cpp.
 
 ##### [Return to Index](#index)
 
@@ -380,8 +445,8 @@ node open/closed state differently. See what makes more sense in your situation!
 ### Q: What are ImTextureID/ImTextureRef?
 
 **Short explanation:**
-- Refer to [Image Loading and Displaying Examples](https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples) on the [Wiki](https://github.com/ocornut/imgui/wiki).
 - You may use functions such as `ImGui::Image()`, `ImGui::ImageButton()` or lower-level `ImDrawList::AddImage()` to emit draw calls that will use your own textures.
+- To load and display your own textures, refer to [Image Loading and Displaying Examples](https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples) on the [Wiki](https://github.com/ocornut/imgui/wiki).
 - Actual textures are identified in a way that is up to the user/engine. Those identifiers are stored and passed as an opaque ImTextureID value.
 - By default ImTextureID can store up to 64-bits. You may `#define` it to a custom type/structure if you need.
 - Loading image files from the disk and turning them into a texture is not within the scope of Dear ImGui (for a good reason), but the examples linked above may be useful references.
@@ -389,12 +454,20 @@ node open/closed state differently. See what makes more sense in your situation!
 **Details:**
 
 1.92 introduced `ImTextureRef` in June 2025.
-- Most drawing functions using ImTextureID were changed to use ImTextureRef.
-- We intentionally do not provide an implicit ImTextureRef -> ImTextureID cast operator because it is technically lossy to convert ImTextureRef to ImTextureID before rendering.
+- All drawing functions using `ImTextureID` were changed to use `ImTextureRef`.
+- You can trivially create a `ImTextureRef` from a `ImTextureID`.
+- **If you use Image functions with textures that you have loaded/created yourself, you will mostly likely only ever store/manipulate `ImTextureID` and then pass them as `ImTextureRef`.**
+- You only NEED to manipulate `ImTextureRef` when dealing with textures managed by the backend itself, aka mainly the atlas texture for now.
+- We intentionally do not provide an implicit `ImTextureRef` -> `ImTextureID` cast operator because it is technically lossy to convert ImTextureRef to ImTextureID before rendering.
 
 **ImTextureID = backend specific, low-level identifier for a texture uploaded in GPU/graphics system.**
+```cpp
+#ifndef ImTextureID
+typedef ImU64 ImTextureID;  // Default: store up to 64-bits (any pointer or integer). A majority of backends are ok with that.
+#endif
+```
 - When a Rendered Backend creates a texture, it store its native identifier into a ImTextureID value (e.g. Used by DX11 backend to a `ID3D11ShaderResourceView*`; Used by OpenGL backends to store `GLuint`; Used by SDLGPU backend to store a `SDL_GPUTextureSamplerBinding*`, etc.).
-- User may submit their own textures to e.g. ImGui::Image() function by passing the same type.
+- User may submit their own textures to e.g. `ImGui::Image()` function by passing this value.
 - During the rendering loop, the Renderer Backend retrieve the ImTextureID, which stored inside a ImTextureRef, which is stored inside ImDrawCmd.
 - Compile-time type configuration:
   - To use something other than a 64-bit value: add '#define ImTextureID MyTextureType*' in your imconfig.h file.
@@ -402,13 +475,29 @@ node open/closed state differently. See what makes more sense in your situation!
   - You may decide to store a higher-level structure containing texture, sampler, shader etc. with various constructors if you like. You will need to implement ==/!= operators.
 
 **ImTextureRef = higher-level identifier for a texture.**
+```cpp
+// Store a ImTextureID _or_ a ImTextureData*.
+struct ImTextureRef
+{
+    ImTextureRef()                          { _TexData = NULL; _TexID = ImTextureID_Invalid; }
+    ImTextureRef(ImTextureID tex_id)        { _TexData = NULL; _TexID = tex_id; }
+    inline ImTextureID  GetTexID() const    { return _TexData ? _TexData->TexID : _TexID; }
+
+    // Members (either are set, never both!)
+    ImTextureData*      _TexData;           //      A texture, generally owned by a ImFontAtlas. Will convert to ImTextureID during render loop, after texture has been uploaded.
+    ImTextureID         _TexID;             // _OR_ Low-level backend texture identifier, if already uploaded or created by user/app. Generally provided to e.g. ImGui::Image() calls.
+};
+```
 - The identifier is valid even before the texture has been uploaded to the GPU/graphics system.
 - This is what gets passed to functions such as `ImGui::Image()`, `ImDrawList::AddImage()`.
 - This is what gets stored in draw commands (`ImDrawCmd`) to identify a texture during rendering.
- - When a texture is created by user code (e.g. custom images), we directly stores the low-level `ImTextureID`.
- - When a texture is created by the backend, we stores a `ImTextureData*` which becomes an indirection to extract the `ImTextureID` value during rendering, after texture upload has happened.
- - There is no constructor to create a `ImTextureID` from a `ImTextureData*` as we don't expect this to be useful to the end-user, and it would be erroneously called by many legacy code.
- - If you want to bind the current atlas when using custom rectangle, you can use `io.Fonts->TexRef`.
+ - When a texture is created by user code (e.g. custom images), we directly store the low-level `ImTextureID`.
+   - Because of this, when displaying your own texture you are likely to ever only manage ImTextureID values on your side.
+ - When a texture is created by the backend, we store a `ImTextureData*` which becomes an indirection to extract the `ImTextureID` value during rendering, after texture upload has happened.
+ - To create a `ImTextureRef` from a `ImTextureData*` you can use `ImTextureData::GetTexRef()`.
+   We intentionally do not provide an `ImTextureRef` constructor for this: we don't expect this to be frequently useful to the end-user, and it would be erroneously called by many legacy code.
+ - There is no constructor to create a `ImTextureRef` from a `ImTextureData*` as we don't expect this to be useful to the end-user, and it would be erroneously called by many legacy code.
+ - If you want to bind the current atlas when using custom rectangles, you can use `io.Fonts->TexRef`.
  - Binding generators for languages such as C (which don't have constructors), should provide a helper, e.g. `inline ImTextureRef ImTextureRefFromID(ImTextureID tex_id) { ImTextureRef tex_ref = { ._TexData = NULL, .TexID = tex_id }; return tex_ref; }`
 
 **Please read documentations or tutorials on your graphics API to understand how to display textures on the screen before moving onward.**
@@ -570,22 +659,28 @@ Since 1.92 (June 2025) fonts may be dynamically used at any size.
 
 **Scaling fonts**
 
+Select default size:
+```cpp
+style.FontSizeBase = 20.0f;
+```
+Scale all fonts:
+```cpp
+style.FontScaleDpi = 2.0f;
+```
+
 To change font size:
 ```cpp
-ImGui::PushFont(NULL, 42.0f);
+ImGui::PushFont(NULL, 42.0f); // This will be multiplied by style.FontScaleDpi
 ```
 To change font and font size:
 ```cpp
 ImGui::PushFont(new_font, 42.0f);
 ```
-To scale all fonts:
-```cpp
-style.FontScaleDpi = 2.0f;
-```
+
 In `docking` branch or with multi-viewports:
 ```cpp
-io.ConfigDpiScaleFonts = true;          // [Experimental] Automatically overwrite style.FontScaleDpi in Begin() when Monitor DPI changes. This will scale fonts but _NOT_ scale sizes/padding for now.
-io.ConfigDpiScaleViewports = true;      // [Experimental] Scale Dear ImGui and Platform Windows when Monitor DPI changes.
+io.ConfigDpiScaleFonts = true;          // (Docking branch only) Automatically overwrite style.FontScaleDpi in Begin() when Monitor DPI changes. This will scale fonts but _NOT_ scale sizes/padding for now.
+io.ConfigDpiScaleViewports = true;      // (Docking branch only) Scale Dear ImGui and Platform Windows when Monitor DPI changes.
 ```
 
 **Scaling style** (paddings, spacings, thicknesses)

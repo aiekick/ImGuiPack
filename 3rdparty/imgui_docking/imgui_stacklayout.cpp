@@ -39,6 +39,7 @@ Index of this file:
 // - EndHorizontal/EndVertical()                user ends the layout
 //-----------------------------------------------------------------------------
 
+#include <cstdint>
 
 //-----------------------------------------------------------------------------
 // [SECTION] Header mess
@@ -54,13 +55,8 @@ Index of this file:
 
 #include "imgui.h"
 #ifndef IMGUI_DISABLE
-#include "imgui_internal.h"
 
-#if defined(_MSC_VER) && _MSC_VER <= 1500 // MSVC 2008 or earlier
-#include <stddef.h>     // intptr_t
-#else
-#include <stdint.h>     // intptr_t
-#endif
+#include "imgui_internal.h"
 
 //-----------------------------------------------------------------------------
 // [SECTION] Stack layout: Forward declarations
@@ -241,7 +237,7 @@ static void             AddLayoutSpring(ImGuiLayout& layout, float weight, float
 static ImGuiID GetContextID(ImGuiContext* context)
 {
     // Hash pointer to ImGuiContext which is unique
-    return ImHashData(&context, sizeof(context));
+    return ImHashData(&context, sizeof(context), 0);
 }
 
 static ImGuiLayoutState* GetCurrentLayoutState()
@@ -292,9 +288,8 @@ static ImGuiLayoutState* CreateLayoutState(ImGuiID context_id, ImGuiContext* con
     return state;
 }
 
-static void StackLayout_NewFramePreCallback(ImGuiContext* ctx, ImGuiContextHook* hook)
+static void StackLayout_NewFramePreCallback(ImGuiContext* /*ctx*/, ImGuiContextHook* hook)
 {
-    (void)ctx;
     ImGuiLayoutState* layout_state = (ImGuiLayoutState*)hook->UserData;
 
     for (int i = 0; i < layout_state->LayoutWindowStates.Data.Size; ++i)
@@ -305,9 +300,8 @@ static void StackLayout_NewFramePreCallback(ImGuiContext* ctx, ImGuiContextHook*
     }
 }
 
-static void StackLayout_EndFramePreCallback(ImGuiContext* ctx, ImGuiContextHook* hook)
+static void StackLayout_EndFramePreCallback(ImGuiContext* /*ctx*/, ImGuiContextHook* hook)
 {
-    (void)ctx;
     ImGuiLayoutState* layout_state = (ImGuiLayoutState*)hook->UserData;
 
     for (int i = 0; i < layout_state->LayoutWindowStates.Data.Size; ++i)
@@ -318,9 +312,8 @@ static void StackLayout_EndFramePreCallback(ImGuiContext* ctx, ImGuiContextHook*
     }
 }
 
-static void StackLayout_ShutdownCallback(ImGuiContext* ctx, ImGuiContextHook* hook)
+static void StackLayout_ShutdownCallback(ImGuiContext* /*ctx*/, ImGuiContextHook* hook)
 {
-    (void)ctx;
     ImGuiLayoutState* layout_state = (ImGuiLayoutState*)hook->UserData;
 
     for (int i = 0; i < layout_state->LayoutWindowStates.Data.Size; ++i)
@@ -384,7 +377,6 @@ static void WindowLayoutState_OnNewFrame(ImGuiLayoutWindowState* state)
 
 static void WindowLayoutState_OnEndFrame(ImGuiLayoutWindowState* state)
 {
-    (void)state;
     // Check stacks (like ImGuiStackSizes::CompareWithCurrentState() does)
     IM_ASSERT(0 == state->LayoutStack.Size && (!state->LayoutStack.Size || state->LayoutStack.back()->Type == ImGuiLayoutType_Horizontal) && "BeginHorizontal/EndHorizontal Mismatch!");
     IM_ASSERT(0 == state->LayoutStack.Size && (!state->LayoutStack.Size || state->LayoutStack.back()->Type == ImGuiLayoutType_Vertical)   && "BeginVertical/EndVertical Mismatch!");
@@ -447,8 +439,6 @@ static void ImGui::BeginLayout(ImGuiID id, ImGuiLayoutType type, ImVec2 size, fl
     ImGuiLayout* layout = FindLayout(id, type);
     if (!layout)
         layout = CreateNewLayout(id, type, size);
-
-    IM_ASSERT(!layout->Live && "BeginHorizontal/BeginVertical with same ID is already live in this frame. Please use PushID() to make ID's unique or rename layout.");
 
     layout->Live = true;
 
@@ -830,6 +820,7 @@ static void ImGui::BalanceChildLayouts(ImGuiLayout& layout)
 
 static ImGuiLayoutItem* ImGui::GenerateLayoutItem(ImGuiLayout& layout, ImGuiLayoutItemType type)
 {
+    //ImGuiContext& g = *GImGui;
     IM_ASSERT(layout.CurrentItemIndex <= layout.Items.Size);
 
     if (layout.CurrentItemIndex < layout.Items.Size)
