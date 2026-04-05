@@ -13,3 +13,6 @@
 	path = 3rdparty/imgui_embeddedframeprofiler
 	url = https://github.com/aiekick/InAppGpuProfiler.git
 	branch = master
+[submodule "3rdparty/imgui_imgenie"]
+	path = 3rdparty/imgui_imgenie
+	url = https://github.com/aiekick/ImGenie.git

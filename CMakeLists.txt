@@ -14,6 +14,7 @@ option(USE_NEW_SINGLETON "Use new sigleton" ON)
 option(USE_IMPLOT "Use ImPlot" OFF)
 option(USE_IM_TOOLS "Use ImTools" OFF)
 option(USE_IM_NODES "Use ImNodes" OFF)
+option(USE_IM_GENIE "Use ImGenie" OFF)
 option(USE_IM_GUIZMO "Use ImGuizmo" OFF)
 option(USE_IM_COOL_BAR "Use ImCoolBar" OFF)
 option(USE_IMGUI_MARKDOW "Use ImGuiMarkDown" OFF)
@@ -184,6 +185,19 @@ if (USE_IM_COOL_BAR)
 endif()
 
 #####################################################
+##### IMGENIE
+#####################################################
+
+if (USE_IM_GENIE)
+	message(STATUS "USE IM GENIE")
+	file(GLOB IMGUI_IMGENIE_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgenie/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgenie/*.cpp)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGENIE_SOURCES})
+endif()
+
+
+#####################################################
 ##### IMGUINODEFLOW
 #####################################################
 
@@ -290,6 +304,7 @@ if (BUILD_SHARED_LIBS)
 		${IMGUI_IMPLOT_SOURCES}
 		${IMGUI_IMNODES_SOURCES}
 		${IMGUI_IMTOOLS_SOURCES}
+		${IMGUI_IMGENIE_SOURCES}
 		${IMGUI_IMGUIZMO_SOURCES}
 		${IMGUI_IMCOOLBAR_SOURCES}
 		${IMGUI_IMGUIPACK_SOURCES}
@@ -310,6 +325,7 @@ else()
 		${IMGUI_IMPLOT_SOURCES}
 		${IMGUI_IMNODES_SOURCES}
 		${IMGUI_IMTOOLS_SOURCES}
+		${IMGUI_IMGENIE_SOURCES}
 		${IMGUI_IMGUIZMO_SOURCES}
 		${IMGUI_IMCOOLBAR_SOURCES}
 		${IMGUI_IMGUIPACK_SOURCES}
@@ -332,6 +348,7 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgenie/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
@@ -367,6 +384,9 @@ if (USE_IM_NODES)
 endif()
 if (USE_IM_GUIZMO)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IM_GUIZMO)
+endif()
+if (USE_IM_GENIE)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IM_GENIE)
 endif()
 if (USE_IM_COOL_BAR)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IM_COOL_BAR)

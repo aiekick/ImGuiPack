@@ -50,6 +50,7 @@
 		#define IGFD_API __declspec(dllexport)
 		#define IMGUI_API __declspec(dllexport)
 		#define IMPLOT_API __declspec(dllexport)
+		#define IMGENIE_API __declspec(dllexport)
 		#define IMGUI_IMPL_API __declspec(dllexport)
 		#define IM_NODE_FLOW_API __declspec(dllexport)
 		#define IMGUIEX_CANVAS_API __declspec(dllexport)
@@ -59,6 +60,7 @@
 		#define IGFD_API __declspec(dllimport)
 		#define IMGUI_API __declspec(dllimport)
 		#define IMPLOT_API __declspec(dllimport)
+		#define IMGENIE_API __declspec(dllimport)
 		#define IMGUI_IMPL_API __declspec(dllimport)
 		#define IM_NODE_FLOW_API __declspec(dllimport)
 		#define IMGUIEX_CANVAS_API __declspec(dllimport)
@@ -68,6 +70,7 @@
 		#define IGFD_API
 		#define IMGUI_API
 		#define IMPLOT_API
+		#define IMGENIE_API
 		#define IMGUI_IMPL_API
 		#define IM_NODE_FLOW_API
 		#define IMGUIEX_CANVAS_API
@@ -78,6 +81,7 @@
 	#define IGFD_API
 	#define IMGUI_API
 	#define IMPLOT_API
+	#define IMGENIE_API
 	#define IMGUI_IMPL_API
 	#define IM_NODE_FLOW_API
 	#define IMGUIEX_CANVAS_API
@@ -115,6 +119,10 @@
 	#include <3rdparty/imgui_tools/ImCanvasWip.h>
 	#include <3rdparty/imgui_tools/ImCanvas.h>
 	#include <3rdparty/imgui_tools/ImCodeEditor.h>
+#endif
+
+#ifdef USE_IM_GENIE
+	#include <3rdparty/imgui_imgenie/ImGenie.h>
 #endif
 
 #ifdef USE_IM_COOL_BAR
