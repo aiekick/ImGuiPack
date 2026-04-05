@@ -2224,7 +2224,7 @@ void ImageRatio(ImTextureID vTexId, float vRatioX, float vWidth, ImVec4 vColor, 
 }
 
 #ifdef USE_OPENGL
-bool TextureOverLay(
+/*bool TextureOverLay(
     float vWidth,
     ez::texture* vTex,
     ImVec4 vBorderColor,
@@ -2295,18 +2295,18 @@ bool TextureOverLay(
     }
 
 #ifdef _DEBUG
-    /*if (IsItemHovered())
+    if (IsItemHovered())
     {
         char arr[3];
         if (snprintf(arr, 3, "%i", (int)vTex->glTex))
         {
             SetTooltip(arr);
         }
-    }*/
+    }
 #endif
 
     return pressed;
-}
+}*/
 #endif
 
 // Convert a value v in the output space of a slider into a parametric position on the slider itself (the logical

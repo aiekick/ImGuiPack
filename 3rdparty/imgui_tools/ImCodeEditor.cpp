@@ -2,8 +2,6 @@
 
 #ifdef USE_IMGUI_COLOR_TEXT_EDIT
 
-#include <ezlibs/ezTools.hpp>
-
 #include <filesystem>
 #include <fstream>
 #include <codecvt>

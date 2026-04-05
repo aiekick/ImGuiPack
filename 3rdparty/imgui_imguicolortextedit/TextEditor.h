@@ -9,8 +9,15 @@
 #include <unordered_set>
 #include <vector>
 
-#include "imgui.h"
+#ifndef IMGUI_DEFINE_MATH_OPERATORS
+#define IMGUI_DEFINE_MATH_OPERATORS
+#endif  // IMGUI_DEFINE_MATH_OPERATORS
 
+#ifdef IMGUI_INCLUDE
+#include IMGUI_INCLUDE
+#else  // IMGUI_INCLUDE
+#include <imgui_internal.h>
+#endif  // IMGUI_INCLUDE
 
 //
 //	TextEditor

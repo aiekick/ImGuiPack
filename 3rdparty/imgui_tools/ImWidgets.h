@@ -19,6 +19,7 @@
 
 #include <imguipack.h>
 
+
 #include <cstdint>  // types like uint32_t
 #include <vector>
 #include <string>
@@ -479,7 +480,7 @@ IMGUI_API void ImageRatio(  //
 
 #ifdef USE_OPENGL
 // show overlay text on mousehover // l'epaisseur du cadre vient de BorderColor.w
-IMGUI_API bool TextureOverLay(  //
+/*IMGUI_API bool TextureOverLay(  //
     float vWidth,
     ez::texture* vTex,
     ImVec4 vBorderColor,
@@ -487,7 +488,7 @@ IMGUI_API bool TextureOverLay(  //
     ImVec4 vOverLayTextColor,
     ImVec4 vOverLayBgColor,
     ImVec2 vUV0 = ImVec2(0, 0),
-    ImVec2 vUV1 = ImVec2(1, 1));
+    ImVec2 vUV1 = ImVec2(1, 1));*/
 #endif
 
 ////////////////////////////////////////////////////////////

@@ -2,6 +2,8 @@ Support development of imgui_markdown through [GitHub Sponsors](https://github.c
 
 [<img src="https://img.shields.io/static/v1?logo=github&label=Github&message=Sponsor&color=#ea4aaa" width="200"/>](https://github.com/sponsors/dougbinks)    [<img src="https://c5.patreon.com/external/logo/become_a_patron_button@2x.png" alt="Become a Patron" width="150"/>](https://www.patreon.com/enkisoftware)
 
+*Note:* development happens on the `dev` branch and is merged to the `main` branch when complete. Please check this branch prior to submitting PRs and issues, and preferably base PRs on `dev`.
+
 # imgui_markdown
 
 ## Markdown For Dear ImGui
@@ -21,9 +23,9 @@ imgui_markdown currently supports the following markdown functionality:
   * Image
   * Horizontal rule
 
-![imgui_markdown demo live editing](https://github.com/juliettef/Media/blob/main/imgui_markdown_demo_live_editing.gif?raw=true)
+![imgui_markdown demo live editing](https://github.com/enkisoftware/Media/blob/main/imgui_markdown_demo_live_editing.gif?raw=true)
 
-*Note - the gif above is heavily compressed due to GitHub limitations. There's a [(slightly) better version of it on twitter](https://twitter.com/juulcat/status/1090996799266000898).*
+*Note - the gif above is heavily compressed due to GitHub limitations*
 
 ## Syntax
 
@@ -77,7 +79,7 @@ Normal text
 ___
 ```
 
-![Example use of imgui_markdown with icon fonts](https://github.com/juliettef/Media/blob/main/imgui_markdown_icon_font.jpg?raw=true)
+![Example use of imgui_markdown with icon fonts](https://github.com/enkisoftware/Media/blob/main/imgui_markdown_icon_font.jpg?raw=true)
 
 ### Unsupported Syntax Combinations
 Non exhaustive
@@ -90,7 +92,7 @@ Non exhaustive
 ```Cpp
 
 #include "ImGui.h"                // https://github.com/ocornut/imgui
-#include "imgui_markdown.h"       // https://github.com/juliettef/imgui_markdown
+#include "imgui_markdown.h"       // https://github.com/enkisoftware/imgui_markdown
 #include "IconsFontAwesome5.h"    // https://github.com/juliettef/IconFontCppHeaders
 
 // Following includes for Windows LinkCallback
@@ -108,6 +110,7 @@ static ImFont* H3 = NULL;
 
 static ImGui::MarkdownConfig mdConfig; 
 
+static float fontSize = 12.0f;
 
 void LinkCallback( ImGui::MarkdownLinkCallbackData data_ )
 {
@@ -121,7 +124,11 @@ void LinkCallback( ImGui::MarkdownLinkCallbackData data_ )
 inline ImGui::MarkdownImageData ImageCallback( ImGui::MarkdownLinkCallbackData data_ )
 {
     // In your application you would load an image based on data_ input. Here we just use the imgui font texture.
-    ImTextureID image = ImGui::GetIO().Fonts->TexID;
+    #ifdef IMGUI_HAS_TEXTURES // used to detect dynamic font capability
+        ImTextureID image = ImGui::GetIO().Fonts->TexRef.GetTexID();
+    #else
+        ImTextureID image = ImGui::GetIO().Fonts->TexID;
+    #endif
     // > C++14 can use ImGui::MarkdownImageData imageData{ true, false, image, ImVec2( 40.0f, 20.0f ) };
     ImGui::MarkdownImageData imageData;
     imageData.isValid =         true;
@@ -141,18 +148,23 @@ inline ImGui::MarkdownImageData ImageCallback( ImGui::MarkdownLinkCallbackData d
     return imageData;
 }
 
-void LoadFonts( float fontSize_ = 12.0f )
+void LoadFonts()
 {
     ImGuiIO& io = ImGui::GetIO();
     io.Fonts->Clear();
     // Base font
-    io.Fonts->AddFontFromFileTTF( "myfont.ttf", fontSize_ );
+    io.Fonts->AddFontFromFileTTF( "myfont.ttf", fontSize );
     // Bold headings H2 and H3
-    H2 = io.Fonts->AddFontFromFileTTF( "myfont-bold.ttf", fontSize_ );
-    H3 = mdConfig.headingFormats[ 1 ].font;
+    H2 = io.Fonts->AddFontFromFileTTF( "myfont-bold.ttf", fontSize );
+    H3 = H2;
     // bold heading H1
-    float fontSizeH1 = fontSize_ * 1.1f;
-    H1 = io.Fonts->AddFontFromFileTTF( "myfont-bold.ttf", fontSizeH1 );
+    #ifdef IMGUI_HAS_TEXTURES // used to detect dynamic font capability
+        H1 = H2; // size can be set in headingFormats
+    #else
+        float fontSizeH1 = fontSize * 1.1f;
+        H1 = io.Fonts->AddFontFromFileTTF( "myfont-bold.ttf", fontSizeH1 );
+    #endif
+
 }
 
 void ExampleMarkdownFormatCallback( const ImGui::MarkdownFormatInfo& markdownFormatInfo_, bool start_ )
@@ -195,9 +207,16 @@ void Markdown( const std::string& markdown_ )
     mdConfig.tooltipCallback =      NULL;
     mdConfig.imageCallback =        ImageCallback;
     mdConfig.linkIcon =             ICON_FA_LINK;
-    mdConfig.headingFormats[0] =    { H1, true };
-    mdConfig.headingFormats[1] =    { H2, true };
-    mdConfig.headingFormats[2] =    { H3, false };
+    #ifdef IMGUI_HAS_TEXTURES // used to detect dynamic font capability
+        mdConfig.headingFormats[0] =    { H1, true,  fontSize * 1.1f };
+        mdConfig.headingFormats[1] =    { H2, true,  fontSize };
+        mdConfig.headingFormats[2] =    { H3, false, fontSize };
+    #else
+        mdConfig.headingFormats[0] =    { H1, true };
+        mdConfig.headingFormats[1] =    { H2, true };
+        mdConfig.headingFormats[2] =    { H3, false };
+    #endif
+
     mdConfig.userData =             NULL;
     mdConfig.formatCallback =       ExampleMarkdownFormatCallback;
     ImGui::Markdown( markdown_.c_str(), markdown_.length(), mdConfig );
@@ -228,12 +247,11 @@ ___
 ## Projects Using imgui_markdown
 
 ### [Avoyd](https://www.enkisoftware.com/avoyd)
-Avoyd is an abstract 6 degrees of freedom voxel game.  
+Avoyd is a voxel Editor and Renderer, as well as a voxel game.  
+The in-app documentation, tutorials, and about windows use imgui_markdown with Dear ImGui.  
 [www.avoyd.com](https://www.avoyd.com)  
 
-The game and the voxel editor's help and tutorials use imgui_markdown with Dear ImGui.  
-
-![Avoyd screenshot](https://github.com/juliettef/Media/blob/main/imgui_markdown_Avoyd_about_OSS.png?raw=true)
+![Side-by-side markdown code and the corresponding text in the Avoyd application](https://github.com/enkisoftware/Media/blob/main/imgui_markdown_Avoyd.webp?raw=true)
 
 ### [bgfx](https://github.com/bkaradzic/bgfx)
 Cross-platform rendering library.  
@@ -241,17 +259,23 @@ Cross-platform rendering library.
 
 ### [Imogen](https://github.com/CedricGuillemet/Imogen)
 GPU/CPU Texture Generator  
-[skaven.fr/imogen](http://skaven.fr/imogen/)
 
-![Imogen screenshot](https://camo.githubusercontent.com/28347bc0c1627aa4f289e1b2b769afcb3a5de370/68747470733a2f2f692e696d6775722e636f6d2f7351664f3542722e706e67)
+![Imogen screenshot](https://camo.githubusercontent.com/dca2488007e88dbed7d4cabcbce7e4f7712bf93a7bdd62db2be1f0e2559bfdc6/68747470733a2f2f692e696d6775722e636f6d2f7351664f3542722e706e67)
 
 ### [Light Tracer](https://lighttracer.org/)
-Experimental GPU ray tracer for web
+Experimental GPU ray tracer for web  
 
-![Light Tracer screenshot](https://github.com/juliettef/Media/blob/main/imgui_markdown_Light_Tracer.png?raw=true)
+![Light Tracer screenshot](https://github.com/enkisoftware/Media/blob/main/imgui_markdown_Light_Tracer.png?raw=true)
+
+### [Lobster Programming Language](https://github.com/aardappel/lobster)
+Lobster is a statically typed programming language with a Python-esque syntax that combines the advantages of an expressive type system and compile-time memory management with a very lightweight, friendly and terse syntax, by doing most of the heavy lifting for you.  
+[Dear ImGui sample with imgui_markdown](https://github.com/aardappel/lobster/blob/master/samples/imguitest.lobster)  
+
+![Using imgui_markdown in Lobster - screenshot](https://github.com/enkisoftware/Media/blob/main/imgui_markdown_Lobster.webp?raw=true)
 
 ### [Visual 6502 Remix](https://github.com/floooh/v6502r)
 Transistor level 6502 Hardware Simulation  
+
 [hfloooh.github.io/visual6502remix](https://floooh.github.io/visual6502remix/)  
 
 Using imgui_markdown as help viewer for Visual 6502 Remix with internal and external links: 
@@ -259,12 +283,12 @@ Using imgui_markdown as help viewer for Visual 6502 Remix with internal and exte
 [![Using imgui_markdown as help viewer for Visual 6502 Remix with internal and external links - animated gif](https://user-images.githubusercontent.com/1699414/69185510-320baa00-0b17-11ea-9fd5-82ed6e02a05c.gif)
 ![Using imgui_markdown as help viewer for Visual 6502 Remix - screenshot](https://user-images.githubusercontent.com/1699414/69185626-67b09300-0b17-11ea-85a8-fed54a0082b4.png)](https://github.com/ocornut/imgui/issues/2847#issuecomment-555710973)  
 
-![Using imgui_markdown in the About page for Visual 6502 Remix - screenshot](https://github.com/juliettef/Media/blob/main/imgui_markdown_Visual_6502_Remix_About.png?raw=true)
+![Using imgui_markdown in the About page for Visual 6502 Remix - screenshot](https://github.com/enkisoftware/Media/blob/main/imgui_markdown_Visual_6502_Remix_About.png?raw=true)
 
 ## Credits
 
 Design and implementation - [Doug Binks](http://www.enkisoftware.com/about.html#doug) - [@dougbinks](https://github.com/dougbinks)  
-Implementation and maintenance - [Juliette Foucaut](http://www.enkisoftware.com/about.html#juliette) - [@juliettef](https://github.com/juliettef)  
+Implementation - [Juliette Foucaut](http://www.enkisoftware.com/about.html#juliette) - [@juliettef](https://github.com/juliettef)  
 [Image resize](https://github.com/juliettef/imgui_markdown/pull/15) example code - [Soufiane Khiat](https://github.com/soufianekhiat)  
 Emphasis and horizontal rule initial implementation - [Dmitry Mekhontsev](https://github.com/mekhontsev)  
 Thanks to [Omar Cornut for Dear ImGui](https://github.com/ocornut/imgui)  
