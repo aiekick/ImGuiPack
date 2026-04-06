@@ -454,7 +454,7 @@ bool ImageCheckButton(
 
     // Render
     const ImU32 col = GetColorU32(((held && hovered) || (v && *v)) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
-    RenderNavHighlight(bb, id);
+    //RenderNavCursor(bb, id);
     RenderFrame(bb.Min, bb.Max, col, true, ImClamp((float)ImMin(padding.x, padding.y), 0.0f, style.FrameRounding));
     if (vRectThickNess > 0.0f) {
         window->DrawList->AddRect(bb.Min, bb.Max, GetColorU32(vRectColor), 0.0, ImDrawFlags_RoundCornersAll, vRectThickNess);
@@ -849,7 +849,7 @@ bool RadioButtonLabeled(float vWidth, const char* label, bool active, bool disab
     const ImGuiID id = window->GetID(label);
     const ImVec2 label_size = CalcTextSize(label, nullptr, true);
     if (w < 0.0f)
-        w = GetContentRegionMax().x - window->DC.CursorPos.x;
+        w = GetContentRegionAvail().x - window->DC.CursorPos.x;
     if (IS_FLOAT_EQUAL(w, 0.0f))
         w = label_size.x + style.FramePadding.x * 2.0f;
     const ImRect total_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
@@ -906,7 +906,7 @@ bool RadioButtonLabeled(float vWidth, const char* label, bool active, bool disab
 
 bool RadioButtonLabeled(float vWidth, const char* label, const char* help, bool active, bool disabled, ImFont* vLabelFont) {
     if (vLabelFont)
-        PushFont(vLabelFont);
+        PushFont(vLabelFont, 0.0f);
     const bool change = RadioButtonLabeled(vWidth, label, active, disabled);
     if (vLabelFont)
         PopFont();
@@ -918,7 +918,7 @@ bool RadioButtonLabeled(float vWidth, const char* label, const char* help, bool 
 
 bool RadioButtonLabeled(float vWidth, const char* label, const char* help, bool* active, bool disabled, ImFont* vLabelFont) {
     if (vLabelFont)
-        PushFont(vLabelFont);
+        PushFont(vLabelFont, 0.0f);
     const bool change = RadioButtonLabeled(vWidth, label, *active, disabled);
     if (vLabelFont)
         PopFont();
@@ -942,9 +942,9 @@ bool RadioButtonLabeled(ImVec2 vSize, const char* label, bool active, bool disab
     const ImGuiID id = window->GetID(label);
     const ImVec2 label_size = CalcTextSize(label, nullptr, true);
     if (w < 0.0f)
-        w = GetContentRegionMax().x - window->DC.CursorPos.x;
+        w = GetContentRegionAvail().x - window->DC.CursorPos.x;
     if (h < 0.0f)
-        w = GetContentRegionMax().y - window->DC.CursorPos.y;
+        w = GetContentRegionAvail().y - window->DC.CursorPos.y;
     if (IS_FLOAT_EQUAL(w, 0.0f))
         w = label_size.x + style.FramePadding.x * 2.0f;
     if (IS_FLOAT_EQUAL(h, 0.0f))
@@ -1003,7 +1003,7 @@ bool RadioButtonLabeled(ImVec2 vSize, const char* label, bool active, bool disab
 
 bool RadioButtonLabeled(ImVec2 vSize, const char* label, const char* help, bool active, bool disabled, ImFont* vLabelFont) {
     if (vLabelFont)
-        PushFont(vLabelFont);
+        PushFont(vLabelFont, 0.0f);
     const bool change = RadioButtonLabeled(vSize, label, active, disabled);
     if (vLabelFont)
         PopFont();
@@ -1015,7 +1015,7 @@ bool RadioButtonLabeled(ImVec2 vSize, const char* label, const char* help, bool 
 
 bool RadioButtonLabeled(ImVec2 vSize, const char* label, const char* help, bool* active, bool disabled, ImFont* vLabelFont) {
     if (vLabelFont)
-        PushFont(vLabelFont);
+        PushFont(vLabelFont, 0.0f);
     const bool change = RadioButtonLabeled(vSize, label, *active, disabled);
     if (vLabelFont)
         PopFont();
@@ -1263,7 +1263,7 @@ bool ButtonNoFrame(const char* vLabel, ImVec2 size, ImVec4 vColor, const char* v
     bool hovered, held;
     const bool pressed = ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
     if (vLabelFont) {
-        PushFont(vLabelFont);
+        PushFont(vLabelFont, 0.0f);
     }
     PushStyleColor(ImGuiCol_Text, vColor);
     RenderTextClipped(bb.Min, bb.Max, vLabel, nullptr, nullptr, ImVec2(0.5f, 0.5f));
@@ -1321,7 +1321,7 @@ bool ClickableTextUrl(const char* label, const char* url, bool vOnlined) {
     const bool pressed = ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
     if (held || (g.HoveredId == id && g.HoveredIdPreviousFrame == id))
         SetMouseCursor(ImGuiMouseCursor_Hand);
-    RenderNavHighlight(bb, id);
+    RenderNavCursor(bb, id);
     ImVec4 defColor = GetStyleColorVec4(ImGuiCol_Text);
     defColor.w = 0.5f;
     ImVec4 hovColor = defColor;
@@ -1370,7 +1370,7 @@ bool ClickableTextFile(const char* label, const char* file, bool vOnlined) {
     const bool pressed = ButtonBehavior(bb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
     if (held || (g.HoveredId == id && g.HoveredIdPreviousFrame == id))
         SetMouseCursor(ImGuiMouseCursor_Hand);
-    RenderNavHighlight(bb, id);
+    RenderNavCursor(bb, id);
     ImVec4 defColor = GetStyleColorVec4(ImGuiCol_Text);
     defColor.w = 0.5f;
     ImVec4 hovColor = defColor;
@@ -1849,7 +1849,7 @@ bool ContrastedButton(const char* label, const char* help, ImFont* imfont, float
     const bool pushed = PushStyleColorWithContrast1(ImGuiCol_Button, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
 
     if (imfont)
-        PushFont(imfont);
+        PushFont(imfont, 0.0f);
 
     PushID(++CustomStyle::pushId);
 
@@ -1878,7 +1878,7 @@ bool ToggleContrastedButton(const char* vLabelTrue, const char* vLabelFalse, boo
     const auto pushed = PushStyleColorWithContrast1(ImGuiCol_Button, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
 
     if (vImfont)
-        PushFont(vImfont);
+        PushFont(vImfont, 0.0f);
 
     PushID(++CustomStyle::pushId);
 
@@ -2109,7 +2109,7 @@ bool GradButton(const char* label, const ImVec2& size_arg, ImGuiButtonFlags flag
     ImVec4 col_darker = ImVec4(col.x * 0.5f, col.y * 0.5f, col.z * 0.5f, col.w);
     RenderGradFrame(bb.Min, bb.Max, GetColorU32(col_darker), GetColorU32(col), true, g.Style.FrameRounding);
 
-    RenderNavHighlight(bb, id);
+    RenderNavCursor(bb, id);
     RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, label, NULL, &label_size, style.ButtonTextAlign, &bb);
 
     // Automatically close popups
@@ -2151,7 +2151,7 @@ bool TransparentButton(const char* label, const ImVec2& size_arg, ImGuiButtonFla
     // Render
     // const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered :
     // ImGuiCol_Button);
-    RenderNavHighlight(bb, id);
+    RenderNavCursor(bb, id);
     // RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
     RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, label, nullptr, &label_size, style.ButtonTextAlign, &bb);
 
@@ -2849,7 +2849,7 @@ bool SliderScalarCompact(
 
     float w = width;
     if (width <= 0.0f) {
-        w = GetContentRegionMax().x - window->DC.CursorPos.x - style.FramePadding.x;
+        w = GetContentRegionAvail().x - window->DC.CursorPos.x - style.FramePadding.x;
     }
 
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
@@ -2900,7 +2900,7 @@ bool SliderScalarCompact(
 
     // Draw frame
     const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
-    RenderNavHighlight(frame_bb, id);
+    RenderNavCursor(frame_bb, id);
     RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, g.Style.FrameRounding);
 
     // Slider behavior
@@ -3148,7 +3148,7 @@ bool SliderScalar(
 
     // Draw frame
     const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
-    RenderNavHighlight(frame_bb, id);
+    RenderNavCursor(frame_bb, id);
     RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, g.Style.FrameRounding);
 
     // Slider behavior
@@ -3434,7 +3434,7 @@ bool BeginContrastedCombo(const char* label, const char* preview_value, ImGuiCom
     // Render shape
     const ImU32 frame_col = GetColorU32(hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
     const float value_x2 = ImMax(bb.Min.x, bb.Max.x - arrow_size);
-    RenderNavHighlight(bb, id);
+    RenderNavCursor(bb, id);
     if (!(flags & ImGuiComboFlags_NoPreview)) {
         window->DrawList->AddRectFilled(
             bb.Min,
@@ -3544,7 +3544,7 @@ bool BeginContrastedEditCombo(const char* label, char* preview_value, size_t pre
     // Render shape
     const ImU32 frame_col = GetColorU32(hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
     const float value_x2 = ImMax(bb.Min.x, bb.Max.x - arrow_size);
-    RenderNavHighlight(bb, id);
+    RenderNavCursor(bb, id);
     if (!(flags & ImGuiComboFlags_NoPreview)) {
         window->DrawList->AddRectFilled(
             bb.Min,

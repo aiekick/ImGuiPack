@@ -401,9 +401,9 @@ std::string ImGuiThemeHelper::GetStyleColorName(ImGuiCol idx)
 	case ImGuiCol_ResizeGripActive: return "ImGuiCol_ResizeGripActive";
 	case ImGuiCol_Tab: return "ImGuiCol_Tab";
 	case ImGuiCol_TabHovered: return "ImGuiCol_TabHovered";
-	case ImGuiCol_TabActive: return "ImGuiCol_TabActive";
-	case ImGuiCol_TabUnfocused: return "ImGuiCol_TabUnfocused";
-	case ImGuiCol_TabUnfocusedActive: return "ImGuiCol_TabUnfocusedActive";
+    case ImGuiCol_TabSelected: return "ImGuiCol_TabSelected";
+    case ImGuiCol_TabDimmed: return "ImGuiCol_TabDimmed";
+    case ImGuiCol_TabDimmedSelected: return "ImGuiCol_TabDimmedSelected";
 	case ImGuiCol_DockingPreview: return "ImGuiCol_DockingPreview";
 	case ImGuiCol_DockingEmptyBg: return "ImGuiCol_DockingEmptyBg";
 	case ImGuiCol_PlotLines: return "ImGuiCol_PlotLines";
@@ -417,7 +417,7 @@ std::string ImGuiThemeHelper::GetStyleColorName(ImGuiCol idx)
 	case ImGuiCol_TableRowBgAlt: return "ImGuiCol_TableRowBgAlt";
 	case ImGuiCol_TextSelectedBg: return "ImGuiCol_TextSelectedBg";
 	case ImGuiCol_DragDropTarget: return "ImGuiCol_DragDropTarget";
-	case ImGuiCol_NavHighlight: return "ImGuiCol_NavHighlight";
+    case ImGuiCol_NavCursor: return "ImGuiCol_NavCursor";
 	case ImGuiCol_NavWindowingHighlight: return "ImGuiCol_NavWindowingHighlight";
 	case ImGuiCol_NavWindowingDimBg: return "ImGuiCol_NavWindowingDimBg";
 	case ImGuiCol_ModalWindowDimBg: return "ImGuiCol_ModalWindowDimBg";
@@ -463,9 +463,9 @@ int ImGuiThemeHelper::GetImGuiColFromName(const std::string& vName)
 	else if (vName == "ImGuiCol_ResizeGripActive") return ImGuiCol_ResizeGripActive;
 	else if (vName == "ImGuiCol_Tab") return ImGuiCol_Tab;
 	else if (vName == "ImGuiCol_TabHovered") return ImGuiCol_TabHovered;
-	else if (vName == "ImGuiCol_TabActive") return ImGuiCol_TabActive;
-	else if (vName == "ImGuiCol_TabUnfocused") return ImGuiCol_TabUnfocused;
-	else if (vName == "ImGuiCol_TabUnfocusedActive") return ImGuiCol_TabUnfocusedActive;
+	else if (vName == "ImGuiCol_TabSelected") return ImGuiCol_TabSelected;
+	else if (vName == "ImGuiCol_TabDimmed") return ImGuiCol_TabDimmed;
+	else if (vName == "ImGuiCol_TabDimmedSelected") return ImGuiCol_TabDimmedSelected;
 	else if (vName == "ImGuiCol_DockingPreview") return ImGuiCol_DockingPreview;
 	else if (vName == "ImGuiCol_DockingEmptyBg") return ImGuiCol_DockingEmptyBg;
 	else if (vName == "ImGuiCol_PlotLines") return ImGuiCol_PlotLines;
@@ -479,7 +479,7 @@ int ImGuiThemeHelper::GetImGuiColFromName(const std::string& vName)
 	else if (vName == "ImGuiCol_TableRowBgAlt") return ImGuiCol_TableRowBgAlt;
 	else if (vName == "ImGuiCol_TextSelectedBg") return ImGuiCol_TextSelectedBg;
 	else if (vName == "ImGuiCol_DragDropTarget") return ImGuiCol_DragDropTarget;
-	else if (vName == "ImGuiCol_NavHighlight") return ImGuiCol_NavHighlight;
+	else if (vName == "ImGuiCol_NavCursor") return ImGuiCol_NavCursor;
 	else if (vName == "ImGuiCol_NavWindowingHighlight") return ImGuiCol_NavWindowingHighlight;
 	else if (vName == "ImGuiCol_NavWindowingDimBg") return ImGuiCol_NavWindowingDimBg;
 	else if (vName == "ImGuiCol_ModalWindowDimBg") return ImGuiCol_ModalWindowDimBg;
@@ -816,7 +816,7 @@ void ImGuiThemeHelper::ShowCustomImGuiStyleEditor(bool* vOpen, ImGuiStyle* ref)
 
 				static auto alpha_flags = 0;
 				if (ImGui::RadioButton("Opaque", alpha_flags == 0)) { alpha_flags = 0; } ImGui::SameLine();
-				if (ImGui::RadioButton("Alpha", alpha_flags == ImGuiColorEditFlags_AlphaPreview)) { alpha_flags = ImGuiColorEditFlags_AlphaPreview; } ImGui::SameLine();
+				// if (ImGui::RadioButton("Alpha", alpha_flags == ImGuiColorEditFlags_AlphaPreview)) { alpha_flags = ImGuiColorEditFlags_AlphaPreview; } ImGui::SameLine();
 				if (ImGui::RadioButton("Both", alpha_flags == ImGuiColorEditFlags_AlphaPreviewHalf)) { alpha_flags = ImGuiColorEditFlags_AlphaPreviewHalf; } ImGui::SameLine();
 				ImGui::HelpMarker("In the color list:\nLeft-click on colored square to open color picker,\nRight-click to open edit options menu.");
 
