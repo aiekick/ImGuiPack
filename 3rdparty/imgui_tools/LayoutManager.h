@@ -83,7 +83,7 @@ class IMGUI_API LayoutManager
 #endif  // EZ_TOOLS_XML_CONFIG
 {
 public:
-    class PaneInfos {
+    class IMGUI_API PaneInfos {
         friend class LayoutManager;
 
     private:

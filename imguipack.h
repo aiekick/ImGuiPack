@@ -93,6 +93,10 @@
 	#include IMGUI_USER_CONFIG
 #endif
 
+#ifndef IMGUI_DEFINE_MATH_OPERATORS
+#define IMGUI_DEFINE_MATH_OPERATORS
+#endif  // IMGUI_DEFINE_MATH_OPERATORS
+
 #include <3rdparty/imgui_docking/imgui.h>
 #include <3rdparty/imgui_docking/imgui_internal.h>
 
