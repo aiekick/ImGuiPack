@@ -13,13 +13,12 @@ option(USE_NEW_SINGLETON "Use new sigleton" ON)
 
 option(USE_IMPLOT "Use ImPlot" OFF)
 option(USE_IM_TOOLS "Use ImTools" OFF)
-option(USE_IM_NODES "Use ImNodes" OFF)
 option(USE_IM_GENIE "Use ImGenie" OFF)
+option(USE_IM_NODAL "Use ImNodal" OFF)
 option(USE_IM_GUIZMO "Use ImGuizmo" OFF)
 option(USE_IM_COOL_BAR "Use ImCoolBar" OFF)
 option(USE_IMGUI_MARKDOW "Use ImGuiMarkDown" OFF)
 option(USE_IM_GRADIENT_HDR "Use ImGradientHDR" OFF)
-option(USE_IMGUI_NODE_FLOW "Use ImGuiNodeFlow" OFF)
 option(USE_IMGUI_NODE_EDITOR "ImGuiNodeEditor" OFF)
 option(USE_IMGUI_FILE_DIALOG "Use ImGuiFileDialog" OFF)
 option(USE_IMGUI_COLOR_TEXT_EDIT "Use ImGuiColorTextEdit" OFF)
@@ -148,16 +147,16 @@ if (USE_IM_TOOLS)
 endif()
 
 #####################################################
-##### IMNODES
+##### IMNODAL
 #####################################################
 
-if (USE_IM_NODES)
-	message(STATUS "USE IM NODES")
-	file(GLOB IMGUI_IMNODES_SOURCES
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/*.h
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/*.cpp
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/*.md)
-	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMNODES_SOURCES})
+if (USE_IM_NODAL)
+	message(STATUS "USE IM NODAL")
+	file(GLOB IMGUI_IMNODAL_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodal/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodal/*.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodal/*.md)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMNODAL_SOURCES})
 endif()
 
 #####################################################
@@ -194,22 +193,6 @@ if (USE_IM_GENIE)
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgenie/*.h
 			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgenie/*.cpp)
 	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGENIE_SOURCES})
-endif()
-
-
-#####################################################
-##### IMGUINODEFLOW
-#####################################################
-
-if (USE_IMGUI_NODE_FLOW)
-	message(STATUS "USE IMGUI NODE FLOW")
-	file(GLOB IMGUI_IMGUINODEFLOW_SOURCES
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/include/*.h
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/src/*.h
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/src/*.inl
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/src/*.cpp
-			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/*.md)
-	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMGUINODEFLOW_SOURCES})
 endif()
 
 #####################################################
@@ -302,7 +285,7 @@ if (BUILD_SHARED_LIBS)
 	add_library(${PROJECT} 
 		${IMGUI_SOURCES} 
 		${IMGUI_IMPLOT_SOURCES}
-		${IMGUI_IMNODES_SOURCES}
+		${IMGUI_IMNODAL_SOURCES}
 		${IMGUI_IMTOOLS_SOURCES}
 		${IMGUI_IMGENIE_SOURCES}
 		${IMGUI_IMGUIZMO_SOURCES}
@@ -310,7 +293,6 @@ if (BUILD_SHARED_LIBS)
 		${IMGUI_IMGUIPACK_SOURCES}
 		${IMGUI_IMGUIMARKDONW_SOURCES}
 		${IMGUI_IMGRADIENTHDR_SOURCES}
-		${IMGUI_IMGUINODEFLOW_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
 		${IMGUI_IMGUINODEEDITOR_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
@@ -323,7 +305,7 @@ else()
 	add_library(${PROJECT} STATIC 
 		${IMGUI_SOURCES} 
 		${IMGUI_IMPLOT_SOURCES}
-		${IMGUI_IMNODES_SOURCES}
+		${IMGUI_IMNODAL_SOURCES}
 		${IMGUI_IMTOOLS_SOURCES}
 		${IMGUI_IMGENIE_SOURCES}
 		${IMGUI_IMGUIZMO_SOURCES}
@@ -331,7 +313,6 @@ else()
 		${IMGUI_IMGUIPACK_SOURCES}
 		${IMGUI_IMGUIMARKDONW_SOURCES}
 		${IMGUI_IMGRADIENTHDR_SOURCES}
-		${IMGUI_IMGUINODEFLOW_SOURCES}
 		${IMGUI_IMGUIFILEDIALOG_SOURCES}
 		${IMGUI_IMGUINODEEDITOR_SOURCES}
 		${IMGUI_IMGUICOLORTEXTEDIT_SOURCES}
@@ -346,7 +327,7 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_tools/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_implot/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodes/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodal/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgenie/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
@@ -356,7 +337,6 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgradienthdr/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguifiledialog/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguicolortextedit/
-	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodeflow/include/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_embeddedframeprofiler/
 )
 
@@ -379,8 +359,8 @@ endif()
 if (USE_IM_TOOLS)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IM_TOOLS)
 endif()
-if (USE_IM_NODES)
-	target_compile_definitions(${PROJECT} PUBLIC USE_IM_NODES)
+if (USE_IM_NODAL)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IM_NODAL)
 endif()
 if (USE_IM_GUIZMO)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IM_GUIZMO)
@@ -396,9 +376,6 @@ if (USE_IMGUI_MARKDOW)
 endif()
 if (USE_IM_GRADIENT_HDR)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IM_GRADIENT_HDR)
-endif()
-if (USE_IMGUI_NODE_FLOW)
-	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_NODE_FLOW)
 endif()
 if (USE_IMGUI_NODE_EDITOR)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IMGUI_NODE_EDITOR)

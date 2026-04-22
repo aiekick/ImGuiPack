@@ -25,39 +25,47 @@
 // for each static/DLL boundary you are calling from. Read "Context and Memory Allocators" section of imgui.cpp for more details.
 
 #if defined(__WIN32__) || defined(WIN32) || defined(_WIN32) || defined(__WIN64__) || defined(WIN64) || defined(_WIN64) || defined(_MSC_VER)
-#if defined(imguipack_EXPORTS)
-#define IGFD_API __declspec(dllexport)
-#define IMGUI_API __declspec(dllexport)
-#define IMPLOT_API __declspec(dllexport)
-#define IMGENIE_API __declspec(dllexport)
-#define IMGUI_IMPL_API __declspec(dllexport)
-#define IM_NODE_FLOW_API __declspec(dllexport)
-#define IMGUI_NODE_EDITOR_API __declspec(dllexport)
-#elif defined(BUILD_IMGUI_PACK_SHARED_LIBS)
-#define IGFD_API __declspec(dllimport)
-#define IMGUI_API __declspec(dllimport)
-#define IMPLOT_API __declspec(dllimport)
-#define IMGENIE_API __declspec(dllimport)
-#define IMGUI_IMPL_API __declspec(dllimport)
-#define IM_NODE_FLOW_API __declspec(dllimport)
-#define IMGUI_NODE_EDITOR_API __declspec(dllimport)
+	#if defined(imguipack_EXPORTS)
+		#define IGFD_API __declspec(dllexport)
+		#define IMGUI_API __declspec(dllexport)
+		#define IMPLOT_API __declspec(dllexport)
+		#define IMGENIE_API __declspec(dllexport)
+		#define IMNODAL_API __declspec(dllexport)
+		#define IMGUI_IMPL_API __declspec(dllexport)
+		#define IMGUIEX_CANVAS_API __declspec(dllexport)
+		#define IMGUI_NODE_EDITOR_API __declspec(dllexport)
+		#define IN_APP_GPU_PROFILER_API __declspec(dllexport)
+	#elif defined(BUILD_IMGUI_PACK_SHARED_LIBS)
+		#define IGFD_API __declspec(dllimport)
+		#define IMGUI_API __declspec(dllimport)
+		#define IMPLOT_API __declspec(dllimport)
+		#define IMGENIE_API __declspec(dllimport)
+		#define IMNODAL_API __declspec(dllimport)
+		#define IMGUI_IMPL_API __declspec(dllimport)
+		#define IMGUIEX_CANVAS_API __declspec(dllimport)
+		#define IMGUI_NODE_EDITOR_API __declspec(dllimport)
+		#define IN_APP_GPU_PROFILER_API __declspec(dllimport)
+	#else
+		#define IGFD_API
+		#define IMGUI_API
+		#define IMPLOT_API
+		#define IMGENIE_API
+		#define IMNODAL_API
+		#define IMGUI_IMPL_API
+		#define IMGUIEX_CANVAS_API
+		#define IMGUI_NODE_EDITOR_API
+		#define IN_APP_GPU_PROFILER_API
+	#endif
 #else
-#define IGFD_API
-#define IMGUI_API
-#define IMPLOT_API
-#define IMGENIE_API
-#define IMGUI_IMPL_API
-#define IM_NODE_FLOW_API
-#define IMGUI_NODE_EDITOR_API
-#endif
-#else
-#define IGFD_API
-#define IMGUI_API
-#define IMPLOT_API
-#define IMGENIE_API
-#define IMGUI_IMPL_API
-#define IM_NODE_FLOW_API
-#define IMGUI_NODE_EDITOR_API
+	#define IGFD_API
+	#define IMGUI_API
+	#define IMPLOT_API
+	#define IMGENIE_API
+	#define IMNODAL_API
+	#define IMGUI_IMPL_API
+	#define IMGUIEX_CANVAS_API
+	#define IMGUI_NODE_EDITOR_API
+	#define IN_APP_GPU_PROFILER_API
 #endif
 
 //---- Don't define obsolete functions/enums/behaviors. Consider enabling from time to time after updating to avoid using soon-to-be obsolete function/names.

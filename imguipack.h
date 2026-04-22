@@ -51,8 +51,8 @@
 		#define IMGUI_API __declspec(dllexport)
 		#define IMPLOT_API __declspec(dllexport)
 		#define IMGENIE_API __declspec(dllexport)
+		#define IMNODAL_API __declspec(dllexport)
 		#define IMGUI_IMPL_API __declspec(dllexport)
-		#define IM_NODE_FLOW_API __declspec(dllexport)
 		#define IMGUIEX_CANVAS_API __declspec(dllexport)
 		#define IMGUI_NODE_EDITOR_API __declspec(dllexport)
 		#define IN_APP_GPU_PROFILER_API __declspec(dllexport)
@@ -61,8 +61,8 @@
 		#define IMGUI_API __declspec(dllimport)
 		#define IMPLOT_API __declspec(dllimport)
 		#define IMGENIE_API __declspec(dllimport)
+		#define IMNODAL_API __declspec(dllimport)
 		#define IMGUI_IMPL_API __declspec(dllimport)
-		#define IM_NODE_FLOW_API __declspec(dllimport)
 		#define IMGUIEX_CANVAS_API __declspec(dllimport)
 		#define IMGUI_NODE_EDITOR_API __declspec(dllimport)
 		#define IN_APP_GPU_PROFILER_API __declspec(dllimport)
@@ -71,8 +71,8 @@
 		#define IMGUI_API
 		#define IMPLOT_API
 		#define IMGENIE_API
+		#define IMNODAL_API
 		#define IMGUI_IMPL_API
-		#define IM_NODE_FLOW_API
 		#define IMGUIEX_CANVAS_API
 		#define IMGUI_NODE_EDITOR_API
 		#define IN_APP_GPU_PROFILER_API
@@ -82,8 +82,8 @@
 	#define IMGUI_API
 	#define IMPLOT_API
 	#define IMGENIE_API
+	#define IMNODAL_API
 	#define IMGUI_IMPL_API
-	#define IM_NODE_FLOW_API
 	#define IMGUIEX_CANVAS_API
 	#define IMGUI_NODE_EDITOR_API
 	#define IN_APP_GPU_PROFILER_API
@@ -133,23 +133,18 @@
 	#include <3rdparty/imgui_imcoolbar/ImCoolBar.h>
 #endif
 
-#ifdef USE_IMGUI_MARKDOW
-	#include <3rdparty/imgui_markdown/imgui_markdown.h>
+#ifdef USE_IM_NODAL
+	#include <3rdparty/imgui_imnodal/ImNodal.h>
 #endif
 
-#ifdef USE_IMGUI_NODE_FLOW
-	#include <3rdparty/imgui_imnodeflow/include/ImNodeFlow.h>
+#ifdef USE_IMGUI_MARKDOW
+	#include <3rdparty/imgui_markdown/imgui_markdown.h>
 #endif
 
 #ifdef USE_IMGUI_NODE_EDITOR
 	#include <3rdparty/imgui_node_editor/imgui_node_editor.h>
 	#include <3rdparty/imgui_node_editor/imgui_canvas.h>
 	namespace nd = ax::NodeEditor;
-#endif
-
-#ifdef USE_IM_NODES
-	#include <3rdparty/imgui_imnodes/imnodes.h>
-	#include <3rdparty/imgui_imnodes/imnodes_internal.h>
 #endif
 
 #ifdef USE_IMGUI_COLOR_TEXT_EDIT

@@ -6,9 +6,6 @@
 	path = 3rdparty/imgui_imcoolbar
 	url = https://github.com/aiekick/ImCoolBar.git
 	branch = master
-[submodule "3rdparty/imgui_imnodes"]
-	path = 3rdparty/imgui_imnodes
-	url = https://github.com/aiekick/ImNodes.git
 [submodule "3rdparty/imgui_embeddedframeprofiler"]
 	path = 3rdparty/imgui_embeddedframeprofiler
 	url = https://github.com/aiekick/InAppGpuProfiler.git
@@ -16,3 +13,8 @@
 [submodule "3rdparty/imgui_imgenie"]
 	path = 3rdparty/imgui_imgenie
 	url = https://github.com/aiekick/ImGenie.git
+	branch = master
+[submodule "3rdparty/imgui_imnodal"]
+	path = 3rdparty/imgui_imnodal
+	url = https://github.com/aiekick/ImNodal.git
+	branch = master
