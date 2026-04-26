@@ -56,21 +56,15 @@ public:
     void Unit() override = 0;
 
     // the return, is a user side use case here
-    bool DrawPanes(const uint32_t& vCurrentFrame, bool* vOpened, ImGuiContext* vContextPtr, void* vUserDatas) override = 0;
-    bool DrawWidgets(const uint32_t& /*vCurrentFrame*/, ImGuiContext* /*vContextPtr*/, void* /*vUserDatas*/) override {
-        return false;
-    }
-    bool DrawOverlays(const uint32_t& /*vCurrentFrame*/, const ImRect& /*vRect*/, ImGuiContext* /*vContextPtr*/, void* /*vUserDatas*/) override {
-        return false;
-    }
-    bool DrawDialogsAndPopups(const uint32_t& /*vCurrentFrame*/, const ImRect& /*vRect*/, ImGuiContext* /*vContextPtr*/, void* /*vUserDatas*/) override {
-        return false;
-    }
+
+    // the return, is a user side use case here
+    bool DrawPanes(bool* apOpened, ContextDatas& aContext, void* apUserDatas) override = 0;
+    bool DrawWidgets(ContextDatas& aContext, void* apvUserDatas) override { return false; }
+    bool DrawOverlays(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas) override { return false; }
+    bool DrawDialogsAndPopups(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas) override { return false; }
 
     // if for any reason the pane must be hidden temporary, the user can control this here
-    bool CanBeDisplayed() override {
-        return true;
-    }
+    bool CanBeDisplayed() override { return true; }
 };
 
 typedef std::shared_ptr<AbstractPane> AbstractPanePtr;
@@ -168,10 +162,10 @@ public:
     void ApplyInitialDockingLayout(const ImVec2& vSize = ImVec2(0, 0));
 
     virtual void DisplayMenu(const ImVec2& vSize);
-    virtual bool DrawWidgets(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr);
-    virtual bool DrawOverlays(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr);
-    virtual bool DrawPanes(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr);
-    virtual bool DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr = nullptr, void* vUserDatas = nullptr);
+    virtual bool DrawPanes(ContextDatas& aContext, void* apUserDatas = nullptr);
+    virtual bool DrawWidgets(ContextDatas& aContext, void* apvUserDatas = nullptr);
+    virtual bool DrawOverlays(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas = nullptr);
+    virtual bool DrawDialogsAndPopups(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas = nullptr);
 
     void ShowSpecificPane(const LayoutPaneFlag vPane);
     void HideSpecificPane(const LayoutPaneFlag vPane);

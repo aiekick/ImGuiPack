@@ -73,7 +73,7 @@ LayoutManager::PaneInfos::PaneInfos(
       focusedDefault(vIsFocusedDefault) {}
 
 LayoutManager::PaneInfos::PaneInfos(ILayoutPaneWeak vPane, const std::string& vName) : ilayoutPane(vPane), paneName(vName) {}
-LayoutManager::PaneInfos& LayoutManager::PaneInfos::setMenu(const std::string& vName, const std::string& vCategory){
+LayoutManager::PaneInfos& LayoutManager::PaneInfos::setMenu(const std::string& vName, const std::string& vCategory) {
     paneMenuName = vName;
     paneMenuCategoryName = vCategory;
     return *this;
@@ -288,7 +288,8 @@ bool LayoutManager::BeginDockSpace(const ImGuiDockNodeFlags& vFlags, const ImVec
     ImGui::SetNextWindowSize(viewport->WorkSize - voffset);
     ImGui::SetNextWindowViewport(viewport->ID);
     auto host_window_flags = 0;
-    host_window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
+    host_window_flags |=
+        ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
     host_window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
     if (vFlags & ImGuiDockNodeFlags_PassthruCentralNode) {
         host_window_flags |= ImGuiWindowFlags_NoBackground;
@@ -366,7 +367,8 @@ void LayoutManager::ApplyInitialDockingLayout(const ImVec2& vSize) {
                         break;
                     } else {
                         if (a != "LEFT" && a != "RIGHT" && a != "TOP" && a != "BOTTOM") {
-                            std::string msg = "bad split name \"" + a + "\" for pane \"" + pane_ptr->paneName + "\". must be CENTRAL, LEFT, RIGHT, TOP or BOTTOM";
+                            std::string msg =
+                                "bad split name \"" + a + "\" for pane \"" + pane_ptr->paneName + "\". must be CENTRAL, LEFT, RIGHT, TOP or BOTTOM";
                             throw LayoutManagerException(msg);
                         }
                         if (idx++ > 0) {
@@ -444,7 +446,7 @@ void LayoutManager::DisplayMenu(const ImVec2& vSize) {
     }
 }
 
-bool LayoutManager::DrawPanes(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr, void* vUserDatas) {
+bool LayoutManager::DrawPanes(ContextDatas& aContext, void* apUserDatas) {
     bool change = false;
     for (const auto& pane : m_PanesByFlag) {
         auto pane_ptr = pane.second.lock();
@@ -462,7 +464,7 @@ bool LayoutManager::DrawPanes(const uint32_t& vCurrentFrame, ImGuiContext* vCont
                     pane_ptr->m_hidePaneAtFirstCall = false;
                 }
                 bool is_opened = static_cast<bool>(m_paneShown & pane_ptr->m_paneFlag);
-                change |= layoutPanePtr->DrawPanes(vCurrentFrame, &is_opened, vContextPtr, vUserDatas);
+                change |= layoutPanePtr->DrawPanes(&is_opened, aContext, apUserDatas);
                 if (!is_opened) {
                     HideSpecificPane(pane_ptr->m_paneFlag);
                 }
@@ -472,42 +474,42 @@ bool LayoutManager::DrawPanes(const uint32_t& vCurrentFrame, ImGuiContext* vCont
     return change;
 }
 
-bool LayoutManager::DrawDialogsAndPopups(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr, void* vUserDatas) {
+bool LayoutManager::DrawWidgets(ContextDatas& aContext, void* apvUserDatas) {
     bool change = false;
     for (const auto& pane : m_PanesByFlag) {
         auto pane_ptr = pane.second.lock();
         if (pane_ptr != nullptr) {
             auto layoutPanePtr = pane_ptr->ilayoutPane.lock();
             if (layoutPanePtr != nullptr && layoutPanePtr->CanBeDisplayed()) {
-                change |= layoutPanePtr->DrawDialogsAndPopups(vCurrentFrame, vRect, vContextPtr, vUserDatas);
+                change |= layoutPanePtr->DrawWidgets(aContext, apvUserDatas);
             }
         }
     }
     return change;
 }
 
-bool LayoutManager::DrawWidgets(const uint32_t& vCurrentFrame, ImGuiContext* vContextPtr, void* vUserDatas) {
+bool LayoutManager::DrawOverlays(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas) {
     bool change = false;
     for (const auto& pane : m_PanesByFlag) {
         auto pane_ptr = pane.second.lock();
         if (pane_ptr != nullptr) {
             auto layoutPanePtr = pane_ptr->ilayoutPane.lock();
             if (layoutPanePtr != nullptr && layoutPanePtr->CanBeDisplayed()) {
-                change |= layoutPanePtr->DrawWidgets(vCurrentFrame, vContextPtr, vUserDatas);
+                change |= layoutPanePtr->DrawOverlays(aRect, aContext, apUserDatas);
             }
         }
     }
     return change;
 }
 
-bool LayoutManager::DrawOverlays(const uint32_t& vCurrentFrame, const ImRect& vRect, ImGuiContext* vContextPtr, void* vUserDatas) {
+bool LayoutManager::DrawDialogsAndPopups(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas) {
     bool change = false;
     for (const auto& pane : m_PanesByFlag) {
         auto pane_ptr = pane.second.lock();
         if (pane_ptr != nullptr) {
             auto layoutPanePtr = pane_ptr->ilayoutPane.lock();
             if (layoutPanePtr != nullptr && layoutPanePtr->CanBeDisplayed()) {
-                change |= layoutPanePtr->DrawOverlays(vCurrentFrame, vRect, vContextPtr, vUserDatas);
+                change |= layoutPanePtr->DrawDialogsAndPopups(aRect, aContext, apUserDatas);
             }
         }
     }
