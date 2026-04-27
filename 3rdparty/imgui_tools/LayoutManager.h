@@ -52,19 +52,19 @@ typedef std::string PaneMenuName;
 
 class IMGUI_API AbstractPane : public ILayoutPane {
 public:
-    bool Init() override = 0;  // return false if the init was failed
-    void Unit() override = 0;
+    bool init() override = 0;  // return false if the init was failed
+    void unit() override = 0;
 
     // the return, is a user side use case here
 
     // the return, is a user side use case here
-    bool DrawPanes(bool* apOpened, ContextDatas& aContext, void* apUserDatas) override = 0;
-    bool DrawWidgets(ContextDatas& aContext, void* apvUserDatas) override { return false; }
-    bool DrawOverlays(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas) override { return false; }
-    bool DrawDialogsAndPopups(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas) override { return false; }
+    bool drawPanes(bool* apOpened, ContextDatas& aContext, void* apUserDatas) override = 0;
+    bool drawWidgets(ContextDatas& aContext, void* apvUserDatas) override { return false; }
+    bool drawOverlays(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas) override { return false; }
+    bool drawDialogsAndPopups(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas) override { return false; }
 
     // if for any reason the pane must be hidden temporary, the user can control this here
-    bool CanBeDisplayed() override { return true; }
+    bool canBeDisplayed() override { return true; }
 };
 
 typedef std::shared_ptr<AbstractPane> AbstractPanePtr;
@@ -144,37 +144,37 @@ protected:
     std::map<PaneDisposal, float> m_PanesDisposalRatios;
 
 public:
-    bool AddPane(const PaneInfos& vPaneInfos);
-    void RemovePane(const LayoutPaneName& vName);
-    void SetPaneDisposalRatio(const PaneDisposal& vPaneDisposal, const float vRatio);
+    bool addPane(const PaneInfos& vPaneInfos);
+    void removePane(const LayoutPaneName& vName);
+    void setPaneDisposalRatio(const PaneDisposal& vPaneDisposal, const float vRatio);
 
-    void Init(const std::string& vMenuLabel, const std::string& vDefaultMenuLabel, const bool vForceDefaultLayout = false);
-    void Unit();
+    void init(const std::string& vMenuLabel, const std::string& vDefaultMenuLabel, const bool vForceDefaultLayout = false);
+    void unit();
 
-    bool InitPanes();
-    void UnitPanes();
+    bool initPanes();
+    void unitPanes();
 
-    void InitAfterFirstDisplay(const ImVec2& vSize);
-    bool BeginDockSpace(const ImGuiDockNodeFlags& vFlags, const ImVec2& voffset = ImVec2());
-    void EndDockSpace();
-    bool IsDockSpaceHoleHovered();
+    void initAfterFirstDisplay(const ImVec2& vSize);
+    bool beginDockSpace(const ImGuiDockNodeFlags& vFlags, const ImVec2& voffset = ImVec2());
+    void endDockSpace();
+    bool isDockSpaceHoleHovered();
 
-    void ApplyInitialDockingLayout(const ImVec2& vSize = ImVec2(0, 0));
+    void applyInitialDockingLayout(const ImVec2& vSize = ImVec2(0, 0));
 
-    virtual void DisplayMenu(const ImVec2& vSize);
-    virtual bool DrawPanes(ContextDatas& aContext, void* apUserDatas = nullptr);
-    virtual bool DrawWidgets(ContextDatas& aContext, void* apvUserDatas = nullptr);
-    virtual bool DrawOverlays(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas = nullptr);
-    virtual bool DrawDialogsAndPopups(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas = nullptr);
+    virtual void displayMenu(const ImVec2& vSize);
+    virtual bool drawPanes(ContextDatas& aContext, void* apUserDatas = nullptr);
+    virtual bool drawWidgets(ContextDatas& aContext, void* apvUserDatas = nullptr);
+    virtual bool drawOverlays(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas = nullptr);
+    virtual bool drawDialogsAndPopups(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas = nullptr);
 
-    void ShowSpecificPane(const LayoutPaneFlag vPane);
-    void HideSpecificPane(const LayoutPaneFlag vPane);
-    void FocusSpecificPane(const LayoutPaneFlag vPane);
-    void FocusSpecificPane(const std::string& vlabel);
-    void ShowAndFocusSpecificPane(const LayoutPaneFlag vPane);
-    bool IsSpecificPaneFocused(const LayoutPaneFlag vPane);
-    bool IsSpecificPaneFocused(const std::string& vlabel);
-    void AddSpecificPaneToExisting(const std::string& vNewPane, const std::string& vExistingPane);
+    void showSpecificPane(const LayoutPaneFlag vPane);
+    void hideSpecificPane(const LayoutPaneFlag vPane);
+    void focusSpecificPane(const LayoutPaneFlag vPane);
+    void focusSpecificPane(const std::string& vlabel);
+    void showAndFocusSpecificPane(const LayoutPaneFlag vPane);
+    bool isSpecificPaneFocused(const LayoutPaneFlag vPane);
+    bool isSpecificPaneFocused(const std::string& vlabel);
+    void addSpecificPaneToExisting(const std::string& vNewPane, const std::string& vExistingPane);
 
     const LayoutPaneFlag& getPaneFocusedDefault() const { return m_paneFocusedDefault; }
     const LayoutPaneFlag& getPaneOpenedDefault() const { return m_paneOpenedDefault; }

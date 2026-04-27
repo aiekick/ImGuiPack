@@ -38,31 +38,31 @@ private:
     LayoutPaneFlag paneFlag = -1;
 
 public:
-    virtual bool Init() = 0; // return false if the init was failed
-    virtual void Unit() = 0;
+    virtual bool init() = 0; // return false if the init was failed
+    virtual void unit() = 0;
 
     // the return, is a user side use case here
-    virtual bool DrawPanes(bool* apOpened, ContextDatas& aContext, void* apUserDatas) = 0;
-    virtual bool DrawWidgets(ContextDatas& aContext, void*apvUserDatas) = 0;
-    virtual bool DrawOverlays(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas) = 0;
-    virtual bool DrawDialogsAndPopups(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas) = 0;
+    virtual bool drawPanes(bool* apOpened, ContextDatas& aContext, void* apUserDatas) = 0;
+    virtual bool drawWidgets(ContextDatas& aContext, void*apvUserDatas) = 0;
+    virtual bool drawOverlays(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas) = 0;
+    virtual bool drawDialogsAndPopups(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas) = 0;
 
     // if for any reason the pane must be hidden temporary, the user can control this here
-    virtual bool CanBeDisplayed() = 0;
+    virtual bool canBeDisplayed() = 0;
 
 public:
-    void SetName(const LayoutPaneName& aName) {
+    void setName(const LayoutPaneName& aName) {
         paneName = aName;
     }
-    const LayoutPaneName& GetName() const {
+    const LayoutPaneName& getName() const {
         return paneName;
     }
-    void SetFlag(const LayoutPaneFlag& aFlag) {
+    void setFlag(const LayoutPaneFlag& aFlag) {
         if (paneFlag < 0) {  // ensure than this can be done only one time
             paneFlag = aFlag;
         }
     }
-    const LayoutPaneFlag& GetFlag() const {
+    const LayoutPaneFlag& getFlag() const {
         return paneFlag;
     }
 };

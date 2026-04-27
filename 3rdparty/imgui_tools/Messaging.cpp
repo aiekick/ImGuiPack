@@ -61,7 +61,7 @@ void Messaging::DrawStatusBar() {
                 if (use) {
                     m_MessageExistFlags = cat.second.flag;
                     if (m_LayoutManagerPtr) {
-                        m_LayoutManagerPtr->ShowAndFocusSpecificPane(sMessagePaneId);
+                        m_LayoutManagerPtr->showAndFocusSpecificPane(sMessagePaneId);
                     }
                     m_CurrentMsgIdx = ImMax(--m_CurrentMsgIdx, 0);
                     m_UpdateFilteredMessages();
@@ -335,7 +335,7 @@ bool Messaging::m_DrawMessage(const MessageBlockWeak& vMsg, const size_t& /*vMsg
             ImGui::PopID();
             if (check) {
                 if (m_LayoutManagerPtr) {
-                    m_LayoutManagerPtr->ShowAndFocusSpecificPane(sMessagePaneId);
+                    m_LayoutManagerPtr->showAndFocusSpecificPane(sMessagePaneId);
                 }
                 if (ptr->func) {
                     ptr->func(ptr->data);
