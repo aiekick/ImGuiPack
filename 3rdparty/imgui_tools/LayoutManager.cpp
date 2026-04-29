@@ -415,7 +415,7 @@ static bool LayoutManager_MenuItem(const char* label, const char* shortcut, T* v
     return res;
 }
 
-void LayoutManager::displayMenu(const ImVec2& vSize) {
+void LayoutManager::drawMenu(const ImVec2& vSize) {
     if (ImGui::BeginMenu(m_MenuLabel.c_str())) {
         if (ImGui::MenuItem(m_DefaultMenuLabel.c_str())) {
             applyInitialDockingLayout(vSize);

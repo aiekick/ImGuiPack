@@ -161,7 +161,7 @@ public:
 
     void applyInitialDockingLayout(const ImVec2& vSize = ImVec2(0, 0));
 
-    virtual void displayMenu(const ImVec2& vSize);
+    virtual void drawMenu(const ImVec2& vSize);
     virtual bool drawPanes(ContextDatas& aContext, void* apUserDatas = nullptr);
     virtual bool drawWidgets(ContextDatas& aContext, void* apvUserDatas = nullptr);
     virtual bool drawOverlays(const ImRect& aRect, ContextDatas& aContext, void* apUserDatas = nullptr);
