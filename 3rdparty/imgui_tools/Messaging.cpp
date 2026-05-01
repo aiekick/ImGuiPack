@@ -19,7 +19,7 @@
 
 #include "Messaging.h"
 #include <ImWidgets.h>
-#include <LayoutManager.h>
+#include <ImLayout.h>
 #include <imgui_internal.h>
 #include <forward_list>
 
@@ -60,8 +60,8 @@ void Messaging::DrawStatusBar() {
                 ImGui::PopStyleColor();
                 if (use) {
                     m_MessageExistFlags = cat.second.flag;
-                    if (m_LayoutManagerPtr) {
-                        m_LayoutManagerPtr->showAndFocusSpecificPane(sMessagePaneId);
+                    if (m_ImLayoutPtr) {
+                        m_ImLayoutPtr->showAndFocusSpecificPane(sMessagePaneId);
                     }
                     m_CurrentMsgIdx = ImMax(--m_CurrentMsgIdx, 0);
                     m_UpdateFilteredMessages();
@@ -237,7 +237,7 @@ void Messaging::AddMessage(const std::string& vMsg,
     msg_ptr->func = vFunction;
     m_Messages.push_back(msg_ptr);
 
-    if (m_LayoutManagerPtr && (m_LayoutManagerPtr->getPaneShown() & sMessagePaneId)) {
+    if (m_ImLayoutPtr && (m_ImLayoutPtr->getPaneShown() & sMessagePaneId)) {
         m_AddToFilteredMessages(msg_ptr);
     }
 }
@@ -334,8 +334,8 @@ bool Messaging::m_DrawMessage(const MessageBlockWeak& vMsg, const size_t& /*vMsg
             const auto check = ImGui::Selectable_FramedText("%s##Messaging", ptr->desc.c_str());
             ImGui::PopID();
             if (check) {
-                if (m_LayoutManagerPtr) {
-                    m_LayoutManagerPtr->showAndFocusSpecificPane(sMessagePaneId);
+                if (m_ImLayoutPtr) {
+                    m_ImLayoutPtr->showAndFocusSpecificPane(sMessagePaneId);
                 }
                 if (ptr->func) {
                     ptr->func(ptr->data);

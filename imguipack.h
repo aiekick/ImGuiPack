@@ -113,12 +113,6 @@
 #ifdef USE_IM_TOOLS
 	#include <3rdparty/imgui_tools/ImWidgets.h>
 	#include <3rdparty/imgui_tools/Messaging.h>
-	#ifndef ILAYOUT_PANE_INCLUDE
-		#include <3rdparty/imgui_tools/ILayoutPane.h>
-	#else
-		#include ILAYOUT_PANE_INCLUDE
-	#endif
-	#include <3rdparty/imgui_tools/LayoutManager.h>
 	#include <3rdparty/imgui_tools/ImGuiThemeHelper.h>
 	#include <3rdparty/imgui_tools/ImCanvasWip.h>
 	#include <3rdparty/imgui_tools/ImCanvas.h>
@@ -127,6 +121,15 @@
 
 #ifdef USE_IM_GENIE
 	#include <3rdparty/imgui_imgenie/ImGenie.h>
+#endif
+
+#ifdef USE_IM_LAYOUT
+	#ifndef ILAYOUT_PANE_INCLUDE
+		#include <3rdparty/imgui_imlayout/ILayoutPane.h>
+	#else
+		#include ILAYOUT_PANE_INCLUDE
+	#endif
+	#include <3rdparty/imgui_imlayout/ImLayout.h>
 #endif
 
 #ifdef USE_IM_COOL_BAR

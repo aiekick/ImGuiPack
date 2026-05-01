@@ -15,6 +15,7 @@ option(USE_IMPLOT "Use ImPlot" OFF)
 option(USE_IM_TOOLS "Use ImTools" OFF)
 option(USE_IM_GENIE "Use ImGenie" OFF)
 option(USE_IM_NODAL "Use ImNodal" OFF)
+option(USE_IM_LAYOUT "Use ImLayout" OFF)
 option(USE_IM_GUIZMO "Use ImGuizmo" OFF)
 option(USE_IM_COOL_BAR "Use ImCoolBar" OFF)
 option(USE_IMGUI_MARKDOW "Use ImGuiMarkDown" OFF)
@@ -154,6 +155,20 @@ if (USE_IM_NODAL)
 endif()
 
 #####################################################
+##### IMNODAL
+#####################################################
+
+if (USE_IM_LAYOUT)
+	message(STATUS "USE IM LAYOUT")
+	file(GLOB IMGUI_IMLAYOUT_SOURCES
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imlayout/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imlayout/*.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imlayout/*.md)
+	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/ PREFIX pack FILES ${IMGUI_IMLAYOUT_SOURCES})
+endif()
+
+
+#####################################################
 ##### IMGUIZMO
 #####################################################
 
@@ -282,6 +297,7 @@ if (BUILD_SHARED_LIBS)
 		${IMGUI_IMNODAL_SOURCES}
 		${IMGUI_IMTOOLS_SOURCES}
 		${IMGUI_IMGENIE_SOURCES}
+		${IMGUI_IMLAYOUT_SOURCES}
 		${IMGUI_IMGUIZMO_SOURCES}
 		${IMGUI_IMCOOLBAR_SOURCES}
 		${IMGUI_IMGUIPACK_SOURCES}
@@ -302,6 +318,7 @@ else()
 		${IMGUI_IMNODAL_SOURCES}
 		${IMGUI_IMTOOLS_SOURCES}
 		${IMGUI_IMGENIE_SOURCES}
+		${IMGUI_IMLAYOUT_SOURCES}
 		${IMGUI_IMGUIZMO_SOURCES}
 		${IMGUI_IMCOOLBAR_SOURCES}
 		${IMGUI_IMGUIPACK_SOURCES}
@@ -324,6 +341,7 @@ set(IMGUIPACK_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imnodal/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_docking/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imgenie/
+	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imlayout/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imguizmo/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_markdown/
 	${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui_imcoolbar/
@@ -356,11 +374,14 @@ endif()
 if (USE_IM_NODAL)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IM_NODAL)
 endif()
+if (USE_IM_GENIE)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IM_GENIE)
+endif()
 if (USE_IM_GUIZMO)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IM_GUIZMO)
 endif()
-if (USE_IM_GENIE)
-	target_compile_definitions(${PROJECT} PUBLIC USE_IM_GENIE)
+if (USE_IM_LAYOUT)
+	target_compile_definitions(${PROJECT} PUBLIC USE_IM_LAYOUT)
 endif()
 if (USE_IM_COOL_BAR)
 	target_compile_definitions(${PROJECT} PUBLIC USE_IM_COOL_BAR)
