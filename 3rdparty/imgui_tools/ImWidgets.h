@@ -378,7 +378,7 @@ IMGUI_API bool CheckBoxBitWize(const char* vLabel, const char* vHelp, T* vContai
 }*/
 
 IMGUI_API void ImageRect(
-    ImTextureID user_texture_id,
+    ImTextureRef user_texture_id,
     const ImVec2& pos,
     const ImVec2& size,
     const ImVec2& uv0 = ImVec2(0, 0),

@@ -1493,7 +1493,7 @@ void Header(const char* vName, float width) {
 }
 
 void ImageRect(
-    ImTextureID user_texture_id,
+    ImTextureRef user_texture_id,
     const ImVec2& pos,
     const ImVec2& size,
     const ImVec2& uv0,
