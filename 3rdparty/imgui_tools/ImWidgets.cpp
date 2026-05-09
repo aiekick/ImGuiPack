@@ -176,7 +176,7 @@ static inline ImU32 sCustomStyle_ColorConvertFloat4ToU32(const ImVec4& in) {
     return out;
 }
 
-float CustomStyle::puContrastRatio = 3.5f;
+float CustomStyle::puContrastRatio = 3.0f;
 ImU32 CustomStyle::puContrastedTextColor = sCustomStyle_ColorConvertFloat4ToU32(ImVec4(0, 0, 0, 1));
 int CustomStyle::pushId = STARTING_CUSTOMID;
 int CustomStyle::minorNumber = 0;
