@@ -3223,6 +3223,10 @@ bool SliderScalarDefault(
     ImGuiSliderFlags flags) {
     bool change = false;
 
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return false;
+
     PushID(label);
     if (ContrastedButton(BUTTON_LABEL_RESET, "Reset")) {
         switch (data_type) {
@@ -3246,7 +3250,9 @@ bool SliderScalarDefault(
         width -= GetCursorPosX() + ImGui::GetStyle().FramePadding.x * 2.0f + ImGui::GetStyle().ItemSpacing.x;
     }
 
-    SameLine();
+    if (!window->DC.MenuBarAppending) {
+        SameLine();
+    }
 
     change |= SliderScalar(width, label, data_type, p_data, p_min, p_max, p_step, format, flags);
 
