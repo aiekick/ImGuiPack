@@ -149,12 +149,16 @@ ez::xml::Nodes ImGuiThemeHelper::getXmlNodes(const std::string& vUserDatas) {
 #if defined(EZ_TOOLS_VEC2) && defined(EZ_TOOLS_VEC4)
         auto& imguiStylesNode = node.addChild("ImGui");
         for (auto i = 0; i < ImGuiCol_COUNT; i++) {
-            imguiStylesNode.addChild(GetStyleColorName(i)).addAttribute("value", ez::fvec4(colors[i].x, colors[i].y, colors[i].z, colors[i].w).string());
+            imguiStylesNode.addChild(GetStyleColorName(i)).addAttribute("value", ez::math::fvec4(colors[i].x, colors[i].y, colors[i].z, colors[i].w).string());
         }
-        imguiStylesNode.addChild("WindowPadding").addAttribute("value", ez::fvec2(m_CurrentTheme.style.WindowPadding.x, m_CurrentTheme.style.WindowPadding.y).string());
-        imguiStylesNode.addChild("FramePadding").addAttribute("value", ez::fvec2(m_CurrentTheme.style.FramePadding.x, m_CurrentTheme.style.FramePadding.y).string());
-        imguiStylesNode.addChild("ItemSpacing").addAttribute("value", ez::fvec2(m_CurrentTheme.style.ItemSpacing.x, m_CurrentTheme.style.ItemSpacing.y).string());
-        imguiStylesNode.addChild("ItemInnerSpacing").addAttribute("value", ez::fvec2(m_CurrentTheme.style.ItemInnerSpacing.x, m_CurrentTheme.style.ItemInnerSpacing.y).string());
+        imguiStylesNode.addChild("WindowPadding")
+            .addAttribute("value", ez::math::fvec2(m_CurrentTheme.style.WindowPadding.x, m_CurrentTheme.style.WindowPadding.y).string());
+        imguiStylesNode.addChild("FramePadding")
+            .addAttribute("value", ez::math::fvec2(m_CurrentTheme.style.FramePadding.x, m_CurrentTheme.style.FramePadding.y).string());
+        imguiStylesNode.addChild("ItemSpacing")
+            .addAttribute("value", ez::math::fvec2(m_CurrentTheme.style.ItemSpacing.x, m_CurrentTheme.style.ItemSpacing.y).string());
+        imguiStylesNode.addChild("ItemInnerSpacing")
+            .addAttribute("value", ez::math::fvec2(m_CurrentTheme.style.ItemInnerSpacing.x, m_CurrentTheme.style.ItemInnerSpacing.y).string());
         imguiStylesNode.addChild("IndentSpacing").addAttribute("value", ez::str::toStr(m_CurrentTheme.style.IndentSpacing));
         imguiStylesNode.addChild("ScrollbarSize").addAttribute("value", ez::str::toStr(m_CurrentTheme.style.ScrollbarSize));
         imguiStylesNode.addChild("GrabMinSize").addAttribute("value", ez::str::toStr(m_CurrentTheme.style.GrabMinSize));
@@ -208,7 +212,7 @@ ez::xml::Nodes ImGuiThemeHelper::getXmlNodes(const std::string& vUserDatas) {
         for (auto& it : m_CurrentTheme.fileTypeInfos) {
             fileTypesNode.addChild("filetype")
                 .addAttribute("value", it.first)
-                .addAttribute("color", ez::fvec4(it.second.color.x, it.second.color.y, it.second.color.z, it.second.color.w).string());
+                .addAttribute("color", ez::math::fvec4(it.second.color.x, it.second.color.y, it.second.color.z, it.second.color.w).string());
         }
     }
 #endif // USE_IMGUI_FILE_DIALOG && EZ_TOOLS_VEC4
