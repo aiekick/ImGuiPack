@@ -422,7 +422,7 @@ IMGUI_API bool ButtonNoFrame(  //
     ImVec4 vColor = ImVec4(1, 1, 1, 1),
     const char* vHelp = 0,
     ImFont* vLabelFont = nullptr);
-IMGUI_API bool SmallContrastedButton(const char* label, const char* vHelp = nullptr);
+IMGUI_API bool ContrastedSmallButton(const char* label, const char* vHelp = nullptr);
 IMGUI_API void SpacingFromStart(float offset_from_start_x);
 IMGUI_API bool Selectable_FramedText(const char* fmt, ...);
 

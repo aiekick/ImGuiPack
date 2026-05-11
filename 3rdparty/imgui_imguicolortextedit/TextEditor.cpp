@@ -2222,7 +2222,7 @@ void TextEditor::stripTrailingWhitespaces() {
 	for (int i = 0; i < document.lineCount(); i++) {
 		auto& line = document[i];
 		size_t lineSize = line.size();
-		size_t whitespace = std::numeric_limits<std::size_t>::max();
+		size_t whitespace = std::numeric_limits<size_t>::max();
 		bool done = false;
 
 		// look for first non-whitespace glyph at the end of the line
@@ -2242,7 +2242,7 @@ void TextEditor::stripTrailingWhitespaces() {
 		}
 
 		// remove whitespaces (if required)
-		if (whitespace != std::numeric_limits<std::size_t>::max()) {
+		if (whitespace != std::numeric_limits<size_t>::max()) {
 			auto start = Coordinate(i, document.getColumn(line, whitespace));
 			auto end = Coordinate(i, document.getColumn(line, lineSize));
 			deleteText(transaction, start, end);

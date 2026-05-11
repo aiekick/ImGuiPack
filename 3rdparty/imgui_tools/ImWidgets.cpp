@@ -1277,7 +1277,7 @@ bool ButtonNoFrame(const char* vLabel, ImVec2 size, ImVec4 vColor, const char* v
     return pressed;
 }
 
-bool SmallContrastedButton(const char* label, const char* vHelp) {
+bool ContrastedSmallButton(const char* label, const char* vHelp) {
     ImGuiContext& g = *GImGui;
     float backup_padding_y = g.Style.FramePadding.y;
     g.Style.FramePadding.y = 0.0f;
@@ -1846,6 +1846,31 @@ bool ContrastedButton_For_Dialogs(const char* label, const ImVec2& size_arg) {
 }
 
 bool ContrastedButton(const char* label, const char* help, ImFont* imfont, float vWidth, const ImVec2& size_arg, ImGuiButtonFlags flags) {
+    const bool pushed = PushStyleColorWithContrast1(ImGuiCol_Button, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
+
+    if (imfont)
+        PushFont(imfont, 0.0f);
+
+    PushID(++CustomStyle::pushId);
+
+    const bool res = ButtonEx(label, ImVec2(ImMax(vWidth, size_arg.x), size_arg.y), flags | ImGuiButtonFlags_PressedOnClick);
+
+    PopID();
+
+    if (imfont)
+        PopFont();
+
+    if (pushed)
+        PopStyleColor();
+
+    if (help)
+        if (IsItemHovered())
+            SetTooltip("%s", help);
+
+    return res;
+}
+
+bool ContrastedSmallButton(const char* label, const char* help, ImFont* imfont, float vWidth, const ImVec2& size_arg, ImGuiButtonFlags flags) {
     const bool pushed = PushStyleColorWithContrast1(ImGuiCol_Button, ImGuiCol_Text, CustomStyle::puContrastedTextColor, CustomStyle::puContrastRatio);
 
     if (imfont)
